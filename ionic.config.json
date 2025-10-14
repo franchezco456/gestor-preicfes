@@ -1,0 +1,7 @@
+{
+  "name": "Gestor Preicfes",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
