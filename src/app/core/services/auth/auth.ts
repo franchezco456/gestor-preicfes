@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
-import { Supabase } from '../../providers/supabase/supabase';
+import { SupabaseClient } from '@supabase/supabase-js';
 
 @Injectable({
   providedIn: 'root'
 })
 export class Auth {
-  constructor(private supabasePrv: Supabase) { }
+  constructor(private supabasePrv: SupabaseClient) { }
 
   async register(email: string, password: string) {
-    const { data, error } = await this.supabasePrv.client.auth.signUp({
+    const { data, error } = await this.supabasePrv.auth.signUp({
       email: email,
       password: password
     });
@@ -17,7 +17,7 @@ export class Auth {
   }
 
   async login(email: string, password: string) {
-    const { data, error } = await this.supabasePrv.client.auth.signInWithPassword({
+    const { data, error } = await this.supabasePrv.auth.signInWithPassword({
       email: email,
       password: password
     });
@@ -26,7 +26,7 @@ export class Auth {
   }
 
   async logout() {
-    const { error } = await this.supabasePrv.client.auth.signOut();
+    const { error } = await this.supabasePrv.auth.signOut();
     if (!error) { 
       return "200";
     }else{
