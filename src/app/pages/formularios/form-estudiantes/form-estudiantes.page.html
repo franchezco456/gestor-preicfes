@@ -1,0 +1,142 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-title>Registro de estudiantes</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="form-page" [fullscreen]="true">
+  <div class="form-wrapper">
+    <section class="form-header">
+      <ion-text color="light">
+        <h1>Inscribe nuevos estudiantes</h1>
+        <p>Completa la información básica del estudiante y asigna la institución educativa correspondiente.</p>
+      </ion-text>
+    </section>
+
+    <ion-card class="form-card">
+      <ion-card-header>
+        <ion-card-subtitle>Formulario</ion-card-subtitle>
+        <ion-card-title>Datos del estudiante</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <form [formGroup]="studentForm" (ngSubmit)="submitStudentForm()" novalidate>
+          <ion-grid fixed class="form-grid">
+            <ion-row>
+              <ion-col size="12" size-md="6">
+                <ion-item lines="none" class="form-field" [class.invalid]="shouldShowError('TI')">
+                  <ion-label position="floating">TI</ion-label>
+                  <ion-input inputmode="numeric" formControlName="TI"></ion-input>
+                </ion-item>
+                <ion-note class="error-text" color="danger" *ngIf="shouldShowError('TI')">
+                  {{ getErrorMessage('TI') }}
+                </ion-note>
+              </ion-col>
+
+              <ion-col size="12" size-md="6">
+                <ion-item lines="none" class="form-field" [class.invalid]="shouldShowError('Name')">
+                  <ion-label position="floating">Nombre</ion-label>
+                  <ion-input formControlName="Name"></ion-input>
+                </ion-item>
+                <ion-note class="error-text" color="danger" *ngIf="shouldShowError('Name')">
+                  {{ getErrorMessage('Name') }}
+                </ion-note>
+              </ion-col>
+
+              <ion-col size="12" size-md="6">
+                <ion-item lines="none" class="form-field" [class.invalid]="shouldShowError('LastName')">
+                  <ion-label position="floating">Apellido</ion-label>
+                  <ion-input formControlName="LastName"></ion-input>
+                </ion-item>
+                <ion-note class="error-text" color="danger" *ngIf="shouldShowError('LastName')">
+                  {{ getErrorMessage('LastName') }}
+                </ion-note>
+              </ion-col>
+
+              <ion-col size="12" size-md="6">
+                <ion-item lines="none" class="form-field" [class.invalid]="shouldShowError('Address')">
+                  <ion-label position="floating">Dirección</ion-label>
+                  <ion-input formControlName="Address"></ion-input>
+                </ion-item>
+                <ion-note class="error-text" color="danger" *ngIf="shouldShowError('Address')">
+                  {{ getErrorMessage('Address') }}
+                </ion-note>
+              </ion-col>
+
+              <ion-col size="12" size-md="6">
+                <ion-item lines="none" class="form-field" [class.invalid]="shouldShowError('Email')">
+                  <ion-label position="floating">Correo electrónico</ion-label>
+                  <ion-input type="email" autocomplete="email" formControlName="Email"></ion-input>
+                </ion-item>
+                <ion-note class="error-text" color="danger" *ngIf="shouldShowError('Email')">
+                  {{ getErrorMessage('Email') }}
+                </ion-note>
+              </ion-col>
+
+              <ion-col size="12" size-md="6">
+                <ion-item lines="none" class="form-field" [class.invalid]="shouldShowError('Number')">
+                  <ion-label position="floating">Número de contacto</ion-label>
+                  <ion-input type="tel" inputmode="tel" formControlName="Number"></ion-input>
+                </ion-item>
+                <ion-note class="error-text" color="danger" *ngIf="shouldShowError('Number')">
+                  {{ getErrorMessage('Number') }}
+                </ion-note>
+              </ion-col>
+
+              <ion-col size="12" size-md="6">
+                <ion-item lines="none" class="form-field" [class.invalid]="shouldShowError('Course')">
+                  <ion-label position="floating">Curso</ion-label>
+                  <ion-input formControlName="Course"></ion-input>
+                </ion-item>
+                <ion-note class="error-text" color="danger" *ngIf="shouldShowError('Course')">
+                  {{ getErrorMessage('Course') }}
+                </ion-note>
+              </ion-col>
+
+              <ion-col size="12" size-md="6">
+                <ion-item lines="none" class="form-field" [class.invalid]="shouldShowError('Nit_Educational_Institution')">
+                  <ion-label>Institución educativa</ion-label>
+                  <ion-select placeholder="Selecciona una institución"
+                              interface="popover"
+                              formControlName="Nit_Educational_Institution">
+                    <ion-select-option *ngFor="let option of institutionsOptions" [value]="option.value">
+                      {{ option.label }}
+                    </ion-select-option>
+                  </ion-select>
+                </ion-item>
+                <ion-note class="error-text" color="danger" *ngIf="shouldShowError('Nit_Educational_Institution')">
+                  {{ getErrorMessage('Nit_Educational_Institution') }}
+                </ion-note>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+
+          <div class="actions">
+            <ion-button expand="block" type="submit" class="submit-button">
+              <ion-icon name="save-outline" slot="start"></ion-icon>
+              Registrar estudiante
+            </ion-button>
+          </div>
+        </form>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card *ngIf="studentResult" class="result-card">
+      <ion-card-header>
+        <ion-card-subtitle>Resumen</ion-card-subtitle>
+        <ion-card-title>Datos recibidos</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-grid class="result-grid">
+          <ion-row>
+            <ion-col size="12" size-md="6" *ngFor="let field of studentSummaryFields">
+              <div class="result-field">
+                <span class="result-label">{{ field.label }}</span>
+                <span class="result-value">{{ studentResult![field.key] }}</span>
+              </div>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

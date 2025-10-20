@@ -1,0 +1,132 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-title>Registro de coordinadores</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="form-page" [fullscreen]="true">
+  <div class="form-wrapper">
+    <section class="form-header">
+      <ion-text color="light">
+        <h1>Gestiona el equipo coordinador</h1>
+        <p>Registra nuevos coordinadores y vincúlalos con la institución educativa en la que operan.</p>
+      </ion-text>
+    </section>
+
+    <ion-card class="form-card">
+      <ion-card-header>
+        <ion-card-subtitle>Formulario</ion-card-subtitle>
+        <ion-card-title>Datos del coordinador</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <form [formGroup]="coordinatorForm" (ngSubmit)="submitCoordinatorForm()" novalidate>
+          <ion-grid fixed class="form-grid">
+            <ion-row>
+              <ion-col size="12" size-md="6">
+                <ion-item lines="none" class="form-field" [class.invalid]="shouldShowError('CC')">
+                  <ion-label position="floating">CC</ion-label>
+                  <ion-input inputmode="numeric" formControlName="CC"></ion-input>
+                </ion-item>
+                <ion-note class="error-text" color="danger" *ngIf="shouldShowError('CC')">
+                  {{ getErrorMessage('CC') }}
+                </ion-note>
+              </ion-col>
+
+              <ion-col size="12" size-md="6">
+                <ion-item lines="none" class="form-field" [class.invalid]="shouldShowError('Name')">
+                  <ion-label position="floating">Nombre</ion-label>
+                  <ion-input formControlName="Name"></ion-input>
+                </ion-item>
+                <ion-note class="error-text" color="danger" *ngIf="shouldShowError('Name')">
+                  {{ getErrorMessage('Name') }}
+                </ion-note>
+              </ion-col>
+
+              <ion-col size="12" size-md="6">
+                <ion-item lines="none" class="form-field" [class.invalid]="shouldShowError('LastName')">
+                  <ion-label position="floating">Apellido</ion-label>
+                  <ion-input formControlName="LastName"></ion-input>
+                </ion-item>
+                <ion-note class="error-text" color="danger" *ngIf="shouldShowError('LastName')">
+                  {{ getErrorMessage('LastName') }}
+                </ion-note>
+              </ion-col>
+
+              <ion-col size="12" size-md="6">
+                <ion-item lines="none" class="form-field" [class.invalid]="shouldShowError('Address')">
+                  <ion-label position="floating">Dirección</ion-label>
+                  <ion-input formControlName="Address"></ion-input>
+                </ion-item>
+                <ion-note class="error-text" color="danger" *ngIf="shouldShowError('Address')">
+                  {{ getErrorMessage('Address') }}
+                </ion-note>
+              </ion-col>
+
+              <ion-col size="12" size-md="6">
+                <ion-item lines="none" class="form-field" [class.invalid]="shouldShowError('Email')">
+                  <ion-label position="floating">Correo electrónico</ion-label>
+                  <ion-input type="email" autocomplete="email" formControlName="Email"></ion-input>
+                </ion-item>
+                <ion-note class="error-text" color="danger" *ngIf="shouldShowError('Email')">
+                  {{ getErrorMessage('Email') }}
+                </ion-note>
+              </ion-col>
+
+              <ion-col size="12" size-md="6">
+                <ion-item lines="none" class="form-field" [class.invalid]="shouldShowError('Number')">
+                  <ion-label position="floating">Número de contacto</ion-label>
+                  <ion-input type="tel" inputmode="tel" formControlName="Number"></ion-input>
+                </ion-item>
+                <ion-note class="error-text" color="danger" *ngIf="shouldShowError('Number')">
+                  {{ getErrorMessage('Number') }}
+                </ion-note>
+              </ion-col>
+
+              <ion-col size="12" size-md="6">
+                <ion-item lines="none" class="form-field" [class.invalid]="shouldShowError('Nit_Educational_Institution')">
+                  <ion-label>Institución educativa</ion-label>
+                  <ion-select placeholder="Selecciona una institución"
+                              interface="popover"
+                              formControlName="Nit_Educational_Institution">
+                    <ion-select-option *ngFor="let option of institutionsOptions" [value]="option.value">
+                      {{ option.label }}
+                    </ion-select-option>
+                  </ion-select>
+                </ion-item>
+                <ion-note class="error-text" color="danger" *ngIf="shouldShowError('Nit_Educational_Institution')">
+                  {{ getErrorMessage('Nit_Educational_Institution') }}
+                </ion-note>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+
+          <div class="actions">
+            <ion-button expand="block" type="submit" class="submit-button">
+              <ion-icon name="person-add-outline" slot="start"></ion-icon>
+              Registrar coordinador
+            </ion-button>
+          </div>
+        </form>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card *ngIf="coordinatorResult" class="result-card">
+      <ion-card-header>
+        <ion-card-subtitle>Resumen</ion-card-subtitle>
+        <ion-card-title>Datos recibidos</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-grid class="result-grid">
+          <ion-row>
+            <ion-col size="12" size-md="6" *ngFor="let field of coordinatorSummaryFields">
+              <div class="result-field">
+                <span class="result-label">{{ field.label }}</span>
+                <span class="result-value">{{ coordinatorResult![field.key] }}</span>
+              </div>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>
