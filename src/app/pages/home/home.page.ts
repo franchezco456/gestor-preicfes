@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Auth } from 'src/app/core/services/auth/auth';
-import { Query } from 'src/app/core/services/query/query';
-import { Institution } from 'src/domain/models/Institution';
+import { Institution } from 'src/app/shared/services/institution/institution';
+import { Institution as In } from 'src/domain/models/Institution';
 
 @Component({
   selector: 'app-home',
@@ -15,27 +15,27 @@ import { Institution } from 'src/domain/models/Institution';
 export class HomePage {
 
 
-  constructor(private readonly authSrv: Auth, private readonly querySrv: Query) { }
+  constructor(private readonly authSrv: Auth, private readonly institutionSrv : Institution) { }
 
   public async go() {
-    const register = await this.authSrv.register("hello@gmail.com", "world2");
+    const register = await this.authSrv.register("hello1@gmail.com", "world2");
     console.log("TAG: REGISTER" + JSON.stringify(register));
 
-    const login = await this.authSrv.login("hello@gmail.com", "world2");
+    const login = await this.authSrv.login("hello1@gmail.com", "world2");
     console.log("TAG: LOGIN" + JSON.stringify(login));
-    const uni: Institution = {
+    const uni: In = {
       NIT: "12345",
       Name: "la salle",
       Address: "bicentenario",
       Course_Value: 500000
     }
-    const uni2: Institution = {
+    const uni2: In = {
       NIT: "123456",
       Name: "la salle",
       Address: "la popa",
       Course_Value: 350000
     }
-    const uni3: Institution = {
+    const uni3: In = {
       NIT: "1234567",
       Name: "inem",
       Address: "el bosque",
@@ -61,26 +61,26 @@ export class HomePage {
       Course_Value: 0
     }
 
-    const create = await this.querySrv.create("Educational_Institution", uni);
+    const create = await this.institutionSrv.addInstitution(uni);
     console.log("TAG: CREATE" + JSON.stringify(create));
 
-    const create2 = await this.querySrv.create("Educational_Institution", uni2);
+    const create2 = await this.institutionSrv.addInstitution(uni2);
     console.log("TAG: CREATE" + JSON.stringify(create2));
 
-    const create3 = await this.querySrv.create("Educational_Institution", uni3);
+    const create3 = await this.institutionSrv.addInstitution(uni3);
     console.log("TAG: CREATE" + JSON.stringify(create3));
 
 
-    const update = await this.querySrv.update("Educational_Institution", filters, new_uni);
+    const update = await this.institutionSrv.updateInstitution(filters, new_uni);
     console.log("TAG: UPDATE" + JSON.stringify(update));
 
-    const deletes = await this.querySrv.delete("Educational_Institution", filter_delete_uni);
+    const deletes = await this.institutionSrv.deleteInstitution(filter_delete_uni);
     console.log("TAG: DELETE" + JSON.stringify(deletes));
 
-    const getOne = await this.querySrv.getOne("Educational_Institution", filters);
+    const getOne = await this.institutionSrv.getInstitution(filters);
     console.log("TAG: GET ONE" + JSON.stringify(getOne));
 
-    const getAll = await this.querySrv.getAll("Educational_Institution");
+    const getAll = await this.institutionSrv.getAllInstitutions();
     console.log("TAG: GET ALL" + JSON.stringify(getAll));
 
     const logout = await this.authSrv.logout();
