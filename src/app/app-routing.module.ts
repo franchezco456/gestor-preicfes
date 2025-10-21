@@ -23,6 +23,10 @@ const routes: Routes = [
     path: 'form-coordinadores',
     loadChildren: () => import('./pages/formularios/form-coordinadores/form-coordinadores.module').then( m => m.FormCoordinadoresPageModule)
   },
+  {
+    path: 'form-instituciones',
+    loadChildren: () => import('./pages/formularios/form-instituciones/form-instituciones.module').then( m => m.FormInstitucionesPageModule)
+  }
 
 
 ];

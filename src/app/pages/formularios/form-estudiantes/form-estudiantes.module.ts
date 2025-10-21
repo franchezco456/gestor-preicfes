@@ -6,6 +6,7 @@ import { IonicModule } from '@ionic/angular';
 
 import { FormEstudiantesPageRoutingModule } from './form-estudiantes-routing.module';
 
+import { SharedModule } from '../../../shared/shared-module';
 import { FormEstudiantesPage } from './form-estudiantes.page';
 
 @NgModule({
@@ -14,7 +15,8 @@ import { FormEstudiantesPage } from './form-estudiantes.page';
     FormsModule,
     ReactiveFormsModule,
     IonicModule,
-    FormEstudiantesPageRoutingModule
+    FormEstudiantesPageRoutingModule,
+    SharedModule,
   ],
   declarations: [FormEstudiantesPage]
 })

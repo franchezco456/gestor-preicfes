@@ -5,6 +5,7 @@ import { IonicModule } from '@ionic/angular';
 
 import { FormInstitucionesPageRoutingModule } from './form-instituciones-routing.module';
 import { FormInstitucionesPage } from './form-instituciones.page';
+import { SharedModule } from '../../../shared/shared-module';
 
 @NgModule({
   imports: [
@@ -13,6 +14,7 @@ import { FormInstitucionesPage } from './form-instituciones.page';
     ReactiveFormsModule,
     IonicModule,
     FormInstitucionesPageRoutingModule,
+    SharedModule,
   ],
   declarations: [FormInstitucionesPage],
 })

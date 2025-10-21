@@ -1,4 +1,5 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { AbstractControl } from '@angular/forms';
 
 @Component({
   selector: 'app-select',
@@ -11,11 +12,19 @@ export class SelectComponent {
   @Input() label: string = '';
   @Input() required: boolean = false;
   @Input() options: { value: any; text: string }[] = [];
-  @Input() value: any;
+  @Input() control: AbstractControl | null = null;
+  @Input() cssClass = '';
+  @Input() lines: 'full' | 'inset' | 'none' = 'none';
+  @Input() interface: 'alert' | 'action-sheet' | 'popover' = 'popover';
 
-  @Output() valueChange = new EventEmitter<any>();
+  public onChange(event: CustomEvent<{ value: any }>): void {
+    if (!this.control) {
+      return;
+    }
 
-  onValueChange(event: any) {
-    this.valueChange.emit(event.detail.value);
+    const value = event.detail?.value;
+    this.control.setValue(value);
+    this.control.markAsDirty();
+    this.control.markAsTouched();
   }
 }

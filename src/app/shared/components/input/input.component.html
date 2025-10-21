@@ -1,10 +1,13 @@
-<ion-item>
+<ion-item [lines]="lines" [ngClass]="cssClass">
   <ion-label position="floating">{{ label }}</ion-label>
   <ion-input
     [placeholder]="placeholder"
     [type]="type"
-    [value]="control?.value"
-    (ionChange)="onChange($event)">
+    [value]="control?.value ?? ''"
+    [inputmode]="inputmode"
+    [autocomplete]="autocomplete"
+    (ionInput)="onInput($event)"
+    (ionBlur)="onBlur()">
   </ion-input>
   <ion-button *ngIf="type === 'password'" fill="clear" slot="end" size="small">
     <ion-icon name="eye"></ion-icon>

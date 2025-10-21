@@ -1,8 +1,9 @@
-<ion-item>
+<ion-item [lines]="lines" [ngClass]="cssClass">
   <ion-select 
     [placeholder]="placeholder" 
-    [value]="value"
-    (ionChange)="onValueChange($event)">
+    [value]="control?.value"
+    [interface]="interface"
+    (ionChange)="onChange($event)">
     
     <div slot="label">
       {{ label }}

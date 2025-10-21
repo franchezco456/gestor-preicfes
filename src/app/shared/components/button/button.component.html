@@ -1,1 +1,10 @@
-<ion-button [fill]="fill" [disabled]="disabled" [type]="type" [color]="color">{{label}}</ion-button>
+<ion-button
+	[fill]="fill"
+	[disabled]="disabled"
+	[type]="type"
+	[color]="color"
+	[expand]="expandValue"
+	[ngClass]="cssClass">
+	<ng-content></ng-content>
+	{{ label }}
+</ion-button>
