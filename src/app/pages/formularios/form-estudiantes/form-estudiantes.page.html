@@ -11,6 +11,16 @@
         <h1>Inscribe nuevos estudiantes</h1>
         <p>Completa la información básica del estudiante y asigna la institución educativa correspondiente.</p>
       </ion-text>
+      <div class="header-meta">
+        <ion-chip class="meta-chip" color="light" [outline]="true">
+          <ion-icon name="shield-checkmark-outline"></ion-icon>
+          <ion-label>Datos protegidos</ion-label>
+        </ion-chip>
+        <ion-chip class="meta-chip" color="light" [outline]="true">
+          <ion-icon name="flash-outline"></ion-icon>
+          <ion-label>Validación en tiempo real</ion-label>
+        </ion-chip>
+      </div>
     </section>
 
     <ion-card class="form-card">
@@ -126,6 +136,10 @@
         <ion-card-title>Datos recibidos</ion-card-title>
       </ion-card-header>
       <ion-card-content>
+        <div class="result-header">
+          <ion-icon name="document-text-outline"></ion-icon>
+          <p>Estos son los datos que ingresaste y pasaron la validación.</p>
+        </div>
         <ion-grid class="result-grid">
           <ion-row>
             <ion-col size="12" size-md="6" *ngFor="let field of studentSummaryFields">
