@@ -24,6 +24,7 @@ export class SelectComponent {
 
     const value = event.detail?.value;
     this.control.setValue(value);
+    console.log('Select value changed to:', value);
     this.control.markAsDirty();
     this.control.markAsTouched();
   }

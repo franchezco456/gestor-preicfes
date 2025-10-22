@@ -107,7 +107,7 @@
                   label="Curso"
                   placeholder="Curso actual"
                   labelPosition="stacked"
-                  [control]="studentForm.get('Course')">
+                  [control]="studentForm.get('Grade')">
                 </app-input>
               </ion-col>
 
@@ -130,7 +130,8 @@
               cssClass="submit-button"
               expand="block"
               type="submit"
-              label="Registrar estudiante">
+              label="Registrar estudiante"
+              [disabled]="!studentForm.valid">
               <ion-icon slot="start" name="save-outline"></ion-icon>
             </app-button>
           </div>

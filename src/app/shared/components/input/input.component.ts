@@ -27,6 +27,7 @@ export class InputComponent {
 
   const value = event.detail?.value ?? '';
     this.control.setValue(value);
+    console.log('Input value changed to:', value);
     this.control.markAsDirty();
   }
 

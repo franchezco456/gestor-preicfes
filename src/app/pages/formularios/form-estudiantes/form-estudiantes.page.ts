@@ -13,14 +13,18 @@ type SelectOption = {
   standalone: false,
 })
 export class FormEstudiantesPage {
-  public readonly studentForm: FormGroup;
-  public readonly institutionsOptions: SelectOption[] = [
+  public studentForm !: FormGroup;
+  public institutionsOptions: SelectOption[] = [
     { value: '0001', text: 'Institución 1' },
     { value: '0002', text: 'Institución 2' },
     { value: '0003', text: 'Institución 3' },
   ];
 
   constructor(private readonly formBuilder: FormBuilder) {
+    this.initForm();
+  }
+
+  private initForm() {
     this.studentForm = this.formBuilder.group({
       TI: ['', [Validators.required, Validators.pattern(/^\d{6,12}$/)]],
       Name: ['', [Validators.required, Validators.minLength(2)]],
@@ -28,13 +32,14 @@ export class FormEstudiantesPage {
       Address: ['', [Validators.required, Validators.minLength(5)]],
       Email: ['', [Validators.required, Validators.email]],
       Number: ['', [Validators.required, Validators.pattern(/^\d{7,12}$/)]],
-      Course: ['', [Validators.required, Validators.minLength(1)]],
+      Grade: ['', [Validators.required, Validators.minLength(1)]],
       Nit_Educational_Institution: ['', [Validators.required]],
     });
   }
-
+  
   public submitStudentForm(): void {
     if (!this.studentForm.valid) {
+      console.error('El formulario no es válido');
       return;
     }
 
