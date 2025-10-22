@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Query } from 'src/app/core/services/query/query';
-import { Student as St } from 'src/domain/models/student';
+import { Student as St } from 'src/domain/models/Student';
 
 @Injectable({
   providedIn: 'root'

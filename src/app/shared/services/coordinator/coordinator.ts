@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Query } from 'src/app/core/services/query/query';
-import {Coordinator as Co} from 'src/domain/models/coordinator';
+import {Coordinator as Co} from 'src/domain/models/Coordinator';
 
 @Injectable({
   providedIn: 'root'
