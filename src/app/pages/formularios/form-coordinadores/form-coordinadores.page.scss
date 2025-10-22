@@ -103,6 +103,7 @@
 .meta-chip ion-label {
 	font-weight: 500;
 	letter-spacing: 0.02em;
+	
 }
 
 .form-card {
@@ -167,11 +168,15 @@ ion-card-content {
 	border: 1px solid rgba(255, 255, 255, 0.08);
 	transition: border-color 160ms ease, transform 160ms ease, box-shadow 180ms ease;
 	transform: translateZ(0);
+
 }
 
 .form-field ion-label {
 	color: rgba(255, 255, 255, 0.65);
 	letter-spacing: 0.03em;
+	gap: 20px;
+	padding:20px;
+
 }
 
 .form-field ion-input,
@@ -180,6 +185,7 @@ ion-card-content {
 	--padding-start: 0;
 	--color: var(--ion-color-light);
 	--placeholder-color: rgba(255, 255, 255, 0.45);
+	
 }
 
 .form-field ion-select::part(text) {

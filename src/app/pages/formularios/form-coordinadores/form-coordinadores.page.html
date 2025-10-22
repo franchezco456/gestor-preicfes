@@ -1,8 +1,4 @@
-<ion-header [translucent]="true">
-  <ion-toolbar color="primary">
-    <ion-title>Registro de coordinadores</ion-title>
-  </ion-toolbar>
-</ion-header>
+
 
 <ion-content class="form-page" [fullscreen]="true">
   <div class="form-wrapper">
@@ -40,6 +36,7 @@
                   placeholder="Documento del coordinador"
                   type="number"
                   inputmode="numeric"
+                  labelPosition="stacked"
                   [control]="coordinatorForm.get('CC')">
                 </app-input>
               </ion-col>
@@ -50,6 +47,7 @@
                   lines="none"
                   label="Nombre"
                   placeholder="Nombre del coordinador"
+                  labelPosition="stacked"
                   [control]="coordinatorForm.get('Name')">
                 </app-input>
               </ion-col>
@@ -60,6 +58,7 @@
                   lines="none"
                   label="Apellido"
                   placeholder="Apellido del coordinador"
+                  labelPosition="stacked"
                   [control]="coordinatorForm.get('LastName')">
                 </app-input>
               </ion-col>
@@ -70,6 +69,7 @@
                   lines="none"
                   label="Dirección"
                   placeholder="Dirección principal"
+                  labelPosition="stacked"
                   [control]="coordinatorForm.get('Address')">
                 </app-input>
               </ion-col>
@@ -82,6 +82,7 @@
                   placeholder="correo@institucion.com"
                   type="email"
                   autocomplete="email"
+                  labelPosition="stacked"
                   [control]="coordinatorForm.get('Email')">
                 </app-input>
               </ion-col>
@@ -94,6 +95,7 @@
                   placeholder="Número principal"
                   type="tel"
                   inputmode="tel"
+                  labelPosition="stacked"
                   [control]="coordinatorForm.get('Number')">
                 </app-input>
               </ion-col>

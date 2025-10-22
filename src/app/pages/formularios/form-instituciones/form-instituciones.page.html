@@ -1,8 +1,4 @@
-<ion-header [translucent]="true">
-  <ion-toolbar color="primary">
-    <ion-title>Registro de instituciones educativas</ion-title>
-  </ion-toolbar>
-</ion-header>
+
 
 <ion-content class="form-page" [fullscreen]="true">
   <div class="form-wrapper">
@@ -40,6 +36,7 @@
                   placeholder="Identificador de la institución"
                   type="number"
                   inputmode="numeric"
+                  labelPosition="stacked"
                   [control]="institutionForm.get('Nit')">
                 </app-input>
               </ion-col>
@@ -50,6 +47,7 @@
                   lines="none"
                   label="Nombre"
                   placeholder="Nombre de la institución"
+                  labelPosition="stacked"
                   [control]="institutionForm.get('Name')">
                 </app-input>
               </ion-col>
@@ -60,6 +58,7 @@
                   lines="none"
                   label="Dirección"
                   placeholder="Dirección principal"
+                  labelPosition="stacked"
                   [control]="institutionForm.get('Address')">
                 </app-input>
               </ion-col>
@@ -72,6 +71,7 @@
                   placeholder="Ej: 250000"
                   type="number"
                   inputmode="decimal"
+                  labelPosition="stacked"
                   [control]="institutionForm.get('Course_Value')">
                 </app-input>
               </ion-col>

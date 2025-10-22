@@ -18,6 +18,7 @@ export class InputComponent {
   @Input() lines: 'full' | 'inset' | 'none' = 'none';
   @Input() inputmode?: string;
   @Input() autocomplete?: string;
+  @Input() labelPosition: 'floating' | 'fixed' | 'stacked' = 'floating';
 
   public onInput(event: CustomEvent<{ value?: string | null }>): void {
     if (!this.control) {

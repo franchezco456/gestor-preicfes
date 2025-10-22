@@ -1,13 +1,64 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>login</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content class="auth-page" [fullscreen]="true">
+  <div class="auth-wrapper">
+    <section class="auth-header">
+      <ion-text color="light">
+        <h1>Inicia sesión en Gestor PreICFES</h1>
+        <p>Accede a la plataforma para administrar estudiantes, coordinadores e instituciones aliadas.</p>
+      </ion-text>
+      <div class="header-meta">
+        <ion-chip class="meta-chip" color="light" [outline]="true">
+          <ion-icon name="shield-checkmark-outline"></ion-icon>
+          <ion-label>Acceso seguro</ion-label>
+        </ion-chip>
+        <ion-chip class="meta-chip" color="light" [outline]="true">
+          <ion-icon name="log-in-outline"></ion-icon>
+          <ion-label>Panel administrativo</ion-label>
+        </ion-chip>
+      </div>
+    </section>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">login</ion-title>
-    </ion-toolbar>
-  </ion-header>
+    <ion-card class="auth-card">
+      <ion-card-header>
+        <ion-card-subtitle>Ingreso</ion-card-subtitle>
+        <ion-card-title>Credenciales de acceso</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <form [formGroup]="loginForm" (ngSubmit)="submitLogin()" novalidate>
+          <div class="form-fields">
+            <app-input
+              [cssClass]="getFieldCss('email')"
+              lines="none"
+              label="Correo electrónico"
+              placeholder="correo@institucion.com"
+              type="email"
+              autocomplete="email"
+              labelPosition="stacked"
+              [control]="getControl('email')">
+            </app-input>
+
+            <app-input
+              [cssClass]="getFieldCss('password')"
+              lines="none"
+              label="Contraseña"
+              placeholder="Tu contraseña"
+              type="password"
+              autocomplete="current-password"
+              labelPosition="stacked"
+              [control]="getControl('password')">
+            </app-input>
+          </div>
+
+          <div class="actions">
+            <app-button
+              cssClass="submit-button"
+              expand="block"
+              type="submit"
+              label="Iniciar sesión">
+              <ion-icon slot="start" name="log-in-outline"></ion-icon>
+            </app-button>
+          </div>
+        </form>
+      </ion-card-content>
+    </ion-card>
+  </div>
 </ion-content>
