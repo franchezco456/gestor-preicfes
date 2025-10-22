@@ -8,8 +8,9 @@ import { Student as St } from 'src/domain/models/Student';
 export class Student {
     constructor(private readonly querySrv: Query) {}
 
-    async addStudent(student: St) {
+    async addStudent(student: St, number : string) {
       const response = await this.querySrv.create('Student', student);
+      await this.querySrv.create('Student_Numbers', { id: student.TI, Number: number });
       return response;
     }
 

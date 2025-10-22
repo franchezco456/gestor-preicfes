@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Student } from 'src/app/shared/services/student/student';
+import { Student as St } from 'src/domain/models/Student';
 
 type SelectOption = {
   value: string;
@@ -15,12 +17,12 @@ type SelectOption = {
 export class FormEstudiantesPage {
   public studentForm !: FormGroup;
   public institutionsOptions: SelectOption[] = [
-    { value: '0001', text: 'Institución 1' },
-    { value: '0002', text: 'Institución 2' },
-    { value: '0003', text: 'Institución 3' },
+    { value: '001', text: 'Institución 1' },
+    { value: '002', text: 'Institución 2' },
+    { value: '003', text: 'Institución 3' },
   ];
 
-  constructor(private readonly formBuilder: FormBuilder) {
+  constructor(private readonly formBuilder: FormBuilder, private readonly studentSrv: Student) {
     this.initForm();
   }
 
@@ -37,13 +39,23 @@ export class FormEstudiantesPage {
     });
   }
   
-  public submitStudentForm(): void {
+  public async  submitStudentForm(){
     if (!this.studentForm.valid) {
       console.error('El formulario no es válido');
       return;
     }
 
-    console.log('Datos del formulario de estudiantes:', this.studentForm.value);
+    const Student :  St = {
+      TI: this.studentForm.value.TI,
+      Name: this.studentForm.value.Name,
+      LastName: this.studentForm.value.LastName,
+      Address: this.studentForm.value.Address,
+      Email: this.studentForm.value.Email,
+      Grade: this.studentForm.value.Grade,
+      Nit_Educational_Institution: this.studentForm.value.Nit_Educational_Institution
+    }
+    const result = await this.studentSrv.addStudent(Student, this.studentForm.value.Number);
+    console.log('Resultado de agregar estudiante:', result);
     this.studentForm.reset();
   }
 }

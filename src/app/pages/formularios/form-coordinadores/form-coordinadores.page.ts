@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Coordinator } from 'src/app/shared/services/coordinator/coordinator';
+import { Coordinator as Co } from 'src/domain/models/Coordinator';
 
 type SelectOption = {
   value: string;
@@ -15,12 +17,12 @@ type SelectOption = {
 export class FormCoordinadoresPage {
   public coordinatorForm !: FormGroup;
   public  institutionsOptions: SelectOption[] = [
-    { value: '0001', text: 'Institución 1' },
-    { value: '0002', text: 'Institución 2' },
-    { value: '0003', text: 'Institución 3' },
+    { value: '001', text: 'Institución 1' },
+    { value: '002', text: 'Institución 2' },
+    { value: '003', text: 'Institución 3' },
   ];
 
-  constructor(private readonly formBuilder: FormBuilder) {
+  constructor(private readonly formBuilder: FormBuilder, private readonly coordinatorSrv: Coordinator) {
     this.initForm();
   }
 
@@ -36,15 +38,20 @@ export class FormCoordinadoresPage {
     });
   }
 
-  public submitCoordinatorForm(): void {
+  public async submitCoordinatorForm() {
     if (!this.coordinatorForm.valid) {
       return;
     }
-
-    console.log(
-      'Datos del formulario de coordinadores:',
-      this.coordinatorForm.value
-    );
+    const Coordinator: Co = {
+      CC: this.coordinatorForm.value.CC,
+      Name: this.coordinatorForm.value.Name,
+      LastName: this.coordinatorForm.value.LastName,
+      Address: this.coordinatorForm.value.Address,
+      Email: this.coordinatorForm.value.Email,
+      Nit_Educational_Institution: this.coordinatorForm.value.Nit_Educational_Institution,
+    };
+    const result = await this.coordinatorSrv.addCoordinator(Coordinator, this.coordinatorForm.value.Number);
+    console.log('Resultado de agregar coordinador:', JSON.stringify(result));
     this.coordinatorForm.reset();
   }
 }

@@ -8,8 +8,9 @@ import {Coordinator as Co} from 'src/domain/models/Coordinator';
 export class Coordinator {
   constructor(private readonly querySrv: Query) {}
 
-    async addCoordinator(coordinator: Co) {
+    async addCoordinator(coordinator: Co, number : string) {
       const response = await this.querySrv.create('Coordinator', coordinator);
+      await this.querySrv.create('Coordinator_Numbers', { id: coordinator.CC, Number: number });
       return response;
     }
 
