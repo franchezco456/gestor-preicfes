@@ -83,8 +83,10 @@
               cssClass="submit-button"
               expand="block"
               type="submit"
-              label="Registrar institución">
+              label="Registrar institución"
+               [disabled]="!institutionForm.valid">
               <ion-icon slot="start" name="ribbon-outline"></ion-icon>
+
             </app-button>
           </div>
         </form>

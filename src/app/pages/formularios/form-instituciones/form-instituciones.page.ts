@@ -8,16 +8,20 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
   standalone: false,
 })
 export class FormInstitucionesPage {
-  public readonly institutionForm: FormGroup;
+   public institutionForm !: FormGroup;
 
   constructor(private readonly formBuilder: FormBuilder) {
+    this.initForm();
+  }
+
+    private initForm() {
     this.institutionForm = this.formBuilder.group({
-      Nit: ['', [Validators.required, Validators.pattern(/^\d{4,12}$/)]],
+      Nit: ['', [Validators.required, Validators.pattern(/^\d{3,12}$/)]],
       Name: ['', [Validators.required, Validators.minLength(2)]],
       Address: ['', [Validators.required, Validators.minLength(5)]],
       Course_Value: ['', [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
     });
-  }
+    }
 
   public submitInstitutionForm(): void {
     if (!this.institutionForm.valid) {

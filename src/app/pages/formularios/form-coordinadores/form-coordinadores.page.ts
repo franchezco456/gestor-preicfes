@@ -13,14 +13,18 @@ type SelectOption = {
   standalone: false,
 })
 export class FormCoordinadoresPage {
-  public readonly coordinatorForm: FormGroup;
-  public readonly institutionsOptions: SelectOption[] = [
+  public coordinatorForm !: FormGroup;
+  public  institutionsOptions: SelectOption[] = [
     { value: '0001', text: 'Institución 1' },
     { value: '0002', text: 'Institución 2' },
     { value: '0003', text: 'Institución 3' },
   ];
 
   constructor(private readonly formBuilder: FormBuilder) {
+    this.initForm();
+  }
+
+  private initForm() {
     this.coordinatorForm = this.formBuilder.group({
       CC: ['', [Validators.required, Validators.pattern(/^\d{6,12}$/)]],
       Name: ['', [Validators.required, Validators.minLength(2)]],
@@ -37,7 +41,10 @@ export class FormCoordinadoresPage {
       return;
     }
 
-    console.log('Datos del formulario de coordinadores:', this.coordinatorForm.value);
+    console.log(
+      'Datos del formulario de coordinadores:',
+      this.coordinatorForm.value
+    );
     this.coordinatorForm.reset();
   }
 }

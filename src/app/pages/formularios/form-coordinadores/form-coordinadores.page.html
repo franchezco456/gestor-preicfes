@@ -119,7 +119,8 @@
               cssClass="submit-button"
               expand="block"
               type="submit"
-              label="Registrar coordinador">
+              label="Registrar coordinador"
+              [disabled]="!coordinatorForm.valid">
               <ion-icon slot="start" name="person-add-outline"></ion-icon>
             </app-button>
           </div>
