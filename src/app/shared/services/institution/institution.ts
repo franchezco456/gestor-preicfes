@@ -6,24 +6,24 @@ import { Institution as In } from 'src/domain/models/Institution';
   providedIn: 'root'
 })
 export class Institution {
-  constructor(private readonly querySrv: Query) {}
+  constructor(private readonly querySrv: Query) { }
 
   async addInstitution(institution: In) {
     const response = await this.querySrv.create('Educational_Institution', institution);
     return response;
   }
 
-  async deleteInstitution(filter: Record <string , any>) {
+  async deleteInstitution(filter: Record<string, any>) {
     const response = await this.querySrv.delete('Educational_Institution', filter);
     return response;
   }
 
-  async updateInstitution(filter: Record <string , any>, institution: In) {
+  async updateInstitution(filter: Record<string, any>, institution: In) {
     const response = await this.querySrv.update('Educational_Institution', filter, institution);
     return response;
   }
 
-  async getInstitution(filter: Record <string , any>) {
+  async getInstitution(filter: Record<string, any>) {
     const response = await this.querySrv.getOne('Educational_Institution', filter);
     return response;
   }

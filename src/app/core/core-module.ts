@@ -5,6 +5,9 @@ import { environment as env } from 'src/environments/environment';
 import { Auth } from './services/auth/auth';
 import { Query } from './services/query/query';
 import { Cleaner } from './providers/cleaner/cleaner';
+import { Loading } from './services/loading/loading';
+import { Preferences } from './services/preferences/preferences';
+import { Toast } from './services/toast/toast';
 
 
 
@@ -15,7 +18,7 @@ import { Cleaner } from './providers/cleaner/cleaner';
     useFactory: () => {
       return createClient(env.SUPABASE_APP.URL, env.SUPABASE_APP.API_KEY);
     }
-  }, Auth, Query, Cleaner],
+  }, Auth, Query, Cleaner, Loading, Preferences, Toast],
   imports: [
     CommonModule
   ]

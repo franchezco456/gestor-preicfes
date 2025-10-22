@@ -11,10 +11,6 @@ export class Loading {
 
  
   async showLoading(message: string = 'Cargando...'): Promise<void> {
-    if (this.loading) {
-      return;
-    }
-
     this.loading = await this.loadingController.create({
       message,
       backdropDismiss: false,
@@ -29,13 +25,6 @@ export class Loading {
     if (this.loading) {
       await this.loading.dismiss();
       this.loading = null;
-    }
-  }
-
-
-  async updateLoadingMessage(message: string): Promise<void> {
-    if (this.loading) {
-      this.loading.message = message;
     }
   }
 }

@@ -16,6 +16,12 @@ export class Auth {
     return data.user;
   }
 
+  async getCurUser(){
+    const {data, error} = await this.supabasePrv.auth.getSession();
+    if (error) { throw error }
+    return data.session?.user;
+  }
+
   async login(email: string, password: string) {
     const { data, error } = await this.supabasePrv.auth.signInWithPassword({
       email: email,

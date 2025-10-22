@@ -8,8 +8,8 @@
     [autocomplete]="autocomplete"
     (ionInput)="onInput($event)"
     (ionBlur)="onBlur()">
+    @if(type === "password"){
+    <ion-input-password-toggle slot="end"></ion-input-password-toggle>
+  }
   </ion-input>
-  <ion-button *ngIf="type === 'password'" fill="clear" slot="end" size="small">
-    <ion-icon name="eye"></ion-icon>
-  </ion-button>
 </ion-item>

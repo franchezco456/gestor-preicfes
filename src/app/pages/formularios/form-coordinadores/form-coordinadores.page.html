@@ -101,6 +101,20 @@
               </ion-col>
 
               <ion-col size="12" size-md="6">
+                <app-input
+                  cssClass="form-field"
+                  lines="none"
+                  label="Contraseña"
+                  placeholder="Ingrese su Contraseña"
+                  type="password"
+                  inputmode="password"
+                  labelPosition="stacked"
+                  [control]="coordinatorForm.get('Password')">
+                </app-input>
+              </ion-col>
+
+
+              <ion-col size="12" size-md="6">
                 <app-select
                   cssClass="form-field"
                   lines="none"

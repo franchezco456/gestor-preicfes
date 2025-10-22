@@ -1,5 +1,9 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Auth } from 'src/app/core/services/auth/auth';
+import { Loading } from 'src/app/core/services/loading/loading';
+import { Toast } from 'src/app/core/services/toast/toast';
+import { Institution } from 'src/app/shared/services/institution/institution';
 import { Student } from 'src/app/shared/services/student/student';
 import { Student as St } from 'src/domain/models/Student';
 
@@ -16,14 +20,16 @@ type SelectOption = {
 })
 export class FormEstudiantesPage {
   public studentForm !: FormGroup;
-  public institutionsOptions: SelectOption[] = [
-    { value: '001', text: 'Institución 1' },
-    { value: '002', text: 'Institución 2' },
-    { value: '003', text: 'Institución 3' },
-  ];
+  public institutionsOptions: SelectOption[] = [];
 
-  constructor(private readonly formBuilder: FormBuilder, private readonly studentSrv: Student) {
+  constructor(private readonly formBuilder: FormBuilder, 
+    private readonly studentSrv: Student, 
+    private readonly institutionSrv: Institution,
+    private readonly loadingSrv: Loading,
+    private readonly toastSrv: Toast,
+    private readonly authSrv : Auth) {
     this.initForm();
+    this.getEducationalInstitutions();
   }
 
   private initForm() {
@@ -38,14 +44,15 @@ export class FormEstudiantesPage {
       Nit_Educational_Institution: ['', [Validators.required]],
     });
   }
-  
-  public async  submitStudentForm(){
+
+  public async submitStudentForm() {
     if (!this.studentForm.valid) {
-      console.error('El formulario no es válido');
+      this.toastSrv.showWarningToast('Por favor, complete todos los campos del formulario');
       return;
     }
-
-    const Student :  St = {
+    try {
+    await this.loadingSrv.showLoading("Registrando estudiante...");
+    const Student: St = {
       TI: this.studentForm.value.TI,
       Name: this.studentForm.value.Name,
       LastName: this.studentForm.value.LastName,
@@ -55,7 +62,27 @@ export class FormEstudiantesPage {
       Nit_Educational_Institution: this.studentForm.value.Nit_Educational_Institution
     }
     const result = await this.studentSrv.addStudent(Student, this.studentForm.value.Number);
-    console.log('Resultado de agregar estudiante:', result);
     this.studentForm.reset();
+    await this.loadingSrv.dismissLoading();
+    await this.toastSrv.showSuccessToast('Estudiante registrado exitosamente.');
+    } catch (error) {
+      this.toastSrv.showErrorToast("Error al registrar el estudiante.");
+      await this.loadingSrv.dismissLoading();
+    }
+  }
+
+  public async getEducationalInstitutions() {
+    try {
+      await this.loadingSrv.showLoading("Cargando instituciones educativas...");
+      const institutions = await this.institutionSrv.getAllInstitutions();
+      this.institutionsOptions = institutions.map((inst) : SelectOption => ({
+        value: inst.NIT,
+        text: inst.Name
+      }));
+      await this.loadingSrv.dismissLoading();
+    } catch (error) {
+      this.toastSrv.showErrorToast("Error al cargar las instituciones educativas.");
+      await this.loadingSrv.dismissLoading();
+    }
   }
 }

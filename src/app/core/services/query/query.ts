@@ -9,8 +9,8 @@ export class Query {
   //los filtros o objetos, los atributos o columnas que el query service reciba en nulo o vacio seran descartadas automaticamente
   constructor(private supabasePrv : SupabaseClient, private readonly cleanerPrv : Cleaner){}
 
-  async hello(){
-    const { data, error } = await this.supabasePrv.rpc('hello_world');
+  async execute_Function(function_name : string = "hello_world", args : any = null){
+    const { data, error } = await this.supabasePrv.rpc(function_name,args);
     if (error){
       throw error;
     }
@@ -20,7 +20,7 @@ export class Query {
   async create(table : string , object : any){
     const {data, error} = await this.supabasePrv.from(table).insert([object]).select();
     if(error){
-      return error.message;
+      throw error.message;
     }
     return data
   }
@@ -29,7 +29,7 @@ export class Query {
     filter = this.cleanerPrv.clean_data(filter);
     const {data, error} = await this.supabasePrv.from(table).delete().match(filter).select();
     if(error){
-      return error.message;
+      throw error;
     }
     return data
   }
@@ -39,7 +39,7 @@ export class Query {
     object = this.cleanerPrv.clean_data(object);
     const {data, error} = await this.supabasePrv.from(table).update([object]).match(filter).select();
     if(error){
-      return error.message;
+      throw error;
     }
     return data
   }
@@ -48,7 +48,7 @@ export class Query {
     filter = this.cleanerPrv.clean_data(filter);
     const {data, error} = await this.supabasePrv.from(table).select().match(filter);
     if(error){
-      return error.message;
+      throw error;
     }
     return data
   }
@@ -56,7 +56,7 @@ export class Query {
   async getAll(table : string){
     const {data, error} = await this.supabasePrv.from(table).select();
     if(error){
-      return error.message;
+      throw error;
     }
     return data
   }

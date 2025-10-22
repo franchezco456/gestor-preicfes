@@ -26,25 +26,23 @@
         <form [formGroup]="loginForm" (ngSubmit)="submitLogin()" novalidate>
           <div class="form-fields">
             <app-input
-              [cssClass]="getFieldCss('email')"
               lines="none"
               label="Correo electrónico"
               placeholder="correo@institucion.com"
               type="email"
               autocomplete="email"
               labelPosition="stacked"
-              [control]="getControl('email')">
+              [control]="loginForm.get('email')">
             </app-input>
 
             <app-input
-              [cssClass]="getFieldCss('password')"
               lines="none"
               label="Contraseña"
               placeholder="Tu contraseña"
               type="password"
               autocomplete="current-password"
               labelPosition="stacked"
-              [control]="getControl('password')">
+              [control]="loginForm.get('password')">
             </app-input>
           </div>
 
@@ -53,7 +51,8 @@
               cssClass="submit-button"
               expand="block"
               type="submit"
-              label="Iniciar sesión">
+              label="Iniciar sesión"
+              [disabled]="!loginForm.valid">
               <ion-icon slot="start" name="log-in-outline"></ion-icon>
             </app-button>
           </div>
