@@ -116,8 +116,7 @@
                   cssClass="form-field"
                   lines="none"
                   label="Institución educativa"
-                  placeholder="Selecciona una institución"
-                  [required]="true"
+                  [disabled]="isCoordinator"
                   [options]="institutionsOptions"
                   [control]="studentForm.get('Nit_Educational_Institution')">
                 </app-select>

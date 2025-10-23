@@ -18,11 +18,11 @@ import { Institution as In } from 'src/domain/models/Institution';
 export class HomePage {
 
 
-  constructor(private readonly authSrv: Auth, 
-    private readonly institutionSrv : Institution, 
-    public readonly querySrv : Query,
-    private readonly preferencesSrv : Preferences,
-    private readonly router : Router) { }
+  constructor(private readonly authSrv: Auth,
+    private readonly institutionSrv: Institution,
+    public readonly querySrv: Query,
+    private readonly preferencesSrv: Preferences,
+    private readonly router: Router) { }
 
   public async go() {
     const register = await this.authSrv.register("hello1@gmail.com", "world2");
@@ -93,27 +93,27 @@ export class HomePage {
 
   }
 
-  public async execute(){
-    const email_param : string = "q@q.com";
-    const response = await this.querySrv.execute_Function("is_coordinator", {email_param : email_param});
+  public async execute() {
+    const email_param: string = "q@q.com";
+    const response = await this.querySrv.execute_Function("is_coordinator", { email_param: email_param });
     console.log(response);
-}
-  public async logout(){
+  }
+  public async logout() {
     const logout = await this.authSrv.logout();
     console.log("TAG: LOGOUT" + JSON.stringify(logout));
     await this.preferencesSrv.removePreferences("login");
     this.router.navigate(["/login"]);
   }
 
-  public gotoRE(){
+  public gotoRE() {
     this.router.navigate(["/form-estudiantes"]);
   }
 
-  public gotoRC(){
+  public gotoRC() {
     this.router.navigate(["/form-coordinadores"]);
   }
 
-  public gotoRI(){
+  public gotoRI() {
     this.router.navigate(["/form-instituciones"]);
   }
 

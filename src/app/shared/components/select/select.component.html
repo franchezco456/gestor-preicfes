@@ -1,15 +1,13 @@
 <ion-item [lines]="lines" [ngClass]="cssClass">
   <ion-select 
+    justify="start"
+    label-placement="floating"
+    [disabled]="disabled"
+    [label]="label"
     [placeholder]="placeholder" 
     [value]="control?.value"
     [interface]="interface"
     (ionChange)="onChange($event)">
-    
-    <div slot="label">
-      {{ label }}
-      <ion-text color="danger" *ngIf="required">(Required)</ion-text>
-    </div>
-    
     <ion-select-option 
       *ngFor="let option of options" 
       [value]="option.value">

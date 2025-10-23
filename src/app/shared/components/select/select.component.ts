@@ -8,8 +8,9 @@ import { AbstractControl } from '@angular/forms';
   standalone: false,
 })
 export class SelectComponent {
-  @Input() placeholder: string = 'Select an option';
+  @Input() placeholder: string = '';
   @Input() label: string = '';
+  @Input() disabled: boolean = false;
   @Input() required: boolean = false;
   @Input() options: { value: any; text: string }[] = [];
   @Input() control: AbstractControl | null = null;

@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Auth } from 'src/app/core/services/auth/auth';
+import { Coordinator as Co } from 'src/domain/models/Coordinator';
 import { Loading } from 'src/app/core/services/loading/loading';
+import { Preferences } from 'src/app/core/services/preferences/preferences';
 import { Toast } from 'src/app/core/services/toast/toast';
+import { Coordinator } from 'src/app/shared/services/coordinator/coordinator';
 import { Institution } from 'src/app/shared/services/institution/institution';
 import { Student } from 'src/app/shared/services/student/student';
 import { Student as St } from 'src/domain/models/Student';
@@ -21,15 +23,18 @@ type SelectOption = {
 export class FormEstudiantesPage {
   public studentForm !: FormGroup;
   public institutionsOptions: SelectOption[] = [];
+  public isCoordinator: boolean = true;
 
   constructor(private readonly formBuilder: FormBuilder, 
     private readonly studentSrv: Student, 
     private readonly institutionSrv: Institution,
+    private readonly coordAuthSrv: Coordinator,
     private readonly loadingSrv: Loading,
     private readonly toastSrv: Toast,
-    private readonly authSrv : Auth) {
+    private readonly preferencesSrv : Preferences) {
     this.initForm();
     this.getEducationalInstitutions();
+    this.autoSetEducationalInstitution();
   }
 
   private initForm() {
@@ -84,5 +89,16 @@ export class FormEstudiantesPage {
       this.toastSrv.showErrorToast("Error al cargar las instituciones educativas.");
       await this.loadingSrv.dismissLoading();
     }
+  }
+
+  public async autoSetEducationalInstitution() {
+      const credentials = await this.preferencesSrv.getPreferences("login");
+      if(credentials.role !== 'Coordinator'){
+        this.isCoordinator = false;
+        return;
+      }
+      const nit = credentials.coordData.Nit_Educational_Institution;
+      this.studentForm.get('Nit_Educational_Institution')?.setValue(nit);
+    
   }
 }
