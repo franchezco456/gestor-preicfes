@@ -1,0 +1,10 @@
+<div class="checkbox-item" [class.disabled]="disabled" (click)="toggle()" [ngClass]="cssClass" role="checkbox" [attr.aria-checked]="checked">
+  <label class="checkbox-label">{{ label }}</label>
+  <ion-checkbox
+    [color]="color"
+    [checked]="checked"
+    [disabled]="disabled"
+    (ionChange)="onCheckboxChange($event)"
+    (click)="$event.stopPropagation()">
+  </ion-checkbox>
+</div>

@@ -169,6 +169,29 @@ ion-card-content {
   transform: translateZ(0);
 }
 
+.price-display {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.price-display .price-label {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.65);
+  letter-spacing: 0.12em;
+}
+
+.price-display .price-value {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--ion-color-light);
+}
+
 .form-field ion-label {
   color: rgba(255, 255, 255, 0.65);
   letter-spacing: 0.03em;
@@ -401,5 +424,50 @@ ion-card-content {
   }
   100% {
     transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+}
+
+/* Page-scoped styles for app-checkbox to match page buttons (kept local to this page) */
+::ng-deep app-checkbox .checkbox-item,
+::ng-deep app-checkbox .checkbox-label {
+  display: flex;
+  align-items: center;
+}
+
+::ng-deep app-checkbox .checkbox-item {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 16px;
+  margin: 10px 0 0 0;
+  background: linear-gradient(135deg, rgba(var(--page-accent-rgb), 1) 0%, rgba(var(--page-accent-rgb), 0.6) 100%);
+  border-radius: 16px;
+  color: var(--ion-color-light);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  justify-content: space-between;
+  transition: transform 180ms ease, box-shadow 220ms ease;
+}
+
+::ng-deep app-checkbox .checkbox-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 38px rgba(var(--page-accent-rgb), 0.18);
+}
+
+::ng-deep app-checkbox .checkbox-label {
+  color: var(--ion-color-light);
+  font-weight: 600;
+  padding-left: 8px;
+}
+
+::ng-deep app-checkbox ion-checkbox {
+  --size: 22px;
+  --handle-background: white;
+  --check-color: var(--ion-color-primary, #fff);
+  margin: 0;
+}
+
+@media (max-width: 480px) {
+  ::ng-deep app-checkbox .checkbox-item {
+    padding: 10px 12px;
   }
 }
