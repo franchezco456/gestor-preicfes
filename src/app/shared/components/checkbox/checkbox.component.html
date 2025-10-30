@@ -1,0 +1,16 @@
+<!-- checkbox.component.html -->
+<div class="checkbox-item" [class.checked]="checked" [class]="cssClass" (click)="toggle()" [attr.aria-disabled]="disabled">
+  <div class="checkbox-label" [class]="justify ? 'ion-justify-content-' + justify : ''">
+    {{ label }}
+  </div>
+  <ion-checkbox
+    class="native-checkbox"
+    [checked]="checked"
+    [disabled]="disabled"
+    [indeterminate]="indeterminate"
+    [value]="value"
+    [name]="name"
+    (ionChange)="onCheckboxChange($event)"
+    (click)="$event.stopPropagation()">
+  </ion-checkbox>
+</div>

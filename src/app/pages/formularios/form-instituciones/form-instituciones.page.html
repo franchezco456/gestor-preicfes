@@ -64,16 +64,62 @@
               </ion-col>
 
               <ion-col size="12" size-md="6">
+                <div class="course-price">
+                  <div class="course-price__header">
+                    <h3>Valor del curso</h3>
+                    <small class="muted">(valor oficial)</small>
+                  </div>
+                  <div class="course-price__value">
+                    <span class="price">{{ formatCurrency(displayPrice) }}</span>
+                  </div>
+                </div>
+              </ion-col>
+
+              <ion-col size="12" size-md="6">
                 <app-input
                   cssClass="form-field"
                   lines="none"
-                  label="Valor del curso"
-                  placeholder="Ej: 250000"
+                  label="Correo electrónico"
+                  placeholder="contacto@institucion.edu"
+                  type="email"
+                  labelPosition="stacked"
+                  [control]="institutionForm.get('Email')">
+                </app-input>
+              </ion-col>
+
+              <ion-col size="12" size-md="6">
+                <app-input
+                  cssClass="form-field"
+                  lines="none"
+                  label="Teléfono"
+                  placeholder="+573001234567"
+                  type="tel"
+                  inputmode="tel"
+                  labelPosition="stacked"
+                  [control]="institutionForm.get('Phone')">
+                </app-input>
+              </ion-col>
+
+              <ion-col size="12" size-md="6">
+                <app-input
+                  cssClass="form-field"
+                  lines="none"
+                  label="Descuento "
+                  placeholder="Ej: 5000"
                   type="number"
                   inputmode="decimal"
                   labelPosition="stacked"
-                  [control]="institutionForm.get('Course_Value')">
+                  [control]="institutionForm.get('Discount')">
                 </app-input>
+              </ion-col>
+
+              <ion-col size="12">
+                <div class="checkbox-row">
+                  <app-checkbox [label]="'Institución financia el preicfes'" [checked]="institutionForm.get('FinancesPreicfes')?.value"
+                    (checkedChange)="test($event)">
+                    Institución financia el preicfes
+                  </app-checkbox>
+                </div>
               </ion-col>
             </ion-row>
           </ion-grid>

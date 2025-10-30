@@ -1,3 +1,4 @@
+import { dim } from './../../../../../node_modules/colors/index.d';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Loading } from 'src/app/core/services/loading/loading';
@@ -13,6 +14,8 @@ import { Institution as In } from 'src/domain/models/Institution';
 })
 export class FormInstitucionesPage {
   public institutionForm !: FormGroup;
+  // Price shown in the UI (formatted). This is the public/display price.
+  public displayPrice: number = 250000;
 
   constructor(private readonly formBuilder: FormBuilder,
     private readonly institutionSrv: Institution,
@@ -26,7 +29,11 @@ export class FormInstitucionesPage {
       Nit: ['', [Validators.required, Validators.pattern(/^\d{3,12}$/)]],
       Name: ['', [Validators.required, Validators.minLength(2)]],
       Address: ['', [Validators.required, Validators.minLength(5)]],
-      Course_Value: ['', [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
+      Email: ['', [Validators.required, Validators.email]],
+      Phone: ['', [Validators.required, Validators.pattern(/^\+?\d{7,15}$/)]],
+      // Course_Value removed from inputs; backend provides it. Keep Discount optionally if needed
+      Discount: ['', [Validators.pattern(/^\d+(\.\d{1,7})?$/)]],
+      FinancesPreicfes: [false]
     });
   }
 
@@ -37,12 +44,20 @@ export class FormInstitucionesPage {
     }
     try {
       await this.loadingSrv.showLoading();
+      
       const Institution: In = {
         NIT: this.institutionForm.value.Nit,
         Name: this.institutionForm.value.Name,
         Address: this.institutionForm.value.Address,
-        Course_Value: parseFloat(this.institutionForm.value.Course_Value)
-      }
+        // Course_Value se envía tal cual como displayPrice (valor estático por ahora)
+        Course_Value: this.displayPrice,
+        Email: this.institutionForm.value.Email,
+        Phone: this.institutionForm.value.Phone,
+        FinancesPreicfes: !!this.institutionForm.value.FinancesPreicfes,
+        Discount: this.institutionForm.value.Discount,
+        
+        
+      } as In;
       const result = await this.institutionSrv.addInstitution(Institution);
       this.institutionForm.reset();
       await this.loadingSrv.dismissLoading();
@@ -53,4 +68,18 @@ export class FormInstitucionesPage {
     }
 
   }
+
+  public test(event: boolean) {
+    
+    console.log(event ? 'SI' : 'NO');
+    this.institutionForm.get('FinancesPreicfes')?.setValue(!!event);
+  }
+
+  
+  public formatCurrency(value: number): string {
+    if (value == null || isNaN(value)) return '$0';
+    return '$' + value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  }
+
+
 }
