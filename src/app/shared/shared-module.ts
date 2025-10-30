@@ -7,11 +7,12 @@ import { InputComponent } from './components/input/input.component';
 import { ButtonComponent } from './components/button/button.component';
 import { SelectComponent } from './components/select/select.component';
 import { CheckboxComponent } from './components/checkbox/checkbox.component';
+import { SearchbarComponent } from './components/searchbar/searchbar.component';
 
 
 @NgModule({
-  declarations: [CardComponent, InputComponent, ButtonComponent, SelectComponent, CheckboxComponent],
+  declarations: [CardComponent, InputComponent, ButtonComponent, SelectComponent, CheckboxComponent, SearchbarComponent],
   imports: [CommonModule, ReactiveFormsModule, IonicModule],
-  exports: [CardComponent, InputComponent, ButtonComponent, SelectComponent, CheckboxComponent],
+  exports: [CardComponent, InputComponent, ButtonComponent, SelectComponent, CheckboxComponent, SearchbarComponent],
 })
 export class SharedModule {}

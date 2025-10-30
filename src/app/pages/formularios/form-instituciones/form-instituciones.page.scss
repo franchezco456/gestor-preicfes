@@ -503,33 +503,21 @@ ion-card-content {
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  background: #63b7ff; /* light blue pill */
-  color: #07233f; /* dark navy text */
+  background: linear-gradient(90deg,#67b8ff,#2f7efb);
+  color: #07233f;
   padding: 12px 18px;
-  border-radius: 18px;
-  box-shadow: 0 6px 18px rgba(2,6,23,0.45);
-  border: 1px solid rgba(255,255,255,0.04);
+  border-radius: 22px;
+  box-shadow: 0 14px 30px rgba(47,126,251,0.12);
+  border: 0;
 }
 .checkbox-row app-checkbox .checkbox-item ion-label {
   color: #07233f;
   font-weight: 600;
 }
 .checkbox-row app-checkbox .checkbox-item ion-checkbox {
-  --background: transparent;
+  --background: #fff;
   --border-radius: 6px;
   --size: 22px;
-  --border-color: rgba(7,35,63,0.18);
-}
-.checkbox-row app-checkbox .checkbox-item.checked {
-  background: #2f7efb; /* active pill color */
-  color: #07233f;
-  box-shadow: 0 12px 30px rgba(47,126,251,0.18);
-}
-.checkbox-row app-checkbox .checkbox-item.checked ion-checkbox {
-  --background: #0f5fb6; /* checked square bg */
-  --checkmark-color: #ffffff;
-  --border-radius: 6px;
-  --size: 24px;
 }
 
 /* Ajustes responsivos */

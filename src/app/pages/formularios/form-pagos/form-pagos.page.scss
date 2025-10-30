@@ -1,0 +1,107 @@
+:host {
+	/* Prefer blue-purple theme: primary (blue) + tertiary (purple) */
+	--page-accent: var(--ion-color-primary);
+	--page-accent-rgb: var(--ion-color-primary-rgb);
+	--page-accent-shade: var(--ion-color-tertiary-shade);
+}
+
+.form-page {
+	position: relative;
+	--background: linear-gradient(135deg, rgba(var(--ion-color-primary-rgb), 0.95) 0%, rgba(var(--ion-color-tertiary-rgb), 0.28) 48%, #071014 100%);
+	min-height: 100%;
+	display: flex;
+	justify-content: center;
+	overflow: hidden;
+}
+
+.form-wrapper {
+	position: relative;
+	z-index: 1;
+	width: min(1024px, 100%);
+	padding: clamp(16px, 3vw, 28px);
+	box-sizing: border-box;
+}
+
+.form-header {
+	margin-bottom: clamp(18px, 3vw, 26px);
+	padding-left: clamp(12px, 3vw, 22px);
+	border-left: 3px solid rgba(255, 255, 255, 0.12);
+	color: var(--ion-color-light);
+}
+
+.form-card {
+	position: relative;
+	background: rgba(8, 12, 20, 0.82);
+	border: 1px solid rgba(255, 255, 255, 0.06);
+	border-radius: 20px;
+	box-shadow: 0 18px 48px rgba(2, 6, 18, 0.6);
+	backdrop-filter: blur(12px);
+	overflow: hidden;
+}
+
+.form-grid {
+	--ion-grid-column-padding: 14px;
+}
+
+.form-field {
+	--background: rgba(255, 255, 255, 0.02);
+	--border-radius: 16px;
+	--padding-start: 18px;
+	margin-bottom: 8px;
+	border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.form-field ion-input,
+.form-field ion-select {
+	font-size: 1rem;
+	--padding-start: 0;
+	--color: var(--ion-color-light);
+}
+
+/* Readonly value inside an ion-item to match form-field visual style */
+.readonly-field {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.readonly-value {
+	padding: 10px 0 8px 0;
+	color: var(--ion-color-light);
+	font-weight: 600;
+}
+
+.actions {
+	margin-top: clamp(18px, 3vw, 24px);
+}
+
+.submit-button::part(native) {
+	/* Button gradient using both primary (blue) and tertiary (purple) tones */
+	background: linear-gradient(135deg, rgba(var(--ion-color-primary-rgb), 1) 0%, rgba(var(--ion-color-tertiary-rgb), 0.75) 100%);
+	border-radius: 14px;
+	padding: 12px 20px;
+	font-weight: 600;
+}
+
+.result-card {
+	margin-top: clamp(20px, 4vw, 28px);
+	background: rgba(6, 10, 18, 0.9);
+	border: 1px solid rgba(255, 255, 255, 0.06);
+	border-radius: 16px;
+	padding: 16px;
+}
+
+.result-header {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	color: rgba(255, 255, 255, 0.9);
+}
+
+.result-value {
+	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', monospace;
+	font-size: 0.95rem;
+	color: var(--ion-color-light);
+	white-space: pre-wrap;
+}
+

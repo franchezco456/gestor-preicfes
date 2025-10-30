@@ -1,0 +1,94 @@
+<ion-content class="form-page" [fullscreen]="true">
+  <div class="form-wrapper">
+    <section class="form-header">
+      <ion-text color="light">
+        <h1>Registrar pago</h1>
+        <p>Ingrese los datos del pagador y el valor a procesar.</p>
+      </ion-text>
+    </section>
+
+    <ion-card class="form-card">
+      <ion-card-header>
+        <ion-card-subtitle>Formulario</ion-card-subtitle>
+        <ion-card-title>Datos de pago</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <!-- Searchbar: autocompletar estudiantes por Nombre, Apellido o TI -->
+        <app-searchbar
+          cssClass="form-field"
+          placeholder="Buscar estudiante por nombre, apellido o TI"
+          [value]="searchQuery"
+          (valueChange)="onSearchInput($event)">
+        </app-searchbar>
+
+        <ion-list *ngIf="filteredResults.length" class="search-results">
+          <ion-item *ngFor="let r of filteredResults" button (click)="selectSearchResult(r)">
+            <ion-label>
+              <h3>{{ r.Name }} {{ r.LastName }}</h3>
+              <p>ID: {{ r.ID }}</p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+
+        <form [formGroup]="paymentForm" (ngSubmit)="submitPaymentForm()" novalidate>
+          <ion-grid fixed class="form-grid">
+            <ion-row>
+              <ion-col size="12" size-md="8">
+                <ion-item lines="none" class="form-field readonly-field">
+                  <ion-label position="stacked">Nombre del estudiante</ion-label>
+                  <div class="readonly-value">{{ paymentForm.get('payerName')?.value || '-' }}</div>
+                </ion-item>
+              </ion-col>
+
+              <ion-col size="12" size-md="4">
+                <ion-item lines="none" class="form-field readonly-field">
+                  <ion-label position="stacked">Número documento</ion-label>
+                  <div class="readonly-value">{{ paymentForm.get('documentNumber')?.value || '-' }}</div>
+                </ion-item>
+              </ion-col>
+
+              <ion-col size="12" size-md="6">
+                <app-input
+                  cssClass="form-field"
+                  lines="none"
+                  label="Valor a pagar"
+                  placeholder="Ej: 20000"
+                  type="number"
+                  inputmode="decimal"
+                  labelPosition="stacked"
+                  [control]="paymentForm.get('amount')">
+                </app-input>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+
+          <div class="actions">
+            <app-button
+              cssClass="submit-button"
+              expand="block"
+              type="submit"
+              label="Procesar pago"
+              [disabled]="!paymentForm.valid">
+              <ion-icon slot="start" name="card-outline"></ion-icon>
+            </app-button>
+          </div>
+        </form>
+
+        <div *ngIf="submittedResult" class="result-card">
+          <div class="result-header">
+            <ion-icon name="checkmark-circle-outline"></ion-icon>
+            <p>Valores recibidos</p>
+          </div>
+          <div class="result-grid">
+            <ion-col>
+              <div class="result-field">
+                <div class="result-label">Payload</div>
+                <div class="result-value">{{ submittedResult | json }}</div>
+              </div>
+            </ion-col>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

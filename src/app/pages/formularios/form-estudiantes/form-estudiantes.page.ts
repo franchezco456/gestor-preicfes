@@ -39,14 +39,34 @@ export class FormEstudiantesPage {
 
   private initForm() {
     this.studentForm = this.formBuilder.group({
+      // Document type (CC, TI, PP) and number
+      DocumentType: ['TI', [Validators.required]],
+      OtherDocumentType: [''],
       TI: ['', [Validators.required, Validators.pattern(/^\d{6,12}$/)]],
       Name: ['', [Validators.required, Validators.minLength(2)]],
       LastName: ['', [Validators.required, Validators.minLength(2)]],
       Address: ['', [Validators.required, Validators.minLength(5)]],
       Email: ['', [Validators.required, Validators.email]],
       Number: ['', [Validators.required, Validators.pattern(/^\d{7,12}$/)]],
-      Grade: ['', [Validators.required, Validators.minLength(1)]],
+      // Grade may contain alphanumeric characters (e.g. "11A")
+      Grade: ['', [Validators.required, Validators.minLength(5)]],
+      // Financial fields
+      Discount: ['', [Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
+      Installments: ['', [Validators.required, Validators.pattern(/^\d+$/)]],
       Nit_Educational_Institution: ['', [Validators.required]],
+    });
+
+    // When the user selects "OTRO" for DocumentType, make OtherDocumentType required
+    this.studentForm.get('DocumentType')?.valueChanges.subscribe((val) => {
+      const otherCtrl = this.studentForm.get('OtherDocumentType');
+      if (!otherCtrl) return;
+      if (val === 'OTRO') {
+        otherCtrl.setValidators([Validators.required, Validators.minLength(2)]);
+      } else {
+        otherCtrl.clearValidators();
+        otherCtrl.setValue('');
+      }
+      otherCtrl.updateValueAndValidity({ onlySelf: true });
     });
   }
 
@@ -59,11 +79,14 @@ export class FormEstudiantesPage {
     await this.loadingSrv.showLoading("Registrando estudiante...");
     const Student: St = {
       TI: this.studentForm.value.TI,
+      DocumentType: this.studentForm.value.DocumentType === 'OT' ? this.studentForm.value.OtherDocumentType : this.studentForm.value.DocumentType,
       Name: this.studentForm.value.Name,
       LastName: this.studentForm.value.LastName,
       Address: this.studentForm.value.Address,
       Email: this.studentForm.value.Email,
       Grade: this.studentForm.value.Grade,
+      Discount: this.studentForm.value.Discount ? parseFloat(this.studentForm.value.Discount) : undefined,
+      Installments: this.studentForm.value.Installments ? parseInt(this.studentForm.value.Installments, 10) : undefined,
       Nit_Educational_Institution: this.studentForm.value.Nit_Educational_Institution
     }
     const result = await this.studentSrv.addStudent(Student, this.studentForm.value.Number);
