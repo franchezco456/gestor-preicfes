@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Loading } from 'src/app/core/services/loading/loading';
+import { Query } from 'src/app/core/services/query/query';
 import { Toast } from 'src/app/core/services/toast/toast';
-import { Institution } from 'src/app/shared/services/institution/institution';
 import { Institution as In } from 'src/domain/models/Institution';
 
 @Component({
@@ -15,7 +15,7 @@ export class FormInstitucionesPage {
   public institutionForm !: FormGroup;
 
   constructor(private readonly formBuilder: FormBuilder,
-    private readonly institutionSrv: Institution,
+    private readonly querySrv: Query,
     private readonly loadingSrv: Loading,
     private readonly toastSrv: Toast) {
     this.initForm();
@@ -36,14 +36,14 @@ export class FormInstitucionesPage {
       return;
     }
     try {
-      await this.loadingSrv.showLoading();
-      const Institution: In = {
+      await this.loadingSrv.showLoading("Registrando institución...");
+      const Institution= {
         NIT: this.institutionForm.value.Nit,
         Name: this.institutionForm.value.Name,
         Address: this.institutionForm.value.Address,
         Course_Value: parseFloat(this.institutionForm.value.Course_Value)
       }
-      const result = await this.institutionSrv.addInstitution(Institution);
+      const result = await this.querySrv.create("Educational_Institution",Institution);
       this.institutionForm.reset();
       await this.loadingSrv.dismissLoading();
       await this.toastSrv.showSuccessToast('Institución agregada exitosamente.');

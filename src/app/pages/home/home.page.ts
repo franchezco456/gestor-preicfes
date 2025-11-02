@@ -25,7 +25,7 @@ export class HomePage {
     private readonly router: Router) { }
 
   public async go() {
-    const register = await this.authSrv.register("hello1@gmail.com", "world2");
+    /*const register = await this.authSrv.register("hello1@gmail.com", "world2");
     console.log("TAG: REGISTER" + JSON.stringify(register));
 
     const login = await this.authSrv.login("hello1@gmail.com", "world2");
@@ -88,7 +88,7 @@ export class HomePage {
     console.log("TAG: GET ONE" + JSON.stringify(getOne));
 
     const getAll = await this.institutionSrv.getAllInstitutions();
-    console.log("TAG: GET ALL" + JSON.stringify(getAll));
+    console.log("TAG: GET ALL" + JSON.stringify(getAll));*/
 
 
   }

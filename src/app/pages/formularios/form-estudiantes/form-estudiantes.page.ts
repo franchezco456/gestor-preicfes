@@ -1,13 +1,11 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Coordinator as Co } from 'src/domain/models/Coordinator';
 import { Loading } from 'src/app/core/services/loading/loading';
 import { Preferences } from 'src/app/core/services/preferences/preferences';
 import { Toast } from 'src/app/core/services/toast/toast';
-import { Coordinator } from 'src/app/shared/services/coordinator/coordinator';
 import { Institution } from 'src/app/shared/services/institution/institution';
-import { Student } from 'src/app/shared/services/student/student';
 import { Student as St } from 'src/domain/models/Student';
+import { Query } from 'src/app/core/services/query/query';
 
 type SelectOption = {
   value: string;
@@ -26,9 +24,8 @@ export class FormEstudiantesPage {
   public isCoordinator: boolean = true;
 
   constructor(private readonly formBuilder: FormBuilder, 
-    private readonly studentSrv: Student, 
     private readonly institutionSrv: Institution,
-    private readonly coordAuthSrv: Coordinator,
+    private readonly querySrv: Query,
     private readonly loadingSrv: Loading,
     private readonly toastSrv: Toast,
     private readonly preferencesSrv : Preferences) {
@@ -58,15 +55,17 @@ export class FormEstudiantesPage {
     try {
     await this.loadingSrv.showLoading("Registrando estudiante...");
     const Student: St = {
-      TI: this.studentForm.value.TI,
-      Name: this.studentForm.value.Name,
-      LastName: this.studentForm.value.LastName,
-      Address: this.studentForm.value.Address,
-      Email: this.studentForm.value.Email,
-      Grade: this.studentForm.value.Grade,
-      Nit_Educational_Institution: this.studentForm.value.Nit_Educational_Institution
+      ti: this.studentForm.value.TI,
+      name: this.studentForm.value.Name,
+      lastname: this.studentForm.value.LastName,
+      address: this.studentForm.value.Address,
+      email: this.studentForm.value.Email,
+      grade: this.studentForm.value.Grade,
+      nit_educational_institution: this.studentForm.value.Nit_Educational_Institution,
+      number: this.studentForm.value.Number
     }
-    const result = await this.studentSrv.addStudent(Student, this.studentForm.value.Number);
+    const result = await this.querySrv.execute_Function("register_student", Student);
+    console.log(result);
     this.studentForm.reset();
     await this.loadingSrv.dismissLoading();
     await this.toastSrv.showSuccessToast('Estudiante registrado exitosamente.');
@@ -99,6 +98,5 @@ export class FormEstudiantesPage {
       }
       const nit = credentials.coordData.Nit_Educational_Institution;
       this.studentForm.get('Nit_Educational_Institution')?.setValue(nit);
-    
   }
 }
