@@ -41,7 +41,6 @@ export class FormEstudiantesPage {
     this.studentForm = this.formBuilder.group({
       // Document type (CC, TI, PP) and number
       DocumentType: ['TI', [Validators.required]],
-      OtherDocumentType: [''],
       TI: ['', [Validators.required, Validators.pattern(/^\d{6,12}$/)]],
       Name: ['', [Validators.required, Validators.minLength(2)]],
       LastName: ['', [Validators.required, Validators.minLength(2)]],
@@ -56,18 +55,7 @@ export class FormEstudiantesPage {
       Nit_Educational_Institution: ['', [Validators.required]],
     });
 
-    // When the user selects "OTRO" for DocumentType, make OtherDocumentType required
-    this.studentForm.get('DocumentType')?.valueChanges.subscribe((val) => {
-      const otherCtrl = this.studentForm.get('OtherDocumentType');
-      if (!otherCtrl) return;
-      if (val === 'OTRO') {
-        otherCtrl.setValidators([Validators.required, Validators.minLength(2)]);
-      } else {
-        otherCtrl.clearValidators();
-        otherCtrl.setValue('');
-      }
-      otherCtrl.updateValueAndValidity({ onlySelf: true });
-    });
+    // No extra input required when selecting 'OT' (otros)
   }
 
   public async submitStudentForm() {
@@ -79,7 +67,7 @@ export class FormEstudiantesPage {
     await this.loadingSrv.showLoading("Registrando estudiante...");
     const Student: St = {
       TI: this.studentForm.value.TI,
-      DocumentType: this.studentForm.value.DocumentType === 'OT' ? this.studentForm.value.OtherDocumentType : this.studentForm.value.DocumentType,
+      DocumentType: this.studentForm.value.DocumentType,
       Name: this.studentForm.value.Name,
       LastName: this.studentForm.value.LastName,
       Address: this.studentForm.value.Address,

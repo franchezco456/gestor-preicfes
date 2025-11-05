@@ -43,17 +43,7 @@
                 </app-select>
               </ion-col>
 
-              <!-- If user selects 'Otro', show an input to specify the document type -->
-              <ion-col size="12" size-md="3" *ngIf="studentForm.get('DocumentType')?.value === 'OT'">
-                <app-input
-                  cssClass="form-field"
-                  lines="none"
-                  label="Especifique tipo de documento"
-                  placeholder="Ej: Cédula de extranjería"
-                  labelPosition="stacked"
-                  [control]="studentForm.get('OtherDocumentType')">
-                </app-input>
-              </ion-col>
+              <!-- No extra input when 'Otro' is selected; DocumentType will be submitted as-is -->
 
               <ion-col size="12" size-md="3">
                 <app-input

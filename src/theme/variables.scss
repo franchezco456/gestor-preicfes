@@ -1,2 +1,82 @@
-// For information on how to create your own theme, please see:
-// http://ionicframework.com/docs/theming/
+// Light theme variables for the app
+// These set the main color tokens used across the styles. Adjust as needed
+// for brand colors. Keep RGB variants for convenient use in rgba() calls.
+
+:root {
+	/* Primary (blue) */
+	--ion-color-primary: #2f7efb;
+	--ion-color-primary-rgb: 47,126,251;
+	--ion-color-primary-contrast: #ffffff;
+	--ion-color-primary-contrast-rgb: 255,255,255;
+	--ion-color-primary-shade: #256fe0;
+	--ion-color-primary-tint: #5f8eff;
+
+	/* Tertiary (purple) */
+	--ion-color-tertiary: #7b61ff;
+	--ion-color-tertiary-rgb: 123,97,255;
+	--ion-color-tertiary-contrast: #ffffff;
+
+	/* Secondary (accent) - adjust for institution pages if needed */
+	--ion-color-secondary: #0ea5a4;
+	--ion-color-secondary-rgb: 14,165,164;
+	--ion-color-secondary-contrast: #ffffff;
+
+	/* Neutral / background */
+	--ion-background-color: #f6f8fb;
+	--ion-background-rgb: 246,248,251;
+	--ion-color-light: #ffffff; /* used as 'light' token (contrast on colored backgrounds) */
+	--ion-color-dark: #071228; /* primary text color on light backgrounds */
+	--ion-text-color: #071228;
+
+	/* Danger */
+	--ion-color-danger: #ef4444;
+	--ion-color-danger-rgb: 239,68,68;
+
+	/* Small helpers used in existing styles */
+	--page-accent: var(--ion-color-primary);
+	--page-accent-rgb: var(--ion-color-primary-rgb);
+	--page-accent-shade: var(--ion-color-primary-shade);
+
+	/* App specific surface tokens */
+	--surface-card: #ffffff; /* card surfaces (light) */
+	--surface-muted: #f1f4f9; /* slightly darker than background */
+	--text-strong: var(--ion-color-dark);
+	--text-muted: #475569;
+}
+
+/* Optional body-level background/text defaults */
+body {
+	background: var(--ion-background-color);
+	color: var(--ion-text-color);
+}
+
+/* Chart / visualization colors (soft, high-contrast on light backgrounds)
+	 Use these variables in chart configuration or CSS-driven chart libraries.
+*/
+:root {
+	--chart-color-1: #60a5fa; /* light-blue */
+	--chart-color-1-rgb: 96,165,250;
+	--chart-color-2: #67e8f9; /* cyan */
+	--chart-color-2-rgb: 103,232,249;
+	--chart-color-3: #a78bfa; /* violet */
+	--chart-color-3-rgb: 167,139,250;
+	--chart-color-4: #f472b6; /* pink */
+	--chart-color-4-rgb: 244,114,182;
+	--chart-color-5: #fdba74; /* orange */
+	--chart-color-5-rgb: 253,186,116;
+	--chart-color-6: #86efac; /* green */
+	--chart-color-6-rgb: 134,239,172;
+	--chart-color-7: #facc15; /* yellow */
+	--chart-color-7-rgb: 250,204,21;
+	--chart-color-8: #94a3b8; /* slate */
+	--chart-color-8-rgb: 148,163,184;
+
+	/* Text used on charts for labels and legends */
+	--chart-text: #0f172a;
+	--chart-text-rgb: 15,23,42;
+
+	/* Helpful convenience: an ordered list for CSS (comma-separated) */
+	--chart-colors: var(--chart-color-1), var(--chart-color-2), var(--chart-color-3), var(--chart-color-4), var(--chart-color-5), var(--chart-color-6), var(--chart-color-7), var(--chart-color-8);
+}
+
+/* For guidance on theming see: https://ionicframework.com/docs/theming */

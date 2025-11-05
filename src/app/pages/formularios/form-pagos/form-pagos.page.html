@@ -74,16 +74,17 @@
           </div>
         </form>
 
+        <!-- Confirmation: do not show raw payload per client request -->
         <div *ngIf="submittedResult" class="result-card">
           <div class="result-header">
             <ion-icon name="checkmark-circle-outline"></ion-icon>
-            <p>Valores recibidos</p>
+            <p>Pago procesado</p>
           </div>
           <div class="result-grid">
             <ion-col>
               <div class="result-field">
-                <div class="result-label">Payload</div>
-                <div class="result-value">{{ submittedResult | json }}</div>
+                <div class="result-label">Estado</div>
+                <div class="result-value">Su pago fue recibido correctamente.</div>
               </div>
             </ion-col>
           </div>

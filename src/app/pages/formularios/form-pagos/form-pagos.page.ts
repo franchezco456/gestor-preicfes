@@ -61,8 +61,11 @@ export class FormPagosPage implements OnInit {
     // include disabled fields (payerName, documentNumber)
     const payload = { ...this.paymentForm.getRawValue() };
     // show values in console and in the UI
-    console.log('Payment form submitted:', payload);
-    this.submittedResult = payload;
+  console.log('Payment form submitted:', payload);
+  // Do not store the raw payload for display — only keep a simple success flag
+  // so the UI can show a confirmation message while the payload remains
+  // visible only in the console (per client request).
+  this.submittedResult = { ok: true };
     // reset form if desired keeping amount as provided
     // this.paymentForm.reset();
   }

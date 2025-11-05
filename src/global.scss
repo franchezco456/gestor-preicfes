@@ -35,3 +35,350 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import "@ionic/angular/css/palettes/dark.system.css";
+
+/* --------------------------------------------------------------------------
+	 Shared form visuals (moved out of per-component SCSS to keep components small)
+	 - Uses per-page `--page-accent` / `--page-accent-rgb` when set on the component
+	 - Provides sensible fallbacks via :root variables
+	 - Keep this compact — global styles are not subject to component budgets
+	 ------------------------------------------------------------------------- */
+
+:root {
+	--form-bg: #EFECE3;
+	--form-accent: #3264ad;
+	--form-accent-rgb: 143,171,212;
+	/* Slightly darker accent for enabled buttons */
+	--form-accent-dark-rgb: 123,147,182;
+}
+
+/* Aesthetic tokens */
+:root {
+	--app-font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+	--app-body-size: 16px;
+	--app-line-height: 1.45;
+	--heading-weight: 600;
+	--muted-color: rgba(11,17,20,0.6);
+	--card-radius: 18px;
+	--card-elevation: 0 18px 40px rgba(11,17,20,0.06);
+	--control-focus: 0 0 0 4px rgba(var(--form-accent-rgb), 0.08);
+}
+
+/* Base typography */
+html, body, ion-app {
+	font-family: var(--app-font-family);
+	font-size: var(--app-body-size);
+	line-height: var(--app-line-height);
+	color: #0B1114;
+}
+
+h1, h2, h3 {
+	font-weight: var(--heading-weight);
+	margin: 0 0 8px 0;
+}
+h1 { font-size: clamp(1.5rem, 3.8vw, 2.25rem); }
+h2 { font-size: clamp(1.2rem, 2.8vw, 1.5rem); }
+h3 { font-size: 1rem; }
+
+/* Subtle global form improvements */
+.form-card {
+	border-radius: var(--card-radius);
+	box-shadow: var(--card-elevation);
+}
+
+.form-card ion-card-header { padding-bottom: 6px; }
+.form-card ion-card-content { padding-top: 6px; }
+
+/* Polish submit button */
+.submit-button::part(native) {
+	border-radius: 14px;
+	padding: 12px 18px;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	font-weight: 700;
+	transition: transform 160ms ease, box-shadow 180ms ease, filter 160ms ease;
+}
+.submit-button::part(native):hover { transform: translateY(-2px); filter: brightness(1.02); }
+.submit-button::part(native):active { transform: translateY(1px); }
+
+/* Inputs focus and subtle borders */
+.form-field, .auth-field {
+	transition: box-shadow 160ms ease, border-color 140ms ease, transform 120ms ease;
+}
+.form-field:focus-within, .auth-field:focus-within { box-shadow: var(--control-focus); transform: translateY(-2px); }
+
+/* Muted text */
+.muted { color: var(--muted-color); }
+
+/* Chips and small UI tweaks */
+.meta-chip::part(container) { padding: 6px 12px; border-radius: 14px; }
+.meta-chip ion-icon { margin-right: 6px; }
+
+/* Keep animations subtle */
+@media (prefers-reduced-motion: reduce) {
+	.form-card, .form-wrapper, .form-page::before, .form-page::after { animation: none !important; }
+}
+
+/* Use per-page accent if present, otherwise fallback to root */
+.form-page {
+		background: linear-gradient(135deg, var(--form-bg), rgba(var(--page-accent-rgb, var(--form-accent-rgb)), 0.04) 50%, #fbf8f6);
+}
+
+/* Ensure the Ionic content element used for pages receives the gradient
+	 even if other styles (or Ionic defaults) set background variables. */
+ion-content.form-page,
+.form-page {
+	background-repeat: no-repeat !important;
+	background-size: cover !important;
+	background-position: center center !important;
+	background-image: linear-gradient(135deg, var(--form-bg), rgba(var(--page-accent-rgb, var(--form-accent-rgb)), 0.04) 50%, #fbf8f6) !important;
+}
+
+/* Ionic `ion-content` uses the `--background` CSS variable for its background.
+	 Setting it ensures the gradient displays even when Ionic's internals
+	 render a different backing layer. */
+ion-content.form-page {
+	--background: linear-gradient(135deg, var(--form-bg), rgba(var(--page-accent-rgb, var(--form-accent-rgb)), 0.04) 50%, #fbf8f6) !important;
+}
+
+/* Improve alignment, spacing and contrast for all forms to look professional */
+.form-page {
+	padding-inline: clamp(12px, 3vw, 28px);
+	display: flex;
+	justify-content: center; /* keep form centered on wide screens */
+	box-sizing: border-box;
+}
+
+/* Ensure pages that don't include a `.form-wrapper` still get proper
+	 horizontal padding and centered content. This targets the immediate
+	 children of `.form-page` so we don't need to edit each template. */
+.form-page > * {
+	width: min(1024px, 100%);
+	margin-inline: auto;
+	padding-inline: clamp(12px, 3vw, 28px);
+	box-sizing: border-box;
+}
+
+.form-card {
+	position: relative;
+	background: rgba(255,255,255,0.96);
+	border: 1px solid rgba(16,24,32,0.06);
+	border-radius: 20px;
+	box-shadow: 0 10px 28px rgba(16,24,32,0.06);
+	overflow: hidden;
+}
+
+/* Make cards centered, increase inner spacing and ensure dark text */
+.form-card {
+  margin-inline: auto;
+  max-width: 920px;
+  padding: clamp(14px, 2.2vw, 28px);
+}
+
+/* Add vertical breathing room between stacked cards and other blocks */
+.form-card { margin: clamp(10px, 2vw, 18px) 0; }
+
+.form-card, .form-card ion-card-content {
+  color: #0B1114; /* primary readable text inside cards */
+}
+
+.form-card::after {
+	content: '';
+	position: absolute; inset: 0;
+	background: linear-gradient(120deg, rgba(255,255,255,0.06), transparent 55%);
+	pointer-events: none;
+}
+
+.form-field, .auth-field {
+	--background: rgba(250,247,244,0.9);
+	border-radius: 12px;
+	padding: 10px 14px;
+	background: var(--background, rgba(250,247,244,0.9));
+	border: 1px solid rgba(16,24,32,0.06);
+}
+
+/* Ensure input text and labels are dark and placeholders are readable */
+.form-field, .auth-field {
+  color: #0B1114;
+}
+.form-field ion-label,
+.auth-field ion-label {
+  color: rgba(11,17,20,0.85);
+  font-weight: 600;
+}
+.form-field ion-input,
+.form-field ion-textarea,
+.auth-field ion-input,
+.auth-field ion-textarea {
+  --color: #0B1114;
+  --placeholder-color: rgba(11,17,20,0.44);
+}
+
+.form-field:focus-within, .auth-field:focus-within { box-shadow: 0 0 0 4px rgba(var(--page-accent-rgb, var(--form-accent-rgb)), 0.06); }
+
+.submit-button::part(native) {
+		background: linear-gradient(135deg, rgba(var(--page-accent-rgb, var(--form-accent-rgb)),1) 0%, rgba(var(--page-accent-rgb, var(--form-accent-rgb)),0.85) 100%);
+	border-radius: 14px;
+	color: #fff;
+}
+
+/* Slightly darker blue for enabled submit buttons to improve affordance */
+app-button.submit-button:not([disabled])::part(native),
+.submit-button:not([disabled])::part(native) {
+	background-image: linear-gradient(135deg, rgba(var(--form-accent-dark-rgb), 1) 0%, rgba(var(--form-accent-dark-rgb), 0.9) 100%) !important;
+	box-shadow: 0 18px 36px rgba(var(--form-accent-dark-rgb), 0.18);
+	transition: transform 160ms ease, box-shadow 200ms ease, filter 160ms ease;
+}
+
+/* Keep the hover state slightly more pronounced */
+app-button.submit-button:not([disabled])::part(native):hover,
+.submit-button:not([disabled])::part(native):hover {
+	transform: translateY(-2px);
+	box-shadow: 0 22px 44px rgba(var(--form-accent-dark-rgb), 0.22) !important;
+}
+
+.result-card {
+	background: rgba(11,16,30,0.9);
+	color: var(--ion-color-light);
+	border-radius: 18px;
+	padding: 14px;
+}
+
+/* Tighten layout: wrapper centering and consistent width */
+.form-wrapper {
+	width: min(1024px, 100%);
+	margin-inline: auto;
+	box-sizing: border-box;
+	/* Ensure wrappers inherit the same horizontal padding as the page so
+		 content is never flush to the viewport edge. */
+	padding-inline: clamp(12px, 3vw, 28px);
+	padding-block: clamp(12px, 2vw, 20px);
+}
+
+/* --------------------------------------------------------------------------
+	 Contrast enforcement: ensure readable text across all form surfaces
+
+	 - Light surfaces (cards, fields, wrappers) should use dark text (#0B1114).
+	 - Dark surfaces (result-card and similar) keep light text for contrast.
+	 - Apply to common Ionic elements used in forms (ion-label, ion-input,
+		 ion-textarea, p, h1..h3, span, a) so we don't miss any textual node.
+	 ------------------------------------------------------------------------- */
+
+/* Light surfaces */
+.form-page .form-card,
+.form-page .form-wrapper,
+.form-page .form-header,
+.form-page .form-field,
+.form-page .auth-field {
+	color: #0B1114;
+}
+
+.form-page .form-card h1,
+.form-page .form-card h2,
+.form-page .form-card h3,
+.form-page .form-card p,
+.form-page .form-card ion-label,
+.form-page .form-card span,
+.form-page .form-card a {
+	color: #0B1114;
+}
+
+/* Override Ionic components that explicitly set light color in markup
+	 (e.g. `ion-text color="light"` or `ion-chip color="light"`) so header
+	 sections remain readable on the light theme. These are scoped to the
+	 form header area to avoid changing dark surfaces like result-card. */
+.form-page .form-header ion-text[color="light"],
+.form-page .form-header ion-chip[color="light"],
+.form-page .form-header ion-chip[color="light"] * {
+	color: #0B1114 !important;
+}
+
+.form-page .form-header ion-chip.meta-chip::part(container) {
+	background: rgba(16,24,32,0.03);
+	border-color: rgba(16,24,32,0.06);
+}
+
+.form-page .form-header ion-chip.meta-chip ion-icon,
+.form-page .form-header ion-chip.meta-chip ion-label {
+	color: rgba(11,17,20,0.78) !important;
+}
+
+/* Input & placeholder colors for Ionic controls inside forms */
+.form-page ion-input,
+.form-page ion-textarea,
+.form-page ion-select,
+.form-page input,
+.form-page textarea {
+	--color: #0B1114;
+	color: #0B1114;
+}
+.form-page ion-input::part(native),
+.form-page ion-textarea::part(native) {
+	color: #0B1114;
+}
+
+.form-page ::placeholder,
+.form-page input::placeholder,
+.form-page textarea::placeholder,
+.form-page ion-input::part(native) ::placeholder {
+	color: rgba(11,17,20,0.44);
+}
+
+/* Meta chips, labels and small UI bits */
+.form-page .meta-chip,
+.form-page .meta-chip::part(container),
+.form-page .muted,
+.form-page .readonly-value {
+	color: rgba(11,17,20,0.86);
+}
+
+/* Dark surfaces keep light text (results, summaries) */
+.form-page .result-card,
+.form-page .result-card * {
+	color: var(--ion-color-light) !important;
+}
+
+/* Shared keyframes (compact) */
+@keyframes fadeInUp { from { opacity:0; transform: translate3d(0,16px,0);} to { opacity:1; transform: translate3d(0,0,0);} }
+@keyframes cardFloat { from { opacity:0; transform: translate3d(0,24px,0);} to { opacity:1; transform: translate3d(0,0,0);} }
+@keyframes pulseGlow { 0%,100% { transform: scale(1); opacity: 0.75;} 50% { transform: scale(1.05); opacity:1;} }
+@keyframes drift { 0% { transform: translate3d(0,0,0);} 100% { transform: translate3d(40px,-20px,0);} }
+
+/* --------------------------------------------------------------------------
+	 Unified header/intro section for all form pages
+
+	 - Ensures the first `section` (start area) inside a `.form-page` has a
+		 consistent layout across all forms (padding, spacing, subtle bg).
+	 - Forces readable, dark text for headings/labels/paragraphs inside that
+		 section to match the light theme requirement (#0B1114).
+	 - Keep rules targeted and compact to avoid inflating component CSS sizes.
+	 ------------------------------------------------------------------------- */
+
+.form-page > section:first-child {
+	padding: clamp(18px, 3vw, 28px);
+	margin-bottom: clamp(18px, 3.5vw, 26px);
+	background: transparent; /* visual surfaces (cards) remain white via .form-card */
+	display: block;
+}
+
+.form-page > section:first-child h1,
+.form-page > section:first-child h2,
+.form-page > section:first-child h3,
+.form-page > section:first-child p,
+.form-page > section:first-child ion-label,
+.form-page > section:first-child .muted,
+.form-page > section:first-child .meta-chip,
+.form-page > section:first-child a,
+.form-page > section:first-child span {
+	color: #0B1114 !important; /* enforce black/dark text for readability */
+}
+
+/* Make ion-icons used in header/meta slightly darker to match text */
+.form-page > section:first-child ion-icon {
+	color: rgba(11,17,20,0.9);
+}
+
+/* Small responsive tweak to keep spacing consistent on narrow screens */
+@media (max-width: 767px) {
+	.form-page > section:first-child { padding: 14px 12px; margin-bottom: 18px; }
+}
+
