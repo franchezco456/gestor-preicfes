@@ -36,7 +36,6 @@ export class Toast {
         await this.showToast(message, duration, 'success');
     }
 
-
     async showWarningToast(
         message: string,
         duration: number = 2500

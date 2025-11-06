@@ -1,20 +1,51 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <ion-button (click)="execute()">
+    Go
+  </ion-button>
+  <ion-button (click)="logout()">
+    logout
+  </ion-button>
+  <ion-button (click)="gotoRE()">
+    registrar estudiantes
+  </ion-button>
+  <ion-button (click)="gotoRC()">
+    registrar coordinadores
+  </ion-button>
+  <ion-button (click)="gotoRI()">
+    registrar institucionies educativas
+  </ion-button>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+  <div style="padding: 20px; margin-top: 20px;">
+
+    <ion-card>
+      <ion-card-content>
+        <app-chart [chartOptions]="studentpago"></app-chart>
+        <ion-button size="small" (click)="testActualizacionTiempoRealPie()">suma 5</ion-button>
+      </ion-card-content>
+    </ion-card>
+    <ion-card>
+      <ion-card-content>
+        <app-chart [chartOptions]="paymentsPorSaturday"></app-chart>
+        <ion-button size="small" (click)="testActualizacionTiempoRealBar1()">suma 500k</ion-button>
+      </ion-card-content>
+    </ion-card>
+    <ion-card>
+      <ion-card-content>
+        <app-chart [chartOptions]="paymentsAcumulados"></app-chart>
+        <ion-button size="small" (click)="testActualizacionTiempoRealLine()">suma 1M</ion-button>
+      </ion-card-content>
+    </ion-card>
+    <ion-card>
+      <ion-card-content>
+        <app-chart [chartOptions]="institutionsDona"></app-chart>
+        <ion-button size="small" (click)="testActualizacionTiempoRealDonut()">suma 50</ion-button>
+      </ion-card-content>
+    </ion-card>
+    <ion-card>
+      <ion-card-content>
+        <app-chart [chartOptions]="studentsPorInstitucion"></app-chart>
+        <ion-button size="small" (click)="testActualizacionTiempoRealBar()">suma 10</ion-button>
+      </ion-card-content>
+    </ion-card>
   </div>
 </ion-content>

@@ -74,7 +74,7 @@ export class Preferences {
 
       return allPreferences;
     } catch (error) {
-      console.error('Error al obtener todas las preferencias:', error);
+      console.error('Error al obtener las preferencias:', error);
       throw error;
     }
   }
