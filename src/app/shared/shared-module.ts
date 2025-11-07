@@ -9,11 +9,13 @@ import { SelectComponent } from './components/select/select.component';
 import { CheckboxComponent } from './components/checkbox/checkbox.component';
 import { SearchbarComponent } from './components/searchbar/searchbar.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
+import { FabbutomComponent } from './components/fabbutom/fabbutom.component';
+
 
 
 @NgModule({
   declarations: [CardComponent, InputComponent, ButtonComponent, SelectComponent, CheckboxComponent, SearchbarComponent, SidebarComponent],
-  imports: [CommonModule, ReactiveFormsModule, IonicModule],
-  exports: [CardComponent, InputComponent, ButtonComponent, SelectComponent, CheckboxComponent, SearchbarComponent, SidebarComponent],
+  imports: [CommonModule, ReactiveFormsModule, IonicModule, FabbutomComponent],
+  exports: [CardComponent, InputComponent, ButtonComponent, SelectComponent, CheckboxComponent, SearchbarComponent, SidebarComponent, FabbutomComponent],
 })
 export class SharedModule {}

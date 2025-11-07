@@ -17,7 +17,53 @@
   </ion-header>
 
   <ion-content>
-    <!-- Menu content goes here. Consumers can project nodes into the component -->
+    <div class="sidebar-header">
+      <div class="coordinator-info">
+        <div class="coordinator-name">{{ coordinatorName }} {{ coordinatorLastName }}</div>
+        <div class="coordinator-institution">{{ coordinatorInstitution }}</div>
+      </div>
+    </div>
+
+    <ion-list class="sidebar-list">
+      <!-- Estudiantes section -->
+      <ion-item button lines="none" (click)="toggleSection('students')" class="section-header">
+        <ion-label>ESTUDIANTES</ion-label>
+        <ion-icon slot="end" [name]="studentsOpen ? 'chevron-down' : 'chevron-forward'"></ion-icon>
+      </ion-item>
+
+      <div *ngIf="studentsOpen" class="section-children">
+        <ion-item button (click)="navigateTo('/consultar-estudiante')">
+          <ion-label>Consultar Estudiante</ion-label>
+        </ion-item>
+        <ion-item button (click)="navigateTo('/form-estudiantes')">
+          <ion-label>Registrar Estudiante</ion-label>
+        </ion-item>
+        <ion-item button (click)="navigateTo('/actualizar-estudiante')">
+          <ion-label>Actualizar Estudiante</ion-label>
+        </ion-item>
+        <ion-item button (click)="navigateTo('/eliminar-estudiante')">
+          <ion-label>Eliminar Estudiante</ion-label>
+        </ion-item>
+      </div>
+
+      <!-- Pagos section -->
+      <ion-item button lines="none" (click)="toggleSection('payments')" class="section-header">
+        <ion-label>PAGOS</ion-label>
+        <ion-icon slot="end" [name]="paymentsOpen ? 'chevron-down' : 'chevron-forward'"></ion-icon>
+      </ion-item>
+
+      <div *ngIf="paymentsOpen" class="section-children">
+        <ion-item button (click)="navigateTo('/form-pagos')">
+          <ion-label>Registrar pago</ion-label>
+        </ion-item>
+        <ion-item button (click)="navigateTo('/consultar-pago')">
+          <ion-label>Consultar pago</ion-label>
+        </ion-item>
+      </div>
+
+    </ion-list>
+
+    <!-- Allow additional content projection if needed -->
     <ng-content></ng-content>
   </ion-content>
 

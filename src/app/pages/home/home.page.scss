@@ -67,3 +67,56 @@
 .search-results {
   margin-top: 6px;
 }
+
+/* Apply form aesthetic tokens to the home topbar and actions */
+.form-page .home-topbar {
+  padding: 14px 18px;
+  gap: 14px;
+  align-items: center;
+  background: transparent;
+}
+
+.home-search-wrapper app-searchbar {
+  display: block;
+}
+
+.search-results ion-item {
+  margin: 6px 0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.home-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 16px;
+  justify-content: center;
+}
+
+.home-actions ion-button {
+  --border-radius: 12px;
+  --padding-top: 10px;
+  --padding-bottom: 10px;
+  --padding-start: 18px;
+  --padding-end: 18px;
+  text-transform: none;
+  font-weight: 600;
+  background: linear-gradient(135deg, rgba(var(--form-accent-rgb),1) 0%, rgba(var(--form-accent-rgb),0.9) 100%);
+  color: #fff;
+  box-shadow: 0 12px 30px rgba(var(--form-accent-dark-rgb), 0.14);
+}
+
+.home-actions ion-button[fill="clear"] {
+  background: transparent;
+  color: rgba(11,17,20,0.86);
+  box-shadow: none;
+}
+
+/* Make the menu button more visible on the light background */
+.menu-btn {
+  background: rgba(var(--form-accent-rgb), 0.06);
+  color: rgba(11,17,20,0.9);
+}
+
+.menu-btn:hover { background: rgba(var(--form-accent-rgb), 0.09); }

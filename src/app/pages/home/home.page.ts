@@ -45,10 +45,23 @@ export class HomePage {
   }
 
   public selectSearchResult(item: { Name: string; LastName: string; ID: string }) {
-    // For Home page we simply log the selection and clear the list.
+    // Navigate to detalles-estudiante and pass the selected item as navigation state
     console.log('Selected search item on Home:', item);
+    const studentForDetails = {
+      nombre: item.Name,
+      apellido: item.LastName,
+      identificacion: item.ID,
+      // keep other fields empty; detalles page will fallback if needed
+      correo: '',
+      direccion: '',
+      institucion: '',
+      estado: '',
+      grado: ''
+    };
     this.searchQuery = `${item.Name} ${item.LastName}`;
     this.filteredResults = [];
+    // Use router navigation extras state to pass the object to the details page
+    this.router.navigate(['/detalles-estudiante'], { state: { student: studentForDetails } });
   }
 
   @ViewChild('sidebar', { static: false }) sidebar?: SidebarComponent;
@@ -156,6 +169,10 @@ export class HomePage {
 
   public gotoRI() {
     this.router.navigate(["/form-instituciones"]);
+  }
+
+  public goToRegisterPayment() {
+    this.router.navigate(["/form-pagos"]);
   }
 
 

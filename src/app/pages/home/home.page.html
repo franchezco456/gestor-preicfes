@@ -8,7 +8,7 @@
   </ion-list>
 </app-sidebar>
 
-<ion-content id="home-content" [fullscreen]="true" class="home-with-search">
+<ion-content id="home-content" [fullscreen]="true" class="form-page home-with-search">
   <div class="home-topbar">
     <button class="menu-btn" (click)="toggleMenu()" aria-label="Abrir menú">
       <ion-icon name="menu"></ion-icon>
@@ -40,4 +40,11 @@
     <ion-button (click)="gotoRC()">registrar coordinadores</ion-button>
     <ion-button (click)="gotoRI()">registrar institucionies educativas</ion-button>
   </div>
+
+  <!-- Shared FAB component (bottom-right, actions upward) -->
+  <app-fabbutom
+    (registerPayment)="goToRegisterPayment()"
+    (registerStudent)="gotoRE()"
+    (logout)="logout()">
+  </app-fabbutom>
 </ion-content>

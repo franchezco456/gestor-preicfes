@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { MenuController, IonMenu } from '@ionic/angular';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-sidebar',
@@ -14,6 +15,10 @@ export class SidebarComponent implements OnInit {
   @Input() contentId?: string;
   @Input() disabled: boolean = false;
   @Input() swipeGesture: boolean = true;
+  // Coordinator info shown in header (optional)
+  @Input() coordinatorName: string = '';
+  @Input() coordinatorLastName: string = '';
+  @Input() coordinatorInstitution: string = '';
 
   /** Outputs that mirror ion-menu events */
   @Output() ionOpen = new EventEmitter<any>();
@@ -24,7 +29,7 @@ export class SidebarComponent implements OnInit {
 
   @ViewChild(IonMenu, { static: false }) menu?: IonMenu;
 
-  constructor(private readonly menuCtrl: MenuController) {}
+  constructor(private readonly menuCtrl: MenuController, private readonly router: Router) {}
 
   ngOnInit() {}
 
@@ -62,6 +67,35 @@ export class SidebarComponent implements OnInit {
     } catch (e) {
       console.warn('Sidebar: isOpen() failed', e);
       return false;
+    }
+  }
+
+  // Collapsible sections state
+  public studentsOpen: boolean = true;
+  public paymentsOpen: boolean = false;
+
+  // Toggle a named section
+  public toggleSection(section: 'students' | 'payments') {
+    if (section === 'students') {
+      this.studentsOpen = !this.studentsOpen;
+    } else if (section === 'payments') {
+      this.paymentsOpen = !this.paymentsOpen;
+    }
+  }
+
+  // Navigate to a route and close the menu
+  public async navigateTo(route: string) {
+    try {
+      // close the menu first
+      await this.menuCtrl.close(this.menuId);
+    } catch (e) {
+      // ignore
+    }
+    // navigate using the injected Router
+    try {
+      await this.router.navigate([route]);
+    } catch (e) {
+      console.warn('Sidebar: navigation failed', e);
     }
   }
 
