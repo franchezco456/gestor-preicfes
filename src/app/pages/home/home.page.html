@@ -1,17 +1,43 @@
-<ion-content [fullscreen]="true">
-  <ion-button (click)="execute()">
-    Go
-  </ion-button>
-  <ion-button (click)="logout()">
-    logout
-  </ion-button>
-  <ion-button (click)="gotoRE()">
-    registrar estudiantes
-  </ion-button>
-  <ion-button (click)="gotoRC()">
-    registrar coordinadores
-  </ion-button>
-  <ion-button (click)="gotoRI()">
-    registrar institucionies educativas
-  </ion-button>
+<!-- Sidebar menu is a sibling of the content; it targets the content via contentId -->
+<app-sidebar #sidebar menuId="homeMenu" contentId="home-content" side="start">
+  <ion-list>
+    <ion-item routerLink="/home">Inicio</ion-item>
+    <ion-item routerLink="/form-estudiantes">Registrar Estudiante</ion-item>
+    <ion-item routerLink="/form-coordinadores">Registrar Coordinador</ion-item>
+    <ion-item routerLink="/form-instituciones">Registrar Institución</ion-item>
+  </ion-list>
+</app-sidebar>
+
+<ion-content id="home-content" [fullscreen]="true" class="home-with-search">
+  <div class="home-topbar">
+    <button class="menu-btn" (click)="toggleMenu()" aria-label="Abrir menú">
+      <ion-icon name="menu"></ion-icon>
+    </button>
+
+    <div class="home-search-wrapper">
+      <app-searchbar
+        cssClass="form-field"
+        placeholder="Buscar estudiante por nombre, apellido o TI"
+        [value]="searchQuery"
+        (valueChange)="onSearchInput($event)">
+      </app-searchbar>
+
+      <ion-list *ngIf="filteredResults.length" class="search-results">
+        <ion-item *ngFor="let r of filteredResults" button (click)="selectSearchResult(r)">
+          <ion-label>
+            <h3>{{ r.Name }} {{ r.LastName }}</h3>
+            <p>ID: {{ r.ID }}</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </div>
+  </div>
+
+  <div class="home-actions">
+    <ion-button (click)="execute()">Go</ion-button>
+    <ion-button (click)="logout()">logout</ion-button>
+    <ion-button (click)="gotoRE()">registrar estudiantes</ion-button>
+    <ion-button (click)="gotoRC()">registrar coordinadores</ion-button>
+    <ion-button (click)="gotoRI()">registrar institucionies educativas</ion-button>
+  </div>
 </ion-content>

@@ -25,3 +25,45 @@
 #container a {
   text-decoration: none;
 }
+
+/* Topbar: menu button + searchbar */
+.home-topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: transparent;
+}
+
+.menu-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border: none;
+  background: transparent;
+  color: var(--ion-color-primary, #0B1114);
+  border-radius: 10px;
+  transition: background-color 120ms ease, transform 120ms ease;
+}
+
+.menu-btn:hover {
+  background: rgba(0,0,0,0.04);
+  transform: translateY(-1px);
+}
+
+.menu-btn ion-icon {
+  font-size: 22px; /* larger icon */
+  width: 22px;
+  height: 22px;
+
+}
+
+.home-search-wrapper {
+  flex: 1 1 auto;
+}
+
+.search-results {
+  margin-top: 6px;
+}

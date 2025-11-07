@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
+import { SidebarComponent } from 'src/app/shared/components/sidebar/sidebar.component';
 import { Router } from '@angular/router';
 import { Auth } from 'src/app/core/services/auth/auth';
 import { Preferences } from 'src/app/core/services/preferences/preferences';
@@ -16,6 +17,46 @@ import { Institution as In } from 'src/domain/models/Institution';
 
 
 export class HomePage {
+
+  // Searchbar related (mirrors functionality from form-pagos)
+  // We use a small inline typing shape for results displayed by the searchbar
+  
+  public searchData: { Name: string; LastName: string; ID: string }[] = [
+    { Name: 'fulanito', LastName: 'de tal', ID: '1234' },
+    { Name: 'fulanito2', LastName: 'de tal2', ID: '12345' },
+    { Name: 'Rafa', LastName: 'Mallarino', ID: '1042576911' },
+  ];
+  public filteredResults: { Name: string; LastName: string; ID: string }[] = [];
+  public searchQuery: string = '';
+
+  public onSearchInput(value: string) {
+    this.searchQuery = value ?? '';
+    const q = (this.searchQuery || '').trim().toLowerCase();
+    if (!q) {
+      this.filteredResults = [];
+      return;
+    }
+    this.filteredResults = this.searchData.filter(
+      (item) =>
+        item.Name.toLowerCase().includes(q) ||
+        item.LastName.toLowerCase().includes(q) ||
+        item.ID.toLowerCase().includes(q)
+    );
+  }
+
+  public selectSearchResult(item: { Name: string; LastName: string; ID: string }) {
+    // For Home page we simply log the selection and clear the list.
+    console.log('Selected search item on Home:', item);
+    this.searchQuery = `${item.Name} ${item.LastName}`;
+    this.filteredResults = [];
+  }
+
+  @ViewChild('sidebar', { static: false }) sidebar?: SidebarComponent;
+
+  public async toggleMenu() {
+    if (!this.sidebar) return;
+    await this.sidebar.toggle();
+  }
 
 
   constructor(private readonly authSrv: Auth,

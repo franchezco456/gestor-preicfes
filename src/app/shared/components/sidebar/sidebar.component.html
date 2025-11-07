@@ -1,0 +1,24 @@
+<ion-menu
+  [side]="side"
+  [menuId]="menuId"
+  [contentId]="contentId"
+  [disabled]="disabled"
+  [swipeGesture]="swipeGesture"
+  (ionWillOpen)="handleWillOpen($event)"
+  (ionOpen)="handleOpen($event)"
+  (ionWillClose)="handleWillClose($event)"
+  (ionClose)="handleClose($event)"
+  (ionDrag)="handleDrag($event)">
+
+  <ion-header>
+    <ion-toolbar>
+      <ion-title>Menú</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-content>
+    <!-- Menu content goes here. Consumers can project nodes into the component -->
+    <ng-content></ng-content>
+  </ion-content>
+
+</ion-menu>
