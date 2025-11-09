@@ -1,0 +1,88 @@
+import { Component } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Auth } from 'src/app/core/services/auth/auth';
+import { Loading } from 'src/app/core/services/loading/loading';
+import { Toast } from 'src/app/core/services/toast/toast';
+import { Institution } from 'src/app/shared/services/institution/institution';
+import { Student } from 'src/app/shared/services/student/student';
+import { Student as St } from 'src/domain/models/Student';
+
+type SelectOption = {
+  value: string;
+  text: string;
+};
+
+@Component({
+  selector: 'app-form-estudiantes',
+  templateUrl: './form-estudiantes.page.html',
+  styleUrls: ['./form-estudiantes.page.scss'],
+  standalone: false,
+})
+export class FormEstudiantesPage {
+  public studentForm !: FormGroup;
+  public institutionsOptions: SelectOption[] = [];
+
+  constructor(private readonly formBuilder: FormBuilder, 
+    private readonly studentSrv: Student, 
+    private readonly institutionSrv: Institution,
+    private readonly loadingSrv: Loading,
+    private readonly toastSrv: Toast,
+    private readonly authSrv : Auth) {
+    this.initForm();
+    this.getEducationalInstitutions();
+  }
+
+  private initForm() {
+    this.studentForm = this.formBuilder.group({
+      TI: ['', [Validators.required, Validators.pattern(/^\d{6,12}$/)]],
+      Name: ['', [Validators.required, Validators.minLength(2)]],
+      LastName: ['', [Validators.required, Validators.minLength(2)]],
+      Address: ['', [Validators.required, Validators.minLength(5)]],
+      Email: ['', [Validators.required, Validators.email]],
+      Number: ['', [Validators.required, Validators.pattern(/^\d{7,12}$/)]],
+      Grade: ['', [Validators.required, Validators.minLength(1)]],
+      Nit_Educational_Institution: ['', [Validators.required]],
+    });
+  }
+
+  public async submitStudentForm() {
+    if (!this.studentForm.valid) {
+      this.toastSrv.showWarningToast('Por favor, complete todos los campos del formulario');
+      return;
+    }
+    try {
+    await this.loadingSrv.showLoading("Registrando estudiante...");
+    const Student: St = {
+      TI: this.studentForm.value.TI,
+      Name: this.studentForm.value.Name,
+      LastName: this.studentForm.value.LastName,
+      Address: this.studentForm.value.Address,
+      Email: this.studentForm.value.Email,
+      Grade: this.studentForm.value.Grade,
+      Nit_Educational_Institution: this.studentForm.value.Nit_Educational_Institution
+    }
+    const result = await this.studentSrv.addStudent(Student, this.studentForm.value.Number);
+    this.studentForm.reset();
+    await this.loadingSrv.dismissLoading();
+    await this.toastSrv.showSuccessToast('Estudiante registrado exitosamente.');
+    } catch (error) {
+      this.toastSrv.showErrorToast("Error al registrar el estudiante.");
+      await this.loadingSrv.dismissLoading();
+    }
+  }
+
+  public async getEducationalInstitutions() {
+    try {
+      await this.loadingSrv.showLoading("Cargando instituciones educativas...");
+      const institutions = await this.institutionSrv.getAllInstitutions();
+      this.institutionsOptions = institutions.map((inst) : SelectOption => ({
+        value: inst.NIT,
+        text: inst.Name
+      }));
+      await this.loadingSrv.dismissLoading();
+    } catch (error) {
+      this.toastSrv.showErrorToast("Error al cargar las instituciones educativas.");
+      await this.loadingSrv.dismissLoading();
+    }
+  }
+}

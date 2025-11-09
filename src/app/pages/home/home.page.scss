@@ -25,3 +25,52 @@
 #container a {
   text-decoration: none;
 }
+
+ion-content {
+  --padding-start: 0;
+  --padding-end: 0;
+}
+
+ion-card {
+  width: 100%;
+  max-width: 100%;
+  margin: 16px 0;
+  box-sizing: border-box;
+  
+  ion-card-content {
+    padding: 16px;
+    overflow-x: hidden;
+  }
+}
+
+@media (max-width: 480px) {
+  ion-card {
+    margin: 8px 0;
+    
+    ion-card-content {
+      padding: 8px;
+    }
+  }
+  
+  ion-button {
+    font-size: 12px;
+    height: 32px;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  ion-card {
+    margin: 12px 0;
+    
+    ion-card-content {
+      padding: 12px;
+    }
+  }
+}
+
+@media (min-width: 769px) {
+  ion-card {
+    margin: 16px auto;
+    max-width: 1200px;
+  }
+}

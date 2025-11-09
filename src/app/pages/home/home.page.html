@@ -15,33 +15,33 @@
     registrar institucionies educativas
   </ion-button>
 
-  <div style="padding: 20px; margin-top: 20px;">
+  <div style="padding: 20px; margin-top: 20px; max-width: 100%;">
 
-    <ion-card>
+    <ion-card style="width: 100%; max-width: 100%;">
       <ion-card-content>
         <app-chart [chartOptions]="studentpago"></app-chart>
         <ion-button size="small" (click)="testActualizacionTiempoRealPie()">suma 5</ion-button>
       </ion-card-content>
     </ion-card>
-    <ion-card>
+    <ion-card style="width: 100%; max-width: 100%;">
       <ion-card-content>
         <app-chart [chartOptions]="paymentsPorSaturday"></app-chart>
         <ion-button size="small" (click)="testActualizacionTiempoRealBar1()">suma 500k</ion-button>
       </ion-card-content>
     </ion-card>
-    <ion-card>
+    <ion-card style="width: 100%; max-width: 100%;">
       <ion-card-content>
         <app-chart [chartOptions]="paymentsAcumulados"></app-chart>
         <ion-button size="small" (click)="testActualizacionTiempoRealLine()">suma 1M</ion-button>
       </ion-card-content>
     </ion-card>
-    <ion-card>
+    <ion-card style="width: 100%; max-width: 100%;">
       <ion-card-content>
         <app-chart [chartOptions]="institutionsDona"></app-chart>
         <ion-button size="small" (click)="testActualizacionTiempoRealDonut()">suma 50</ion-button>
       </ion-card-content>
     </ion-card>
-    <ion-card>
+    <ion-card style="width: 100%; max-width: 100%;">
       <ion-card-content>
         <app-chart [chartOptions]="studentsPorInstitucion"></app-chart>
         <ion-button size="small" (click)="testActualizacionTiempoRealBar()">suma 10</ion-button>

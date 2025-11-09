@@ -1,0 +1,297 @@
+:host {
+	--page-accent: var(--ion-color-primary);
+	--page-accent-rgb: var(--ion-color-primary-rgb);
+	--page-accent-shade: var(--ion-color-primary-shade);
+}
+
+.auth-page {
+	position: relative;
+	--background: linear-gradient(135deg, rgba(var(--page-accent-rgb), 0.95) 0%, var(--page-accent-shade) 45%, #0b1020 100%);
+	min-height: 100%;
+	display: flex;
+	justify-content: center;
+	overflow: hidden;
+}
+
+.auth-page::before,
+.auth-page::after {
+	content: '';
+	position: absolute;
+	border-radius: 50%;
+	pointer-events: none;
+}
+
+.auth-page::before {
+	width: 480px;
+	height: 480px;
+	top: -140px;
+	right: -160px;
+	background: radial-gradient(circle at center, rgba(var(--page-accent-rgb), 0.26) 0%, transparent 70%);
+	animation: pulseGlow 16s ease-in-out infinite;
+}
+
+.auth-page::after {
+	width: 640px;
+	height: 640px;
+	bottom: -360px;
+	left: -240px;
+	background: radial-gradient(circle at center, rgba(33, 53, 105, 0.32) 0%, transparent 72%);
+	animation: drift 24s linear infinite;
+}
+
+.auth-wrapper {
+	position: relative;
+	z-index: 1;
+	width: min(960px, 100%);
+	padding: clamp(16px, 3vw, 28px);
+	box-sizing: border-box;
+	animation: fadeInUp 0.75s ease-out forwards;
+}
+
+.auth-header {
+	margin-bottom: clamp(24px, 4vw, 32px);
+	padding-left: clamp(14px, 3vw, 26px);
+	border-left: 3px solid rgba(255, 255, 255, 0.16);
+	backdrop-filter: blur(6px);
+	color: var(--ion-color-light);
+}
+
+.auth-header h1 {
+	margin: 0 0 8px;
+	font-size: clamp(1.8rem, 4vw, 2.4rem);
+	font-weight: 600;
+	letter-spacing: 0.02em;
+}
+
+.auth-header p {
+	margin: 0;
+	font-size: 0.95rem;
+	max-width: 560px;
+	opacity: 0.85;
+}
+
+.header-meta {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin-top: 18px;
+}
+
+.meta-chip {
+	--background: transparent;
+	--color: var(--ion-color-light);
+}
+
+.meta-chip::part(container) {
+	background: rgba(255, 255, 255, 0.08);
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	border-radius: 18px;
+	padding: 0 14px;
+	gap: 6px;
+	transition: transform 180ms ease, box-shadow 200ms ease;
+}
+
+.meta-chip::part(container):hover {
+	transform: translateY(-2px);
+	box-shadow: 0 10px 24px rgba(var(--page-accent-rgb), 0.35);
+}
+
+.meta-chip ion-icon {
+	font-size: 1rem;
+}
+
+.meta-chip ion-label {
+	font-weight: 500;
+	letter-spacing: 0.02em;
+}
+
+.auth-card {
+	position: relative;
+	background: rgba(10, 15, 30, 0.78);
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	border-radius: 24px;
+	box-shadow: 0 28px 65px rgba(2, 4, 20, 0.6);
+	backdrop-filter: blur(16px);
+	overflow: hidden;
+	animation: cardFloat 0.85s cubic-bezier(0.21, 0.8, 0.32, 1) 0.08s both;
+}
+
+.auth-card::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(120deg, rgba(255, 255, 255, 0.08), transparent 55%);
+	opacity: 0;
+	transition: opacity 260ms ease;
+	pointer-events: none;
+}
+
+.auth-card:hover::after {
+	opacity: 1;
+}
+
+ion-card-header {
+	padding-inline: clamp(20px, 3vw, 28px);
+	padding-block: clamp(18px, 3vw, 24px);
+	color: var(--ion-color-light);
+}
+
+ion-card-subtitle {
+	text-transform: uppercase;
+	letter-spacing: 0.14em;
+	font-weight: 500;
+	opacity: 0.75;
+}
+
+ion-card-title {
+	font-size: clamp(1.2rem, 3vw, 1.55rem);
+	font-weight: 600;
+	letter-spacing: 0.02em;
+}
+
+ion-card-content {
+	padding-inline: clamp(20px, 3vw, 32px);
+	padding-block: clamp(18px, 3vw, 28px);
+}
+
+.form-fields {
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+}
+
+.auth-field {
+	--background: rgba(255, 255, 255, 0.02);
+	--border-radius: 16px;
+	--padding-start: 18px;
+	--inner-padding-end: 18px;
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	transition: border-color 160ms ease, transform 160ms ease, box-shadow 180ms ease;
+	transform: translateZ(0);
+}
+
+.auth-field ion-label {
+	color: rgba(255, 255, 255, 0.65);
+	letter-spacing: 0.03em;
+}
+
+.auth-field ion-input {
+	font-size: 1rem;
+	--padding-start: 0;
+	--color: var(--ion-color-light);
+	--placeholder-color: rgba(255, 255, 255, 0.45);
+}
+
+.auth-field:hover {
+	transform: translateY(-2px);
+	border-color: rgba(var(--page-accent-rgb), 0.35);
+}
+
+.auth-field:focus-within {
+	border-color: rgba(var(--page-accent-rgb), 0.58);
+	box-shadow: 0 0 0 2px rgba(var(--page-accent-rgb), 0.2);
+}
+
+.auth-field.invalid {
+	border-color: rgba(var(--ion-color-danger-rgb), 0.7);
+	box-shadow: 0 0 0 2px rgba(var(--ion-color-danger-rgb), 0.35);
+}
+
+.auth-field.invalid ion-label {
+	color: var(--ion-color-danger);
+}
+
+.actions {
+	margin-top: clamp(24px, 4vw, 32px);
+}
+
+.submit-button::part(native) {
+	background: linear-gradient(135deg, rgba(var(--page-accent-rgb), 1) 0%, rgba(var(--page-accent-rgb), 0.65) 100%);
+	border-radius: 16px;
+	padding: 14px 24px;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	box-shadow: 0 20px 38px rgba(var(--page-accent-rgb), 0.4);
+	transition: transform 200ms ease, box-shadow 220ms ease, filter 200ms ease;
+}
+
+.submit-button:hover::part(native) {
+	transform: translateY(-2px);
+	box-shadow: 0 26px 46px rgba(var(--page-accent-rgb), 0.45);
+	filter: brightness(1.02);
+}
+
+.submit-button:active::part(native) {
+	transform: translateY(1px);
+	box-shadow: 0 16px 30px rgba(var(--page-accent-rgb), 0.35);
+}
+
+@media (max-width: 767px) {
+	.header-meta {
+		gap: 6px;
+	}
+
+	.meta-chip::part(container) {
+		padding: 0 10px;
+	}
+
+	.auth-card {
+		border-radius: 20px;
+	}
+
+	.auth-page::before {
+		width: 340px;
+		height: 340px;
+		right: -120px;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.auth-wrapper,
+	.auth-card {
+		animation: none !important;
+	}
+}
+
+@keyframes fadeInUp {
+	from {
+		opacity: 0;
+		transform: translate3d(0, 16px, 0);
+	}
+	to {
+		opacity: 1;
+		transform: translate3d(0, 0, 0);
+	}
+}
+
+@keyframes cardFloat {
+	0% {
+		opacity: 0;
+		transform: translate3d(0, 24px, 0);
+	}
+	100% {
+		opacity: 1;
+		transform: translate3d(0, 0, 0);
+	}
+}
+
+@keyframes pulseGlow {
+	0%,
+	100% {
+		transform: scale(1);
+		opacity: 0.7;
+	}
+	40% {
+		transform: scale(1.05);
+		opacity: 1;
+	}
+}
+
+@keyframes drift {
+	0% {
+		transform: translate3d(0, 0, 0);
+	}
+	100% {
+		transform: translate3d(40px, -20px, 0);
+	}
+}

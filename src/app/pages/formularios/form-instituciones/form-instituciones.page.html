@@ -1,0 +1,96 @@
+
+
+<ion-content class="form-page" [fullscreen]="true">
+  <div class="form-wrapper">
+    <section class="form-header">
+      <ion-text color="light">
+        <h1>Administra instituciones aliadas</h1>
+        <p>Registra nuevas instituciones educativas junto con la información clave para la oferta académica.</p>
+      </ion-text>
+      <div class="header-meta">
+        <ion-chip class="meta-chip" color="light" [outline]="true">
+          <ion-icon name="business-outline"></ion-icon>
+          <ion-label>Registro oficial</ion-label>
+        </ion-chip>
+        <ion-chip class="meta-chip" color="light" [outline]="true">
+          <ion-icon name="analytics-outline"></ion-icon>
+          <ion-label>Reportes precisos</ion-label>
+        </ion-chip>
+      </div>
+    </section>
+
+    <ion-card class="form-card">
+      <ion-card-header>
+        <ion-card-subtitle>Formulario</ion-card-subtitle>
+        <ion-card-title>Datos de la institución</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <form [formGroup]="institutionForm" (ngSubmit)="submitInstitutionForm()" novalidate>
+          <ion-grid fixed class="form-grid">
+            <ion-row>
+              <ion-col size="12" size-md="6">
+                <app-input
+                  cssClass="form-field"
+                  lines="none"
+                  label="NIT"
+                  placeholder="Identificador de la institución"
+                  type="number"
+                  inputmode="numeric"
+                  labelPosition="stacked"
+                  [control]="institutionForm.get('Nit')">
+                </app-input>
+              </ion-col>
+
+              <ion-col size="12" size-md="6">
+                <app-input
+                  cssClass="form-field"
+                  lines="none"
+                  label="Nombre"
+                  placeholder="Nombre de la institución"
+                  labelPosition="stacked"
+                  [control]="institutionForm.get('Name')">
+                </app-input>
+              </ion-col>
+
+              <ion-col size="12">
+                <app-input
+                  cssClass="form-field"
+                  lines="none"
+                  label="Dirección"
+                  placeholder="Dirección principal"
+                  labelPosition="stacked"
+                  [control]="institutionForm.get('Address')">
+                </app-input>
+              </ion-col>
+
+              <ion-col size="12" size-md="6">
+                <app-input
+                  cssClass="form-field"
+                  lines="none"
+                  label="Valor del curso"
+                  placeholder="Ej: 250000"
+                  type="number"
+                  inputmode="decimal"
+                  labelPosition="stacked"
+                  [control]="institutionForm.get('Course_Value')">
+                </app-input>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+
+          <div class="actions">
+            <app-button
+              cssClass="submit-button"
+              expand="block"
+              type="submit"
+              label="Registrar institución"
+               [disabled]="!institutionForm.valid">
+              <ion-icon slot="start" name="ribbon-outline"></ion-icon>
+
+            </app-button>
+          </div>
+        </form>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

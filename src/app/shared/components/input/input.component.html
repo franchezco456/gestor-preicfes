@@ -1,0 +1,15 @@
+<ion-item [lines]="lines" [ngClass]="cssClass">
+  <ion-label [position]="labelPosition">{{ label }}</ion-label>
+  <ion-input
+    [placeholder]="placeholder"
+    [type]="type"
+    [value]="control?.value ?? ''"
+    [inputmode]="inputmode"
+    [autocomplete]="autocomplete"
+    (ionInput)="onInput($event)"
+    (ionBlur)="onBlur()">
+    @if(type === "password"){
+    <ion-input-password-toggle slot="end"></ion-input-password-toggle>
+  }
+  </ion-input>
+</ion-item>

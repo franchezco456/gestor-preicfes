@@ -1,4 +1,77 @@
+:host {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 .chart-container {
   width: 100%;
+  max-width: 100%;
   padding: 16px;
+  box-sizing: border-box;
+}
+
+apx-chart {
+  width: 100% !important;
+  max-width: 100% !important;
+  
+  ::ng-deep {
+    .apexcharts-canvas {
+      margin: 0 auto;
+      max-width: 100%;
+    }
+    
+    svg {
+      max-width: 100%;
+      height: auto;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .chart-container {
+    padding: 8px;
+  }
+  
+  apx-chart {
+    ::ng-deep {
+      .apexcharts-legend {
+        font-size: 10px !important;
+      }
+      
+      .apexcharts-datalabel-label,
+      .apexcharts-datalabel-value {
+        font-size: 10px !important;
+      }
+      
+      .apexcharts-title-text {
+        font-size: 14px !important;
+      }
+    }
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .chart-container {
+    padding: 12px;
+  }
+  
+  apx-chart {
+    ::ng-deep {
+      .apexcharts-legend {
+        font-size: 12px !important;
+      }
+      
+      .apexcharts-title-text {
+        font-size: 16px !important;
+      }
+    }
+  }
+}
+
+@media (min-width: 769px) {
+  .chart-container {
+    padding: 16px;
+  }
 }

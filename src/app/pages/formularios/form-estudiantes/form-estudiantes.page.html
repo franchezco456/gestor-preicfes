@@ -1,0 +1,142 @@
+
+
+<ion-content class="form-page" [fullscreen]="true">
+  <div class="form-wrapper">
+    <section class="form-header">
+      <ion-text color="light">
+        <h1>Inscribe nuevos estudiantes</h1>
+        <p>Completa la información básica del estudiante y asigna la institución educativa correspondiente.</p>
+      </ion-text>
+      <div class="header-meta">
+        <ion-chip class="meta-chip" color="light" [outline]="true">
+          <ion-icon name="shield-checkmark-outline"></ion-icon>
+          <ion-label>Datos protegidos</ion-label>
+        </ion-chip>
+        <ion-chip class="meta-chip" color="light" [outline]="true">
+          <ion-icon name="flash-outline"></ion-icon>
+          <ion-label>Validación en tiempo real</ion-label>
+        </ion-chip>
+      </div>
+    </section>
+
+    <ion-card class="form-card">
+      <ion-card-header>
+        <ion-card-subtitle>Formulario</ion-card-subtitle>
+        <ion-card-title>Datos del estudiante</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <form [formGroup]="studentForm" (ngSubmit)="submitStudentForm()" novalidate>
+          <ion-grid fixed class="form-grid">
+            <ion-row>
+              <ion-col size="12" size-md="6">
+                <app-input
+                  cssClass="form-field"
+                  lines="none"
+                  label="TI"
+                  placeholder="Documento del estudiante"
+                  type="number"
+                  inputmode="numeric"
+                  labelPosition="stacked"
+                  [control]="studentForm.get('TI')">
+                </app-input>
+              </ion-col>
+
+              <ion-col size="12" size-md="6">
+                <app-input
+                  cssClass="form-field"
+                  lines="none"
+                  label="Nombre"
+                  placeholder="Nombre del estudiante"
+                  labelPosition="stacked"
+                  [control]="studentForm.get('Name')">
+                </app-input>
+              </ion-col>
+
+              <ion-col size="12" size-md="6">
+                <app-input
+                  cssClass="form-field"
+                  lines="none"
+                  label="Apellido"
+                  placeholder="Apellido del estudiante"
+                  labelPosition="stacked"
+                  [control]="studentForm.get('LastName')">
+                </app-input>
+              </ion-col>
+
+              <ion-col size="12" size-md="6">
+                <app-input
+                  cssClass="form-field"
+                  lines="none"
+                  label="Dirección"
+                  placeholder="Dirección de residencia"
+                  labelPosition="stacked"
+                  [control]="studentForm.get('Address')">
+                </app-input>
+              </ion-col>
+
+              <ion-col size="12" size-md="6">
+                <app-input
+                  cssClass="form-field"
+                  lines="none"
+                  label="Correo electrónico"
+                  placeholder="correo@institucion.com"
+                  type="email"
+                  autocomplete="email"
+                  labelPosition="stacked"
+                  [control]="studentForm.get('Email')">
+                </app-input>
+              </ion-col>
+
+              <ion-col size="12" size-md="6">
+                <app-input
+                  cssClass="form-field"
+                  lines="none"
+                  label="Número de contacto"
+                  placeholder="Número principal"
+                  type="tel"
+                  inputmode="tel"
+                  labelPosition="stacked"
+                  [control]="studentForm.get('Number')">
+                </app-input>
+              </ion-col>
+
+              <ion-col size="12" size-md="6">
+                <app-input
+                  cssClass="form-field"
+                  lines="none"
+                  label="Curso"
+                  placeholder="Curso actual"
+                  labelPosition="stacked"
+                  [control]="studentForm.get('Grade')">
+                </app-input>
+              </ion-col>
+
+              <ion-col size="12" size-md="6">
+                <app-select
+                  cssClass="form-field"
+                  lines="none"
+                  label="Institución educativa"
+                  placeholder="Selecciona una institución"
+                  [required]="true"
+                  [options]="institutionsOptions"
+                  [control]="studentForm.get('Nit_Educational_Institution')">
+                </app-select>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+
+          <div class="actions">
+            <app-button
+              cssClass="submit-button"
+              expand="block"
+              type="submit"
+              label="Registrar estudiante"
+              [disabled]="!studentForm.valid">
+              <ion-icon slot="start" name="save-outline"></ion-icon>
+            </app-button>
+          </div>
+        </form>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

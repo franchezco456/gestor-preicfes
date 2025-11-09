@@ -1,0 +1,28 @@
+import { Component, Input, OnInit } from '@angular/core';
+
+type ButtonFill = 'clear' | 'default' | 'outline' | 'solid';
+type ButtonType = 'button' | 'submit';
+type ButtonExpand = 'block' | 'full' | 'default';
+@Component({
+  selector: 'app-button',
+  templateUrl: './button.component.html',
+  styleUrls: ['./button.component.scss'],
+  standalone: false,
+})
+export class ButtonComponent  implements OnInit {
+  @Input () label : string = 'Button';
+  @Input () disabled : boolean = false;
+  @Input () fill : ButtonFill = 'solid';
+  @Input () color : string | undefined;
+  @Input () type : ButtonType = 'button';
+  @Input () expand : ButtonExpand = 'default';
+  @Input () cssClass : string = '';
+  constructor() { }
+
+  ngOnInit() {}
+
+  get expandValue(): 'block' | 'full' | undefined {
+    return this.expand === 'default' ? undefined : this.expand;
+  }
+
+}

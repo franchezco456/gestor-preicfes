@@ -2,23 +2,13 @@ import { Injectable } from '@angular/core';
 import { 
   PaymentData, 
   AccumulatedPaymentData, 
-  StudentsByInstitutionData 
-} from 'src/app/domain/models';
-
-export interface ChartConfig {
-  title?: string;
-  subtitle?: string;
-  height?: number;
-  colors?: string[];
-  xAxisTitle?: string;
-  yAxisTitle?: string;
-  showToolbar?: boolean;
-  showDataLabels?: boolean;
-  showLegend?: boolean;
-  legendPosition?: 'top' | 'right' | 'bottom' | 'left';
-  valueFormatter?: (val: number) => string;
-  labelFormatter?: (val: number) => string;
-}
+  StudentsByInstitutionData,
+  PieChartConfig,
+  DonutChartConfig,
+  BarChartConfig,
+  LineChartConfig,
+  BaseChartConfig
+} from '../../../../domain/models';
 
 @Injectable({
   providedIn: 'root'
@@ -27,7 +17,7 @@ export class ChartService {
 
   constructor() { }
 
-  private defaultConfig: ChartConfig = {
+  private defaultConfig: Partial<BaseChartConfig> = {
     height: 350,
     showToolbar: true,
     showDataLabels: true,
@@ -36,10 +26,38 @@ export class ChartService {
     colors: ['blue', 'green', 'orange', 'red', 'purple', 'pink']
   };
 
+  private getResponsiveConfig(): any[] {
+    return [
+      {
+        breakpoint: 480,
+        options: {
+          chart: { width: '100%', height: 300 },
+          legend: { position: 'bottom', fontSize: '12px' },
+          dataLabels: { style: { fontSize: '10px' } }
+        }
+      },
+      {
+        breakpoint: 768,
+        options: {
+          chart: { width: '100%', height: 320 },
+          legend: { position: 'bottom', fontSize: '13px' },
+          dataLabels: { style: { fontSize: '11px' } }
+        }
+      },
+      {
+        breakpoint: 1024,
+        options: {
+          chart: { width: '100%', height: 350 },
+          legend: { fontSize: '14px' }
+        }
+      }
+    ];
+  }
+
   createPieChart(
     data: number[],
     labels: string[],
-    config: ChartConfig = {}
+    config: Partial<PieChartConfig> = {}
   ): any {
     const finalConfig = { ...this.defaultConfig, ...config };
 
@@ -67,19 +85,13 @@ export class ChartService {
           return val.toFixed(1) + '%';
         }
       },
-      responsive: [{
-        breakpoint: 480,
-        options: {
-          chart: { width: 300 },
-          legend: { position: 'bottom' }
-        }
-      }]
+      responsive: this.getResponsiveConfig()
     };
   }
 
   createBarChart(
     data: { x: string; y: number }[] | PaymentData[] | StudentsByInstitutionData[],
-    config: ChartConfig = {}
+    config: Partial<BarChartConfig> = {}
   ): any {
     const finalConfig = { ...this.defaultConfig, ...config };
     
@@ -99,7 +111,7 @@ export class ChartService {
 
     return {
       series: [{
-        name: config.subtitle || 'Valor',
+        name: finalConfig.subtitle || 'Valor',
         data: formattedData
       }],
       chart: {
@@ -148,13 +160,14 @@ export class ChartService {
       legend: {
         show: finalConfig.showLegend,
         position: finalConfig.legendPosition
-      }
+      },
+      responsive: this.getResponsiveConfig()
     };
   }
 
   createLineChart(
     data: { x: string; y: number }[] | AccumulatedPaymentData[],
-    config: ChartConfig = {}
+    config: Partial<LineChartConfig> = {}
   ): any {
     const finalConfig = { ...this.defaultConfig, ...config };
     
@@ -171,7 +184,7 @@ export class ChartService {
 
     return {
       series: [{
-        name: config.subtitle || 'Valor',
+        name: finalConfig.subtitle || 'Valor',
         data: formattedData
       }],
       chart: {
@@ -221,16 +234,17 @@ export class ChartService {
       legend: {
         show: finalConfig.showLegend,
         position: finalConfig.legendPosition
-      }
+      },
+      responsive: this.getResponsiveConfig()
     };
   }
 
   createDonutChart(
     data: number[],
     labels: string[],
-    config: ChartConfig = {}
+    config: Partial<DonutChartConfig> = {}
   ): any {
-    const pieConfig = this.createPieChart(data, labels, config);
+    const pieConfig = this.createPieChart(data, labels, config as Partial<PieChartConfig>);
     pieConfig.chart.type = 'donut';
     return pieConfig;
   }
