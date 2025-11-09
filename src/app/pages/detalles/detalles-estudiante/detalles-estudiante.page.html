@@ -78,25 +78,4 @@
 
 
 
-  <!-- Floating action button with multiple actions -->
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-    <!-- main toggle button -->
-    <ion-fab-button aria-label="Acciones" color="primary">
-      <ion-icon name="menu"></ion-icon>
-    </ion-fab-button>
-
-    <!-- list of action buttons -->
-    <ion-fab-list side="start">
-      <ion-fab-button color="tertiary" size="small" title="Registrar Pago" (click)="goToRegisterPayment()" aria-label="Registrar Pago">
-        <ion-icon name="card"></ion-icon>
-      </ion-fab-button>
-      <ion-fab-button color="success" size="small" title="Registrar Estudiante" (click)="goToRegisterStudent()" aria-label="Registrar Estudiante">
-        <ion-icon name="person-add"></ion-icon>
-      </ion-fab-button>
-      <ion-fab-button color="medium" size="small" title="Cerrar sesión" (click)="logout()" aria-label="Cerrar sesión">
-        <ion-icon name="log-out"></ion-icon>
-      </ion-fab-button>
-    </ion-fab-list>
-  </ion-fab>
-
 </ion-content>

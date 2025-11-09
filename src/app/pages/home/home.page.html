@@ -8,7 +8,11 @@
   </ion-list>
 </app-sidebar>
 
-<ion-content id="home-content" [fullscreen]="true" class="form-page home-with-search">
+<ion-content
+  id="home-content"
+  [fullscreen]="true"
+  class="form-page home-with-search"
+>
   <div class="home-topbar">
     <button class="menu-btn" (click)="toggleMenu()" aria-label="Abrir menú">
       <ion-icon name="menu"></ion-icon>
@@ -19,11 +23,16 @@
         cssClass="form-field"
         placeholder="Buscar estudiante por nombre, apellido o TI"
         [value]="searchQuery"
-        (valueChange)="onSearchInput($event)">
+        (valueChange)="onSearchInput($event)"
+      >
       </app-searchbar>
 
       <ion-list *ngIf="filteredResults.length" class="search-results">
-        <ion-item *ngFor="let r of filteredResults" button (click)="selectSearchResult(r)">
+        <ion-item
+          *ngFor="let r of filteredResults"
+          button
+          (click)="selectSearchResult(r)"
+        >
           <ion-label>
             <h3>{{ r.Name }} {{ r.LastName }}</h3>
             <p>ID: {{ r.ID }}</p>
@@ -33,18 +42,28 @@
     </div>
   </div>
 
+  <div>
+    <ion-card>
+      <app-chart [chartOptions]="studentPagos" cssClass="home-chart">
+      </app-chart>
+    </ion-card>
+  </div>
+
   <div class="home-actions">
     <ion-button (click)="execute()">Go</ion-button>
     <ion-button (click)="logout()">logout</ion-button>
     <ion-button (click)="gotoRE()">registrar estudiantes</ion-button>
     <ion-button (click)="gotoRC()">registrar coordinadores</ion-button>
-    <ion-button (click)="gotoRI()">registrar institucionies educativas</ion-button>
+    <ion-button (click)="gotoRI()"
+      >registrar institucionies educativas</ion-button
+    >
   </div>
 
   <!-- Shared FAB component (bottom-right, actions upward) -->
   <app-fabbutom
     (registerPayment)="goToRegisterPayment()"
     (registerStudent)="gotoRE()"
-    (logout)="logout()">
+    (logout)="logout()"
+  >
   </app-fabbutom>
 </ion-content>

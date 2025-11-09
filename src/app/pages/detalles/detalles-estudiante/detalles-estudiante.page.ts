@@ -1,7 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { Auth } from 'src/app/core/services/auth/auth';
-import { Preferences } from 'src/app/core/services/preferences/preferences';
 
 @Component({
   selector: 'app-detalles-estudiante',
@@ -31,11 +28,7 @@ export class DetallesEstudiantePage implements OnInit {
     totalPreicfes: 120000
   };
 
-  constructor(
-    private readonly router: Router,
-    private readonly authSrv: Auth,
-    private readonly preferencesSrv: Preferences
-  ) {}
+  constructor() {}
 
   ngOnInit() {
     // If navigation provided a student in state, use it to populate the view
@@ -62,31 +55,6 @@ export class DetallesEstudiantePage implements OnInit {
   public addPayment() {
     // open payment flow or navigate to payment form
     console.log('Add payment for', this.student.identificacion);
-  }
-
-  public goToRegisterPayment() {
-    // navigate to the payment registration form
-    this.router.navigate(['/form-pagos']);
-  }
-
-  public goToRegisterStudent() {
-    // navigate to the student registration form
-    this.router.navigate(['/form-estudiantes']);
-  }
-
-  public async logout() {
-    // perform logout and navigate to login
-    try {
-      await this.authSrv.logout();
-    } catch (err) {
-      console.warn('Logout failed (ignored):', err);
-    }
-    try {
-      await this.preferencesSrv.removePreferences('login');
-    } catch (err) {
-      console.warn('Failed to remove preferences (ignored):', err);
-    }
-    this.router.navigate(['/login']);
   }
 
 }
