@@ -25,8 +25,7 @@ export class FormEstudiantesPage {
   public institutionsOptions: SelectOption[] = [];
   public isCoordinator: boolean = true;
 
-  constructor(private readonly formBuilder: FormBuilder, 
-    private readonly institutionSrv: Institution,
+  constructor(private readonly formBuilder: FormBuilder,
     private readonly coordAuthSrv: Coordinator,
     private readonly querySrv: Query,
     private readonly loadingSrv: Loading,
@@ -46,13 +45,13 @@ export class FormEstudiantesPage {
       LastName: ['', [Validators.required, Validators.minLength(2)]],
       Address: ['', [Validators.required, Validators.minLength(5)]],
       Email: ['', [Validators.required, Validators.email]],
-      Number: ['', [Validators.required, Validators.pattern(/^\d{7,12}$/)]],
+      Phone: ['', [Validators.required, Validators.pattern(/^\d{7,12}$/)]],
       // Grade may contain alphanumeric characters (e.g. "11A")
       Grade: ['', [Validators.required, Validators.minLength(5)]],
       // Financial fields
       Discount: ['', [Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
       Installments: ['', [Validators.required, Validators.pattern(/^\d+$/)]],
-      Nit_Educational_Institution: ['', [Validators.required]],
+      Id_IE: ['', [Validators.required]],
     });
 
     // No extra input required when selecting 'OT' (otros)
@@ -65,8 +64,6 @@ export class FormEstudiantesPage {
   //  }
     try {
     await this.loadingSrv.showLoading("Registrando estudiante...");
-    let phone = '9089786756';
-    let id_ie =  '001-123456';
     let cicle = '001';
     const Student = {
       id_student: this.studentForm.value.TI,
@@ -75,11 +72,11 @@ export class FormEstudiantesPage {
       lastname: this.studentForm.value.LastName,
       email: this.studentForm.value.Email,
       address: this.studentForm.value.Address,
-      phone : phone,
+      phone : this.studentForm.value.Phone,
       grade: this.studentForm.value.Grade,
       discount: this.studentForm.value.Discount ? parseFloat(this.studentForm.value.Discount) : undefined,
       installments: this.studentForm.value.Installments ? parseInt(this.studentForm.value.Installments, 10) : undefined,
-      id_ie_cicle : id_ie,
+      id_ie_cicle : this.studentForm.value.Id_IE,
       id_cicle : cicle
     }
     const response = await this.querySrv.execute_Function('register_student', Student);
@@ -96,10 +93,11 @@ export class FormEstudiantesPage {
   public async getEducationalInstitutions() {
     try {
       await this.loadingSrv.showLoading("Cargando instituciones educativas...");
-      const institutions = await this.institutionSrv.getAllInstitutions();
-      this.institutionsOptions = institutions.map((inst) : SelectOption => ({
-        value: inst.NIT,
-        text: inst.Name
+      const institutions = await this.querySrv.execute_Function('get_ie_by_cicle', {p_id_cicle : '001'});
+      console.log("Instituciones educativas: " + JSON.stringify(institutions));
+      this.institutionsOptions = institutions.map((inst : any) : SelectOption => ({
+        value: inst.id_ie_cicle_out,
+        text: inst.name_out
       }));
       await this.loadingSrv.dismissLoading();
     } catch (error) {
@@ -115,7 +113,7 @@ export class FormEstudiantesPage {
         return;
       }
       const nit = credentials.coordData.Nit_Educational_Institution;
-      this.studentForm.get('Nit_Educational_Institution')?.setValue(nit);
+      this.studentForm.get('Id_IE')?.setValue(nit);
     
   }
 }

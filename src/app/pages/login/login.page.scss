@@ -14,6 +14,8 @@
 .auth-wrapper { width: min(960px,100%); padding: 16px; box-sizing: border-box; }
 
 .auth-header h1 { color: #0B1114; }
+.auth-header p { color: #0B1114; }
+.header-meta .meta-chip { color: #0B1114; }
 
 @media (prefers-reduced-motion: reduce) {
   .auth-wrapper { animation: none !important; }

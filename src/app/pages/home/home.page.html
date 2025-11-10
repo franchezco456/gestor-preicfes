@@ -1,5 +1,5 @@
 
-<app-sidebar #sidebar menuId="homeMenu" contentId="home-content" side="start">
+<app-sidebar #sidebar menuId="homeMenu" contentId="home-content" side="start" coordinatorName = "Julian" coordinatorLastName = "Enriquez" coordinatorInstitution = "Ins a">
 
 </app-sidebar>
 
@@ -42,16 +42,6 @@
       <app-chart [chartOptions]="studentPagos" cssClass="home-chart">
       </app-chart>
     </ion-card>
-  </div>
-
-  <div class="home-actions">
-    <ion-button (click)="execute()">Go</ion-button>
-    <ion-button (click)="logout()">logout</ion-button>
-    <ion-button (click)="gotoRE()">registrar estudiantes</ion-button>
-    <ion-button (click)="gotoRC()">registrar coordinadores</ion-button>
-    <ion-button (click)="gotoRI()"
-      >registrar institucionies educativas</ion-button
-    >
   </div>
 
   <!-- Shared FAB component (bottom-right, actions upward) -->

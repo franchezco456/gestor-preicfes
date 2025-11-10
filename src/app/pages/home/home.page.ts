@@ -8,6 +8,8 @@ import { Institution } from 'src/app/shared/services/institution/institution';
 import { Institution as In } from 'src/domain/models/Institution';
 import { ChartService } from 'src/app/shared/services/chart/chart-service';
 import { PaymentStatusData } from 'src/domain/models';
+import { Loading } from 'src/app/core/services/loading/loading';
+import { Toast } from 'src/app/core/services/toast/toast';
 
 @Component({
   selector: 'app-home',
@@ -50,9 +52,9 @@ export class HomePage implements OnInit {
 
   private initializeChart(): void {
     const datosDePagos: PaymentStatusData[] = [
-      { status: 'Paid', count: 80000, label: 'Pago 1' },
-      { status: 'Pending', count: 120000, label: 'Pago 2' },
-      { status: 'Not Paid', count: 50000, label: 'Pago 3' },
+      { status: 'Paid', count: 80000, label: 'Pagado' },
+      { status: 'Pending', count: 120000, label: 'En Proceso' },
+      { status: 'Not Paid', count: 50000, label: 'No Iniciado' },
     ];
     this.studentPagos = this.chartSrv.createPieChart(
       datosDePagos.map((d) => d.count),
@@ -101,8 +103,12 @@ export class HomePage implements OnInit {
     public readonly querySrv: Query,
     private readonly chartSrv: ChartService,
     private readonly preferencesSrv: Preferences,
-    private readonly router: Router
-  ) {}
+    private readonly router: Router,
+    private readonly loadingSrv: Loading,
+    private readonly toastSrv: Toast
+  ) {
+    this.getStudents();
+  }
 
   public async go() {
     const register = await this.authSrv.register('hello1@gmail.com', 'world2');
@@ -202,5 +208,22 @@ export class HomePage implements OnInit {
 
   public goToRegisterPayment() {
     this.router.navigate(['/form-pagos']);
+  }
+
+  public async getStudents(){
+    try {
+      await this.loadingSrv.showLoading();
+      const students = await this.querySrv.execute_Function('get_students_by_ie_cicle', {p_id_ie_cicle : '001-123456'});
+      console.log("Estudiantes: " + JSON.stringify(students));
+      this.searchData = students.map((stud : any) => ({
+        Name: stud.nombre_out,
+        LastName: stud.apellido_out,
+        ID: stud.invoice_id_out
+      }));
+      await this.loadingSrv.dismissLoading();
+    } catch (error) {
+      this.toastSrv.showErrorToast("Error al cargar las instituciones educativas.");
+      await this.loadingSrv.dismissLoading();
+    }
   }
 }

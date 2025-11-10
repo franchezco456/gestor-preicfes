@@ -1,5 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Loading } from 'src/app/core/services/loading/loading';
+import { Query } from 'src/app/core/services/query/query';
+import { Toast } from 'src/app/core/services/toast/toast';
 
 interface SearchOptions {
   Name: string;
@@ -19,20 +22,17 @@ export class FormPagosPage implements OnInit {
   public paymentForm!: FormGroup;
   public submittedResult: any = null;
   // Searchbar related
-  public searchData: SearchOptions[] = [
-    {
-      Name: 'fulanito',
-      LastName: 'de tal',
-      ID: '1234',
-    },
-    { Name: 'fulanito2', LastName: 'de tal2', ID: '12345' },
-    { Name: 'Rafa', LastName: 'Mallarino', ID: '1042576911' },
-  ];
+  public searchData: SearchOptions[] = [];
   public filteredResults: SearchOptions[] = [];
   public searchQuery: string = '';
 
-  constructor(private readonly formBuilder: FormBuilder) {
+  constructor(private readonly formBuilder: FormBuilder,
+    private readonly querySrv: Query,
+        private readonly loadingSrv: Loading,
+        private readonly toastSrv: Toast,
+  ) {
     this.initForm();
+    this.getStudents();
   }
 
   ngOnInit() {
@@ -94,5 +94,22 @@ export class FormPagosPage implements OnInit {
     this.paymentForm.get('documentNumber')?.setValue(item.ID);
     this.searchQuery = `${item.Name} ${item.LastName}`;
     this.filteredResults = [];
+  }
+
+  public async getStudents(){
+    try {
+      await this.loadingSrv.showLoading();
+      const students = await this.querySrv.execute_Function('get_students_by_ie_cicle', {p_id_ie_cicle : '001-123456'});
+      console.log("Estudiantes: " + JSON.stringify(students));
+      this.searchData = students.map((stud : any) : SearchOptions => ({
+        Name: stud.nombre_out,
+        LastName: stud.apellido_out,
+        ID: stud.invoice_id_out
+      }));
+      await this.loadingSrv.dismissLoading();
+    } catch (error) {
+      this.toastSrv.showErrorToast("Error al cargar las instituciones educativas.");
+      await this.loadingSrv.dismissLoading();
+    }
   }
 }
