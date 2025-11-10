@@ -31,8 +31,9 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 16px;
+  padding: 20px 16px 12px 16px !important;
   background: transparent;
+  
 }
 
 .menu-btn {
@@ -76,8 +77,85 @@
   background: transparent;
 }
 
+/* Remove default grid/col paddings so the searchbar and menu align flush */
+.form-page .home-topbar ion-grid,
+.form-page .home-topbar ion-row,
+.form-page .home-topbar ion-col {
+  padding: 0;
+  margin: 0;
+}
+
+/* Slightly reduce overall topbar padding to avoid large empty areas */
+.form-page .home-topbar {
+  padding: 8px 10px;
+}
+
+/* make topbar a positioning context so results can overlay content */
+.form-page .home-topbar {
+  position: relative;
+}
+
+/* If the results list is rendered directly inside the search wrapper, make it overlay */
+.home-search-wrapper {
+  position: relative;
+}
+
+.home-search-wrapper .search-results {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 40;
+  background: var(--ion-background-color, #fff);
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  max-height: 320px;
+  overflow: auto;
+  margin: 0;
+}
+
 .home-search-wrapper app-searchbar {
-  display: block;
+  display: flex;
+}
+
+/* Make the search wrapper and results take full available width */
+.home-search-wrapper {
+  width: 100%;
+  margin: 0;
+}
+
+.search-results-container {
+  padding: 0 10px;
+  width: 100%;
+  position: absolute; /* overlay */
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 40;
+}
+
+.search-results {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  background: var(--ion-background-color, #fff);
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  max-height: 320px;
+  overflow: auto;
+}
+
+.search-results ion-item {
+  margin: 6px 0;
+  border-radius: 12px;
+  overflow: hidden;
+  --padding-start: 12px; /* reduce left inset */
+  --padding-end: 12px;
+}
+
+/* Make the chart card expand reasonably and remove large side gaps */
+ion-card.home-chart, ion-card {
+  margin: 10px;
 }
 
 .search-results ion-item {

@@ -1,11 +1,6 @@
-<!-- Sidebar menu is a sibling of the content; it targets the content via contentId -->
+
 <app-sidebar #sidebar menuId="homeMenu" contentId="home-content" side="start">
-  <ion-list>
-    <ion-item routerLink="/home">Inicio</ion-item>
-    <ion-item routerLink="/form-estudiantes">Registrar Estudiante</ion-item>
-    <ion-item routerLink="/form-coordinadores">Registrar Coordinador</ion-item>
-    <ion-item routerLink="/form-instituciones">Registrar Institución</ion-item>
-  </ion-list>
+
 </app-sidebar>
 
 <ion-content
@@ -21,7 +16,7 @@
     <div class="home-search-wrapper">
       <app-searchbar
         cssClass="form-field"
-        placeholder="Buscar estudiante por nombre, apellido o TI"
+        placeholder="Buscar un estudiante"
         [value]="searchQuery"
         (valueChange)="onSearchInput($event)"
       >

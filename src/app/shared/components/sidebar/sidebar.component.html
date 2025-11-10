@@ -26,37 +26,37 @@
 
     <ion-list class="sidebar-list">
       <!-- Estudiantes section -->
-      <ion-item button lines="none" (click)="toggleSection('students')" class="section-header">
+      <ion-item button lines="none" detail="false" (click)="toggleSection('students')" class="section-header">
         <ion-label>ESTUDIANTES</ion-label>
         <ion-icon slot="end" [name]="studentsOpen ? 'chevron-down' : 'chevron-forward'"></ion-icon>
       </ion-item>
 
       <div *ngIf="studentsOpen" class="section-children">
-        <ion-item button (click)="navigateTo('/consultar-estudiante')">
+        <ion-item button detail="false" (click)="navigateTo('/consultar-estudiante')">
           <ion-label>Consultar Estudiante</ion-label>
         </ion-item>
-        <ion-item button (click)="navigateTo('/form-estudiantes')">
+        <ion-item button detail="false" (click)="navigateTo('/form-estudiantes')">
           <ion-label>Registrar Estudiante</ion-label>
         </ion-item>
-        <ion-item button (click)="navigateTo('/actualizar-estudiante')">
+        <ion-item button detail="false" (click)="navigateTo('/actualizar-estudiante')">
           <ion-label>Actualizar Estudiante</ion-label>
         </ion-item>
-        <ion-item button (click)="navigateTo('/eliminar-estudiante')">
+        <ion-item button detail="false" (click)="navigateTo('/eliminar-estudiante')">
           <ion-label>Eliminar Estudiante</ion-label>
         </ion-item>
       </div>
 
       <!-- Pagos section -->
-      <ion-item button lines="none" (click)="toggleSection('payments')" class="section-header">
+      <ion-item button lines="none" detail="false" (click)="toggleSection('payments')" class="section-header">
         <ion-label>PAGOS</ion-label>
         <ion-icon slot="end" [name]="paymentsOpen ? 'chevron-down' : 'chevron-forward'"></ion-icon>
       </ion-item>
 
       <div *ngIf="paymentsOpen" class="section-children">
-        <ion-item button (click)="navigateTo('/form-pagos')">
+        <ion-item button detail="false" (click)="navigateTo('/form-pagos')">
           <ion-label>Registrar pago</ion-label>
         </ion-item>
-        <ion-item button (click)="navigateTo('/consultar-pago')">
+        <ion-item button detail="false" (click)="navigateTo('/consultar-pago')">
           <ion-label>Consultar pago</ion-label>
         </ion-item>
       </div>
