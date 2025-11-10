@@ -17,6 +17,8 @@ export class SelectComponent {
   @Input() lines: 'full' | 'inset' | 'none' = 'none';
   @Input() interface: 'alert' | 'action-sheet' | 'popover' = 'popover';
 
+  @Input() disabled: boolean = false;
+
   public onChange(event: CustomEvent<{ value: any }>): void {
     if (!this.control) {
       return;

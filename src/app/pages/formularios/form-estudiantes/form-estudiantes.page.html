@@ -1,11 +1,15 @@
-
-
 <ion-content class="form-page" [fullscreen]="true">
   <div class="form-wrapper">
     <section class="form-header">
+       <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
       <ion-text color="light">
         <h1>Inscribe nuevos estudiantes</h1>
-        <p>Completa la información básica del estudiante y asigna la institución educativa correspondiente.</p>
+        <p>
+          Completa la información básica del estudiante y asigna la institución
+          educativa correspondiente.
+        </p>
       </ion-text>
       <div class="header-meta">
         <ion-chip class="meta-chip" color="light" [outline]="true">
@@ -25,19 +29,42 @@
         <ion-card-title>Datos del estudiante</ion-card-title>
       </ion-card-header>
       <ion-card-content>
-        <form [formGroup]="studentForm" (ngSubmit)="submitStudentForm()" novalidate>
+        <form
+          [formGroup]="studentForm"
+          (ngSubmit)="submitStudentForm()"
+          novalidate
+        >
           <ion-grid fixed class="form-grid">
             <ion-row>
-              <ion-col size="12" size-md="6">
+              <ion-col size="12" size-md="3">
+                <app-select
+                  cssClass="form-field"
+                  lines="none"
+                  label="Tipo documento"
+                  [options]="[
+                    { value: 'CC', text: 'Cédula de ciudadanía' },
+                    { value: 'TI', text: 'Tarjeta de identidad' },
+                    { value: 'PP', text: 'Permiso de Permanencia' },
+                    { value: 'OT', text: 'Otro' }
+                  ]"
+                  [control]="studentForm.get('DocumentType')"
+                >
+                </app-select>
+              </ion-col>
+
+              <!-- No extra input when 'Otro' is selected; DocumentType will be submitted as-is -->
+
+              <ion-col size="12" size-md="3">
                 <app-input
                   cssClass="form-field"
                   lines="none"
-                  label="TI"
+                  label="Número de documento"
                   placeholder="Documento del estudiante"
                   type="number"
                   inputmode="numeric"
                   labelPosition="stacked"
-                  [control]="studentForm.get('TI')">
+                  [control]="studentForm.get('TI')"
+                >
                 </app-input>
               </ion-col>
 
@@ -48,7 +75,8 @@
                   label="Nombre"
                   placeholder="Nombre del estudiante"
                   labelPosition="stacked"
-                  [control]="studentForm.get('Name')">
+                  [control]="studentForm.get('Name')"
+                >
                 </app-input>
               </ion-col>
 
@@ -59,7 +87,8 @@
                   label="Apellido"
                   placeholder="Apellido del estudiante"
                   labelPosition="stacked"
-                  [control]="studentForm.get('LastName')">
+                  [control]="studentForm.get('LastName')"
+                >
                 </app-input>
               </ion-col>
 
@@ -70,7 +99,8 @@
                   label="Dirección"
                   placeholder="Dirección de residencia"
                   labelPosition="stacked"
-                  [control]="studentForm.get('Address')">
+                  [control]="studentForm.get('Address')"
+                >
                 </app-input>
               </ion-col>
 
@@ -83,7 +113,8 @@
                   type="email"
                   autocomplete="email"
                   labelPosition="stacked"
-                  [control]="studentForm.get('Email')">
+                  [control]="studentForm.get('Email')"
+                >
                 </app-input>
               </ion-col>
 
@@ -96,7 +127,8 @@
                   type="tel"
                   inputmode="tel"
                   labelPosition="stacked"
-                  [control]="studentForm.get('Number')">
+                  [control]="studentForm.get('Number')"
+                >
                 </app-input>
               </ion-col>
 
@@ -107,7 +139,36 @@
                   label="Curso"
                   placeholder="Curso actual"
                   labelPosition="stacked"
-                  [control]="studentForm.get('Grade')">
+                  [control]="studentForm.get('Grade')"
+                >
+                </app-input>
+              </ion-col>
+
+              <ion-col size="12" size-md="6">
+                <app-input
+                  cssClass="form-field"
+                  lines="none"
+                  label="Descuento"
+                  placeholder="Ej: 5000"
+                  type="number"
+                  inputmode="decimal"
+                  labelPosition="stacked"
+                  [control]="studentForm.get('Discount')"
+                >
+                </app-input>
+              </ion-col>
+
+              <ion-col size="12" size-md="6">
+                <app-input
+                  cssClass="form-field"
+                  lines="none"
+                  label="Cuotas a pagar"
+                  placeholder="Número de cuotas"
+                  type="number"
+                  inputmode="numeric"
+                  labelPosition="stacked"
+                  [control]="studentForm.get('Installments')"
+                >
                 </app-input>
               </ion-col>
 
@@ -116,10 +177,10 @@
                   cssClass="form-field"
                   lines="none"
                   label="Institución educativa"
-                  placeholder="Selecciona una institución"
-                  [required]="true"
+                  [disabled]="isCoordinator"
                   [options]="institutionsOptions"
-                  [control]="studentForm.get('Nit_Educational_Institution')">
+                  [control]="studentForm.get('Nit_Educational_Institution')"
+                >
                 </app-select>
               </ion-col>
             </ion-row>
@@ -131,7 +192,8 @@
               expand="block"
               type="submit"
               label="Registrar estudiante"
-              [disabled]="!studentForm.valid">
+              [disabled]="false"
+            >
               <ion-icon slot="start" name="save-outline"></ion-icon>
             </app-button>
           </div>

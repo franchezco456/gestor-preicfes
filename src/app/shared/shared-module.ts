@@ -8,10 +8,13 @@ import { InputComponent } from './components/input/input.component';
 import { ButtonComponent } from './components/button/button.component';
 import { SelectComponent } from './components/select/select.component';
 import { ChartComponent } from './components/chart/chart.component';
+import { SidebarComponent } from './components/sidebar/sidebar.component';
+import { SearchbarComponent } from './components/searchbar/searchbar.component';
+import { FabbutomComponent } from './components/fabbutom/fabbutom.component';
 
 @NgModule({
-  declarations: [CardComponent, InputComponent, ButtonComponent, SelectComponent, ChartComponent],
-  imports: [CommonModule, ReactiveFormsModule, IonicModule, NgApexchartsModule],
-  exports: [CardComponent, InputComponent, ButtonComponent, SelectComponent, ChartComponent],
+  declarations: [CardComponent, InputComponent, ButtonComponent, SelectComponent, ChartComponent, SidebarComponent, SearchbarComponent],
+  imports: [CommonModule, ReactiveFormsModule, IonicModule, NgApexchartsModule, FabbutomComponent],
+  exports: [CardComponent, InputComponent, ButtonComponent, SelectComponent, ChartComponent, SidebarComponent, SearchbarComponent, FabbutomComponent],
 })
 export class SharedModule {}

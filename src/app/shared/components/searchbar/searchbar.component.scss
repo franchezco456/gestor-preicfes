@@ -1,0 +1,18 @@
+// searchbar.component.scss
+:host {
+  width: 100%;
+}
+
+// Puedes agregar estilos personalizados aquí si es necesario
+.custom-searchbar {
+  --background: #f8f9fa;
+  --border-radius: 10px;
+  --box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+// Estilos para diferentes estados
+:host-context(.dark) ion-searchbar {
+  --background: #2a2a2a;
+  --color: #ffffff;
+  --placeholder-color: #a0a0a0;
+}

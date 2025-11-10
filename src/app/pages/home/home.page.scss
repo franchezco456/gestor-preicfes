@@ -26,51 +26,175 @@
   text-decoration: none;
 }
 
-ion-content {
-  --padding-start: 0;
-  --padding-end: 0;
+/* Topbar: menu button + searchbar */
+.home-topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 16px 12px 16px !important;
+  background: transparent;
+  
 }
 
-ion-card {
+.menu-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border: none;
+  background: transparent;
+  color: var(--ion-color-primary, #0B1114);
+  border-radius: 10px;
+  transition: background-color 120ms ease, transform 120ms ease;
+}
+
+.menu-btn:hover {
+  background: rgba(0,0,0,0.04);
+  transform: translateY(-1px);
+}
+
+.menu-btn ion-icon {
+  font-size: 22px; /* larger icon */
+  width: 22px;
+  height: 22px;
+
+}
+
+.home-search-wrapper {
+  flex: 1 1 auto;
+}
+
+.search-results {
+  margin-top: 6px;
+}
+
+/* Apply form aesthetic tokens to the home topbar and actions */
+.form-page .home-topbar {
+  padding: 14px 18px;
+  gap: 14px;
+  align-items: center;
+  background: transparent;
+}
+
+/* Remove default grid/col paddings so the searchbar and menu align flush */
+.form-page .home-topbar ion-grid,
+.form-page .home-topbar ion-row,
+.form-page .home-topbar ion-col {
+  padding: 0;
+  margin: 0;
+}
+
+/* Slightly reduce overall topbar padding to avoid large empty areas */
+.form-page .home-topbar {
+  padding: 8px 10px;
+}
+
+/* make topbar a positioning context so results can overlay content */
+.form-page .home-topbar {
+  position: relative;
+}
+
+/* If the results list is rendered directly inside the search wrapper, make it overlay */
+.home-search-wrapper {
+  position: relative;
+}
+
+.home-search-wrapper .search-results {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 40;
+  background: var(--ion-background-color, #fff);
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  max-height: 320px;
+  overflow: auto;
+  margin: 0;
+}
+
+.home-search-wrapper app-searchbar {
+  display: flex;
+}
+
+/* Make the search wrapper and results take full available width */
+.home-search-wrapper {
   width: 100%;
-  max-width: 100%;
-  margin: 16px 0;
-  box-sizing: border-box;
-  
-  ion-card-content {
-    padding: 16px;
-    overflow-x: hidden;
-  }
+  margin: 0;
 }
 
-@media (max-width: 480px) {
-  ion-card {
-    margin: 8px 0;
-    
-    ion-card-content {
-      padding: 8px;
-    }
-  }
-  
-  ion-button {
-    font-size: 12px;
-    height: 32px;
-  }
+.search-results-container {
+  padding: 0 10px;
+  width: 100%;
+  position: absolute; /* overlay */
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 40;
 }
 
-@media (min-width: 481px) and (max-width: 768px) {
-  ion-card {
-    margin: 12px 0;
-    
-    ion-card-content {
-      padding: 12px;
-    }
-  }
+.search-results {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  background: var(--ion-background-color, #fff);
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  max-height: 320px;
+  overflow: auto;
 }
 
-@media (min-width: 769px) {
-  ion-card {
-    margin: 16px auto;
-    max-width: 1200px;
-  }
+.search-results ion-item {
+  margin: 6px 0;
+  border-radius: 12px;
+  overflow: hidden;
+  --padding-start: 12px; /* reduce left inset */
+  --padding-end: 12px;
 }
+
+/* Make the chart card expand reasonably and remove large side gaps */
+ion-card.home-chart, ion-card {
+  margin: 10px;
+}
+
+.search-results ion-item {
+  margin: 6px 0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.home-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 16px;
+  justify-content: center;
+}
+
+.home-actions ion-button {
+  --border-radius: 12px;
+  --padding-top: 10px;
+  --padding-bottom: 10px;
+  --padding-start: 18px;
+  --padding-end: 18px;
+  text-transform: none;
+  font-weight: 600;
+  background: linear-gradient(135deg, rgba(var(--form-accent-rgb),1) 0%, rgba(var(--form-accent-rgb),0.9) 100%);
+  color: #fff;
+  box-shadow: 0 12px 30px rgba(var(--form-accent-dark-rgb), 0.14);
+}
+
+.home-actions ion-button[fill="clear"] {
+  background: transparent;
+  color: rgba(11,17,20,0.86);
+  box-shadow: none;
+}
+
+/* Make the menu button more visible on the light background */
+.menu-btn {
+  background: rgba(var(--form-accent-rgb), 0.06);
+  color: rgba(11,17,20,0.9);
+}
+
+.menu-btn:hover { background: rgba(var(--form-accent-rgb), 0.09); }

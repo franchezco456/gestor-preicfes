@@ -1,51 +1,64 @@
-<ion-content [fullscreen]="true">
-  <ion-button (click)="execute()">
-    Go
-  </ion-button>
-  <ion-button (click)="logout()">
-    logout
-  </ion-button>
-  <ion-button (click)="gotoRE()">
-    registrar estudiantes
-  </ion-button>
-  <ion-button (click)="gotoRC()">
-    registrar coordinadores
-  </ion-button>
-  <ion-button (click)="gotoRI()">
-    registrar institucionies educativas
-  </ion-button>
 
-  <div style="padding: 20px; margin-top: 20px; max-width: 100%;">
+<app-sidebar #sidebar menuId="homeMenu" contentId="home-content" side="start">
 
-    <ion-card style="width: 100%; max-width: 100%;">
-      <ion-card-content>
-        <app-chart [chartOptions]="studentpago"></app-chart>
-        <ion-button size="small" (click)="testActualizacionTiempoRealPie()">suma 5</ion-button>
-      </ion-card-content>
-    </ion-card>
-    <ion-card style="width: 100%; max-width: 100%;">
-      <ion-card-content>
-        <app-chart [chartOptions]="paymentsPorSaturday"></app-chart>
-        <ion-button size="small" (click)="testActualizacionTiempoRealBar1()">suma 500k</ion-button>
-      </ion-card-content>
-    </ion-card>
-    <ion-card style="width: 100%; max-width: 100%;">
-      <ion-card-content>
-        <app-chart [chartOptions]="paymentsAcumulados"></app-chart>
-        <ion-button size="small" (click)="testActualizacionTiempoRealLine()">suma 1M</ion-button>
-      </ion-card-content>
-    </ion-card>
-    <ion-card style="width: 100%; max-width: 100%;">
-      <ion-card-content>
-        <app-chart [chartOptions]="institutionsDona"></app-chart>
-        <ion-button size="small" (click)="testActualizacionTiempoRealDonut()">suma 50</ion-button>
-      </ion-card-content>
-    </ion-card>
-    <ion-card style="width: 100%; max-width: 100%;">
-      <ion-card-content>
-        <app-chart [chartOptions]="studentsPorInstitucion"></app-chart>
-        <ion-button size="small" (click)="testActualizacionTiempoRealBar()">suma 10</ion-button>
-      </ion-card-content>
+</app-sidebar>
+
+<ion-content
+  id="home-content"
+  [fullscreen]="true"
+  class="form-page home-with-search"
+>
+  <div class="home-topbar">
+    <button class="menu-btn" (click)="toggleMenu()" aria-label="Abrir menú">
+      <ion-icon name="menu"></ion-icon>
+    </button>
+
+    <div class="home-search-wrapper">
+      <app-searchbar
+        cssClass="form-field"
+        placeholder="Buscar un estudiante"
+        [value]="searchQuery"
+        (valueChange)="onSearchInput($event)"
+      >
+      </app-searchbar>
+
+      <ion-list *ngIf="filteredResults.length" class="search-results">
+        <ion-item
+          *ngFor="let r of filteredResults"
+          button
+          (click)="selectSearchResult(r)"
+        >
+          <ion-label>
+            <h3>{{ r.Name }} {{ r.LastName }}</h3>
+            <p>ID: {{ r.ID }}</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </div>
+  </div>
+
+  <div>
+    <ion-card>
+      <app-chart [chartOptions]="studentPagos" cssClass="home-chart">
+      </app-chart>
     </ion-card>
   </div>
+
+  <div class="home-actions">
+    <ion-button (click)="execute()">Go</ion-button>
+    <ion-button (click)="logout()">logout</ion-button>
+    <ion-button (click)="gotoRE()">registrar estudiantes</ion-button>
+    <ion-button (click)="gotoRC()">registrar coordinadores</ion-button>
+    <ion-button (click)="gotoRI()"
+      >registrar institucionies educativas</ion-button
+    >
+  </div>
+
+  <!-- Shared FAB component (bottom-right, actions upward) -->
+  <app-fabbutom
+    (registerPayment)="goToRegisterPayment()"
+    (registerStudent)="gotoRE()"
+    (logout)="logout()"
+  >
+  </app-fabbutom>
 </ion-content>

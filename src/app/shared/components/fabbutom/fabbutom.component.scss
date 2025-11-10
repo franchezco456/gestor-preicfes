@@ -1,0 +1,26 @@
+.fabbutom-root {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 9999;
+}
+
+.fabbutom-root ion-fab-list {
+  display: flex;
+  flex-direction: column-reverse; /* first action sits closest to main button */
+  gap: 10px;
+  align-items: flex-end;
+}
+
+.fabbutom-root ion-fab-button {
+  --box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+}
+
+/* Make all action buttons share the same background and icon color */
+.fabbutom-root ion-fab-list ion-fab-button.action {
+  --background: #8FABD4; /* app accent color */
+  --background-activated: #7aa3c6;
+  --background-focused: #7aa3c6;
+  --color: #ffffff; /* icon color */
+  --box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+}
