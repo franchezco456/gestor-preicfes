@@ -1,4 +1,4 @@
-import { Component, ViewChild, OnInit } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { SidebarComponent } from 'src/app/shared/components/sidebar/sidebar.component';
 import { Router } from '@angular/router';
 import { Auth } from 'src/app/core/services/auth/auth';
@@ -17,7 +17,7 @@ import { Toast } from 'src/app/core/services/toast/toast';
   styleUrls: ['home.page.scss'],
   standalone: false,
 })
-export class HomePage implements OnInit {
+export class HomePage {
   public studentPagos: any;
 
   // Searchbar related (mirrors functionality from form-pagos)
@@ -46,9 +46,7 @@ export class HomePage implements OnInit {
     );
   }
 
-  ngOnInit(): void {
-    this.initializeChart();
-  }
+
 
   private initializeChart(): void {
     const datosDePagos: PaymentStatusData[] = [
@@ -108,6 +106,7 @@ export class HomePage implements OnInit {
     private readonly toastSrv: Toast
   ) {
     this.getStudents();
+    this.initializeChart();
   }
 
   public async go() {
@@ -190,7 +189,7 @@ export class HomePage implements OnInit {
   public async logout() {
     const logout = await this.authSrv.logout();
     console.log('TAG: LOGOUT' + JSON.stringify(logout));
-    await this.preferencesSrv.removePreferences('login');
+    await this.preferencesSrv.removePreferences("login");
     this.router.navigate(['/login']);
   }
 

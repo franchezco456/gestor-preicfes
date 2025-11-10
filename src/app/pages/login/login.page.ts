@@ -59,7 +59,7 @@ export class LoginPage {
 
   public async skiplogin() {
     const credentials = await this.preferencesSrv.getPreferences("login");
-    if (credentials) {
+    if (credentials && credentials.email && credentials.password) {
       try {
         await this.loadingSrv.showLoading();
         const login = await this.authSrv.login(credentials.email, credentials.password);

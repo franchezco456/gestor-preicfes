@@ -26,7 +26,7 @@ export class FabbutomComponent {
     this.registerStudent.emit();
   }
 
-  public onLogout() {
+  public async onLogout() {
     this.logout.emit();
   }
 
