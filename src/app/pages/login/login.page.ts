@@ -6,7 +6,6 @@ import { Loading } from 'src/app/core/services/loading/loading';
 import { Preferences } from 'src/app/core/services/preferences/preferences';
 import { Query } from 'src/app/core/services/query/query';
 import { Toast } from 'src/app/core/services/toast/toast';
-import { Coordinator } from 'src/app/shared/services/coordinator/coordinator';
 
 @Component({
   selector: 'app-login',
@@ -15,25 +14,21 @@ import { Coordinator } from 'src/app/shared/services/coordinator/coordinator';
   standalone: false,
 })
 export class LoginPage {
-  public loginForm !: FormGroup;
+  public readonly loginForm: FormGroup;
 
   constructor(private readonly formBuilder: FormBuilder,
     private readonly authSrv: Auth,
-    private readonly querySrv: Query,
+    private readonly querySrv : Query,
     private readonly loadingSrv: Loading,
     private readonly toastSrv: Toast,
-    private readonly preferencesSrv: Preferences,
-    private readonly coordinatorSrv: Coordinator,
-    private readonly router: Router) {
-    this.initForm();
-    this.skiplogin();
-  }
-
-  private initForm() {
+    private readonly preferencesSrv : Preferences,
+    private readonly router : Router) {
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
     });
+
+    this.skiplogin();
   }
 
   public async submitLogin() {
@@ -57,41 +52,30 @@ export class LoginPage {
     }
   }
 
-  public async skiplogin() {
+  public async skiplogin(){
     const credentials = await this.preferencesSrv.getPreferences("login");
-    if (credentials) {
+    if(credentials){
       try {
-        await this.loadingSrv.showLoading();
-        const login = await this.authSrv.login(credentials.email, credentials.password);
-        console.log("TAG: LOGIN" + JSON.stringify(login));
-        const last_signIn = login.last_sign_in_at;
-        await this.loadingSrv.dismissLoading();
-        await this.toastSrv.showToast("Ultimo inicio de sesion " + last_signIn);
-        console.log("login skipeado " + JSON.stringify(credentials.role));
-        this.router.navigate(["/home"]);
-        this.loginForm.reset();
-      } catch (error) {
-        await this.toastSrv.showErrorToast("Error al iniciar sesion");
-        await this.loadingSrv.dismissLoading();
-        this.loginForm.reset();
-      }
+      await this.loadingSrv.showLoading();
+      const login = await this.authSrv.login(credentials.email, credentials.password);
+      console.log("TAG: LOGIN" + JSON.stringify(login));
+      const last_signIn = login.last_sign_in_at;
+      await this.loadingSrv.dismissLoading();
+      await this.toastSrv.showToast("Ultimo inicio de sesion " + last_signIn);
+      console.log("login skipeado como coordinador " + credentials.is_coordinator);
+      this.router.navigate(["/home"]);
+      this.loginForm.reset();
+    } catch (error) {
+      await this.toastSrv.showErrorToast("Error al iniciar sesion");
+      await this.loadingSrv.dismissLoading();
+      this.loginForm.reset();
+    }
     }
   }
 
-  public async saveLogin() {
-    const response = await this.querySrv.execute_Function("is_coordinator", { email_param: this.loginForm.value.email });
-    let role = "Coordinator";
-    if (!response) {
-      role = "Administrator"
-    }
-    const coordData = await this.coordinatorSrv.getCoordinator({ Email: this.loginForm.value.email });
-    if (!coordData || coordData.length === 0) {
-      await this.preferencesSrv.setPreferences("login", { email: this.loginForm.value.email, password: this.loginForm.value.password, role: role });
-      console.log("login guardado")
-      return;
-    }
-    console.log("Datos del coordinador: ", JSON.stringify(coordData));
-    await this.preferencesSrv.setPreferences("login", { email: this.loginForm.value.email, password: this.loginForm.value.password, role: role, coordData: coordData[0] });
+  public async saveLogin(){
+    const is_coordinator = await this.querySrv.execute_Function("is_coordinator" , {email_param : this.loginForm.value.email})
+    await this.preferencesSrv.setPreferences("login" , {email : this.loginForm.value.email, password : this.loginForm.value.password, is_coordinator : is_coordinator});
     console.log("login guardado")
   }
 }

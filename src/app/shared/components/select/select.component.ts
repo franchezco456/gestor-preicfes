@@ -8,15 +8,16 @@ import { AbstractControl } from '@angular/forms';
   standalone: false,
 })
 export class SelectComponent {
-  @Input() placeholder: string = '';
+  @Input() placeholder: string = 'Select an option';
   @Input() label: string = '';
-  @Input() disabled: boolean = false;
   @Input() required: boolean = false;
   @Input() options: { value: any; text: string }[] = [];
   @Input() control: AbstractControl | null = null;
   @Input() cssClass = '';
   @Input() lines: 'full' | 'inset' | 'none' = 'none';
   @Input() interface: 'alert' | 'action-sheet' | 'popover' = 'popover';
+
+  @Input() disabled: boolean = false;
 
   public onChange(event: CustomEvent<{ value: any }>): void {
     if (!this.control) {

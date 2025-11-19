@@ -7,11 +7,9 @@
     [inputmode]="inputmode"
     [autocomplete]="autocomplete"
     (ionInput)="onInput($event)"
-    (ionBlur)="onBlur()"
-    [disabled]="disabled"
-  >
+    (ionBlur)="onBlur()">
     @if(type === "password"){
     <ion-input-password-toggle slot="end"></ion-input-password-toggle>
-    }
+  }
   </ion-input>
 </ion-item>

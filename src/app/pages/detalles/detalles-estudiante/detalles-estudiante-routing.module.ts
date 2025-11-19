@@ -5,7 +5,7 @@ import { DetallesEstudiantePage } from './detalles-estudiante.page';
 
 const routes: Routes = [
   {
-    path: '',
+    path: ':id',
     component: DetallesEstudiantePage
   }
 ];

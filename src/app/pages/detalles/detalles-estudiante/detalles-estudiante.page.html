@@ -14,7 +14,7 @@
     </ion-toolbar>
   </ion-header>
 
-  <section class="form-wrapper">
+  <section class="form-wrapper" *ngIf="!loading && !notFound; else loadingOrEmpty">
     <!-- Student info card (rounded) -->
     <ion-card class="form-card student-card">
       <ion-card-header>
@@ -75,6 +75,20 @@
     </ion-card>
 
   </section>
+
+  <ng-template #loadingOrEmpty>
+    <div class="loading-state" *ngIf="loading" style="display:flex;align-items:center;justify-content:center;height:50vh;">
+      <ion-spinner name="crescent"></ion-spinner>
+    </div>
+    <ion-card *ngIf="!loading && notFound" class="form-card">
+      <ion-card-header>
+        <h3>Estudiante no encontrado</h3>
+      </ion-card-header>
+      <ion-card-content>
+        No se encontraron datos para el identificador solicitado.
+      </ion-card-content>
+    </ion-card>
+  </ng-template>
 
 
 
