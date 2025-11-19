@@ -1,12 +1,8 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Coordinator as Co } from 'src/domain/models/Coordinator';
 import { Loading } from 'src/app/core/services/loading/loading';
 import { Preferences } from 'src/app/core/services/preferences/preferences';
 import { Toast } from 'src/app/core/services/toast/toast';
-import { Coordinator } from 'src/app/shared/services/coordinator/coordinator';
-import { Institution } from 'src/app/shared/services/institution/institution';
-import { Student as St } from 'src/domain/models/Student';
 import { Query } from 'src/app/core/services/query/query';
 
 type SelectOption = {
@@ -25,9 +21,7 @@ export class FormEstudiantesPage {
   public institutionsOptions: SelectOption[] = [];
   public isCoordinator: boolean = true;
 
-  constructor(private readonly formBuilder: FormBuilder, 
-    private readonly institutionSrv: Institution,
-    private readonly coordAuthSrv: Coordinator,
+  constructor(private readonly formBuilder: FormBuilder,
     private readonly querySrv: Query,
     private readonly loadingSrv: Loading,
     private readonly toastSrv: Toast,
