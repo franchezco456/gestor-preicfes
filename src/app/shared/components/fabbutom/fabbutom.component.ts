@@ -1,33 +1,27 @@
-import { Component, EventEmitter, Output } from '@angular/core';
-import { IonicModule } from '@ionic/angular';
+import { Component, EventEmitter, Output, Input } from '@angular/core';
 
 @Component({
   selector: 'app-fabbutom',
   templateUrl: './fabbutom.component.html',
   styleUrls: ['./fabbutom.component.scss'],
-  standalone: true,
-  imports: [IonicModule]
+  standalone: false,
 })
 export class FabbutomComponent {
-  /** Emit when user taps Registrar Pago */
-  @Output() registerPayment = new EventEmitter<void>();
+  public fabOpen = false;
+  @Input() label: string = '';
+  @Input() color: string = 'primary';
+  @Input() position: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left' = 'bottom-right';
+  @Input() actions: Array<{
+    id: string;
+    icon: string;
+    label?: string;
+    color?: string;
+    kind?: 'fab' | 'normal';
+  }> = [];
+  @Output() actionClick = new EventEmitter<string>();
 
-  /** Emit when user taps Registrar Estudiante */
-  @Output() registerStudent = new EventEmitter<void>();
-
-  /** Emit when user taps Logout */
-  @Output() logout = new EventEmitter<void>();
-
-  public onRegisterPayment() {
-    this.registerPayment.emit();
-  }
-
-  public onRegisterStudent() {
-    this.registerStudent.emit();
-  }
-
-  public onLogout() {
-    this.logout.emit();
+  public onActionClick(id: string) {
+    this.actionClick.emit(id);
   }
 
 }

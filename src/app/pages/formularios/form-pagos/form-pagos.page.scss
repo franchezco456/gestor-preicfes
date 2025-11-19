@@ -1,0 +1,29 @@
+:host {
+  /* Page tokens only; heavy visuals live in global.scss */
+  --page-accent: #8FABD4;
+  --page-accent-rgb: 143,171,212;
+}
+
+.form-page {
+  min-height: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.form-wrapper {
+  width: min(1024px, 100%);
+  padding: clamp(14px, 2.4vw, 28px);
+  box-sizing: border-box;
+}
+
+/* Keep header text dark and readable; detailed visuals handled globally */
+.form-header h1 { color: #0B1114; }
+.form-header p { color: rgba(11,17,20,0.8); }
+
+/* Readonly value styling kept minimal */
+.readonly-value { color: rgba(11,17,20,0.86); font-weight: 600; }
+
+@media (prefers-reduced-motion: reduce) {
+  .form-wrapper { animation: none !important; }
+}
+

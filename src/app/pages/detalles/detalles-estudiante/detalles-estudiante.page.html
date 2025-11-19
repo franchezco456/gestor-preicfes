@@ -90,6 +90,23 @@
     </ion-card>
   </ng-template>
 
+  <!-- las acciones son los botoncitos que salen, y estan configurados en un array de objetos, 
+   el id, es lo que hara el boton, eso lo debes definir en los en el switch, ya lo demas
+   son caracteristicas visuales, puse ejemplo de colores que pueden usar, no es simplemente
+   escribir red o blue ok bebe?-->
+
+  <app-fabbutom
+    color="primary"
+    position="bottom-right"
+    [actions]="[
+      { id: 'editar', icon: 'create', label: 'Editar', color: 'primary' },
+      { id: 'eliminar', icon: 'trash', label: 'Eliminar', color: 'danger' },
+      { id: 'pago', icon: 'card', label: 'Registrar pago', color: 'success' },
+      { id: 'volver', icon: 'arrow-back', label: 'Volver', color: 'secondary' }
+    ]"
+    (actionClick)="onFabAction($event)"
+  ></app-fabbutom>
+
 
 
 </ion-content>
