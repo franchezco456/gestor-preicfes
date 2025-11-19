@@ -1,0 +1,95 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Detalle estudiante</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="form-page" [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Detalle estudiante</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <section class="form-wrapper" *ngIf="!loading && !notFound; else loadingOrEmpty">
+    <!-- Student info card (rounded) -->
+    <ion-card class="form-card student-card">
+      <ion-card-header>
+        <h2>DATOS DEL ESTUDIANTE</h2>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="student-grid">
+          <div class="label">Nombre</div>
+          <div class="value">{{ student.nombre }}</div>
+
+          <div class="label">Apellido</div>
+          <div class="value">{{ student.apellido }}</div>
+
+          <div class="label">Correo</div>
+          <div class="value">{{ student.correo }}</div>
+
+          <div class="label">ID</div>
+          <div class="value">{{ student.identificacion }}</div>
+
+          <div class="label">IE</div>
+          <div class="value">{{ student.institucion }}</div>
+
+          <div class="label">Dirección</div>
+          <div class="value">{{ student.direccion }}</div>
+
+          <div class="label">Estado</div>
+          <div class="value">{{ student.estado }}</div>
+
+          <div class="label">Grado</div>
+          <div class="value">{{ student.grado }}</div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Payment summary card -->
+    <ion-card class="form-card payment-card">
+      <ion-card-header>
+        <h3>DATOS DEL PAGO DEL ESTUDIANTE</h3>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="payment-grid">
+          <div class="p-label">Valor del Curso:</div>
+          <div class="p-value">{{ paymentSummary.courseValue | currency:'COP' }}</div>
+
+          <div class="p-label">Total Abonado:</div>
+          <div class="p-value">{{ paymentSummary.totalPaid | currency:'COP' }}</div>
+
+          <div class="p-label">Descuento:</div>
+          <div class="p-value">{{ paymentSummary.discount | currency:'COP' }}</div>
+
+          <div class="p-label">Pendiente:</div>
+          <div class="p-value">{{ paymentSummary.pending | currency:'COP' }}</div>
+
+          <div class="p-label">Total Preicfes:</div>
+          <div class="p-value">{{ paymentSummary.totalPreicfes | currency:'COP' }}</div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+  </section>
+
+  <ng-template #loadingOrEmpty>
+    <div class="loading-state" *ngIf="loading" style="display:flex;align-items:center;justify-content:center;height:50vh;">
+      <ion-spinner name="crescent"></ion-spinner>
+    </div>
+    <ion-card *ngIf="!loading && notFound" class="form-card">
+      <ion-card-header>
+        <h3>Estudiante no encontrado</h3>
+      </ion-card-header>
+      <ion-card-content>
+        No se encontraron datos para el identificador solicitado.
+      </ion-card-content>
+    </ion-card>
+  </ng-template>
+
+
+
+</ion-content>

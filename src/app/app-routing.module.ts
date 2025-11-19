@@ -12,6 +12,10 @@ const routes: Routes = [
     pathMatch: 'full'
   },
   {
+    path: 'detalles-estudiante',
+    loadChildren: () => import('./pages/detalles/detalles-estudiante/detalles-estudiante.module').then(m => m.DetallesEstudiantePageModule)
+  },
+  {
     path: 'login',
     loadChildren: () => import('./pages/login/login.module').then( m => m.LoginPageModule)
   },

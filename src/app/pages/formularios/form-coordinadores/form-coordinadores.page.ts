@@ -58,7 +58,7 @@ export class FormCoordinadoresPage {
         LastName: this.coordinatorForm.value.LastName,
         Address: this.coordinatorForm.value.Address,
         Email: this.coordinatorForm.value.Email,
-        Nit_Educational_Institution: this.coordinatorForm.value.Nit_Educational_Institution,
+       id_IE: this.coordinatorForm.value.Nit_Educational_Institution,
       };
       const register = await this.authSrv.register(this.coordinatorForm.value.Email, this.coordinatorForm.value.Password);
       const result = await this.coordinatorSrv.addCoordinator(Coordinator, this.coordinatorForm.value.Number);
