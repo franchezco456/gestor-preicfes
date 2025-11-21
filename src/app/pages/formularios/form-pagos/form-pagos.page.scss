@@ -5,18 +5,38 @@
 }
 
 .form-page {
-  min-height: 100%;
-  display: flex;
-  justify-content: center;
+  position: relative;
+  --background: linear-gradient(140deg, rgba(var(--page-accent-rgb), 0.95) 0%, rgba(20,40,80,0.12) 45%, #ffffff 100%);
+  overflow: hidden;
 }
 
-.form-wrapper {
-  width: min(1024px, 100%);
-  padding: clamp(14px, 2.4vw, 28px);
-  box-sizing: border-box;
+.form-page::before,
+.form-page::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
 }
 
-/* Keep header text dark and readable; detailed visuals handled globally */
+.form-page::before {
+  width: 420px;
+  height: 420px;
+  top: -120px;
+  right: -140px;
+  background: radial-gradient(circle at center, rgba(var(--page-accent-rgb), 0.26) 0%, transparent 68%);
+  animation: pulseGlow 18s ease-in-out infinite;
+}
+
+.form-page::after {
+  width: 580px;
+  height: 580px;
+  bottom: -300px;
+  left: -200px;
+  background: radial-gradient(circle at center, rgba(56,120,200,0.22) 0%, transparent 72%);
+  animation: drift 26s linear infinite;
+}
+
+/* Keep header text dark and readable; global handles layout */
 .form-header h1 { color: #0B1114; }
 .form-header p { color: rgba(11,17,20,0.8); }
 

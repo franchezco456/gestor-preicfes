@@ -7,9 +7,6 @@
 .form-page {
 	position: relative;
 	--background: linear-gradient(135deg, rgba(var(--page-accent-rgb), 0.95) 0%, var(--page-accent-shade) 45%, #0b1020 100%);
-	min-height: 100%;
-	display: flex;
-	justify-content: center;
 	overflow: hidden;
 }
 
@@ -39,35 +36,15 @@
 	animation: drift 24s linear infinite;
 }
 
-.form-wrapper {
-	position: relative;
-	z-index: 1;
-	width: min(1024px, 100%);
-	padding: clamp(16px, 3vw, 28px);
-	box-sizing: border-box;
-	animation: fadeInUp 0.75s ease-out forwards;
-}
+/* layout and wrapper styles are provided globally in `global.scss` */
 
-.form-header {
-	margin-bottom: clamp(22px, 4vw, 30px);
-	padding-left: clamp(14px, 3vw, 26px);
-	border-left: 3px solid rgba(255, 255, 255, 0.16);
-	backdrop-filter: blur(6px);
-	color: var(--ion-color-light);
-}
+/* Header visuals moved to global.scss */
 
-.form-header h1 {
-	margin: 0 0 8px;
-	font-size: clamp(1.85rem, 4vw, 2.5rem);
-	font-weight: 600;
-	letter-spacing: 0.02em;
-}
-
-.form-header p {
-	margin: 0;
-	font-size: 0.95rem;
-	max-width: 620px;
-	opacity: 0.85;
+/* Ensure back button is visible and matches coordinadores style */
+.form-header ion-back-button {
+	color: var(--form-accent, #7FAFE0);
+	--padding-start: 6px;
+	--padding-end: 6px;
 }
 
 .header-meta {
@@ -105,30 +82,7 @@
 	letter-spacing: 0.02em;
 }
 
-.form-card {
-	position: relative;
-	background: rgba(10, 15, 30, 0.78);
-	border: 1px solid rgba(255, 255, 255, 0.08);
-	border-radius: 24px;
-	box-shadow: 0 28px 65px rgba(2, 4, 20, 0.6);
-	backdrop-filter: blur(16px);
-	overflow: hidden;
-	animation: cardFloat 0.85s cubic-bezier(0.21, 0.8, 0.32, 1) 0.08s both;
-}
-
-.form-card::after {
-	content: '';
-	position: absolute;
-	inset: 0;
-	background: linear-gradient(120deg, rgba(255, 255, 255, 0.08), transparent 55%);
-	opacity: 0;
-	transition: opacity 260ms ease;
-	pointer-events: none;
-}
-
-.form-card:hover::after {
-	opacity: 1;
-}
+/* Card visuals moved to global.scss */
 
 ion-card-header {
 	padding-inline: clamp(20px, 3vw, 28px);
@@ -154,60 +108,9 @@ ion-card-content {
 	padding-block: clamp(18px, 3vw, 28px);
 }
 
-.form-grid {
-	--ion-grid-column-padding: 14px;
-}
+/* grid column padding can be overridden per-page if needed */
 
-.form-field {
-	--background: rgba(255, 255, 255, 0.02);
-	--border-radius: 16px;
-	--padding-start: 18px;
-	--inner-padding-end: 18px;
-	margin-bottom: 8px;
-	border: 1px solid rgba(255, 255, 255, 0.08);
-	transition: border-color 160ms ease, transform 160ms ease, box-shadow 180ms ease;
-	transform: translateZ(0);
-}
-
-.form-field ion-label {
-	color: rgba(255, 255, 255, 0.65);
-	letter-spacing: 0.03em;
-}
-
-.form-field ion-input,
-.form-field ion-select {
-	font-size: 1rem;
-	--padding-start: 0;
-	--color: var(--ion-color-light);
-	--placeholder-color: rgba(255, 255, 255, 0.45);
-}
-
-.form-field ion-select::part(text) {
-	color: var(--ion-color-light);
-}
-
-.form-field ion-select::part(icon) {
-	color: rgba(255, 255, 255, 0.7);
-}
-
-.form-field:hover {
-	transform: translateY(-2px);
-	border-color: rgba(var(--page-accent-rgb), 0.35);
-}
-
-.form-field:focus-within {
-	border-color: rgba(var(--page-accent-rgb), 0.58);
-	box-shadow: 0 0 0 2px rgba(var(--page-accent-rgb), 0.2);
-}
-
-.form-field.invalid {
-	border-color: rgba(var(--ion-color-danger-rgb), 0.7);
-	box-shadow: 0 0 0 2px rgba(var(--ion-color-danger-rgb), 0.35);
-}
-
-.form-field.invalid ion-label {
-	color: var(--ion-color-danger);
-}
+/* form-field visuals moved to global.scss */
 
 .error-text {
 	display: block;
@@ -216,34 +119,9 @@ ion-card-content {
 	letter-spacing: 0.01em;
 }
 
-.actions {
-	margin-top: clamp(20px, 4vw, 30px);
-}
+/* actions spacing is global */
 
-.submit-button::part(native) {
-	background: linear-gradient(135deg, rgba(var(--page-accent-rgb), 1) 0%, rgba(var(--page-accent-rgb), 0.65) 100%);
-	border-radius: 16px;
-	padding: 14px 24px;
-	font-weight: 600;
-	letter-spacing: 0.04em;
-	box-shadow: 0 20px 38px rgba(var(--page-accent-rgb), 0.4);
-	transition: transform 200ms ease, box-shadow 220ms ease, filter 200ms ease;
-}
-
-.submit-button:hover::part(native) {
-	transform: translateY(-2px);
-	box-shadow: 0 26px 46px rgba(var(--page-accent-rgb), 0.45);
-	filter: brightness(1.02);
-}
-
-.submit-button:active::part(native) {
-	transform: translateY(1px);
-	box-shadow: 0 16px 30px rgba(var(--page-accent-rgb), 0.35);
-}
-
-.submit-button ion-icon {
-	font-size: 1.1rem;
-}
+/* submit-button visuals moved to global.scss */
 
 .result-card {
 	position: relative;
