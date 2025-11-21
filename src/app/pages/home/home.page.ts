@@ -122,7 +122,7 @@ export class HomePage implements OnInit {
   public async logout() {
     const logout = await this.authSrv.logout();
     console.log('TAG: LOGOUT' + JSON.stringify(logout));
-    await this.preferencesSrv.removePreferences('login');
+    await this.preferencesSrv.clearPreferences();
     this.router.navigate(['/login']);
   }
 

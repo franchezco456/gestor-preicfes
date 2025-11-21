@@ -41,9 +41,7 @@ export class FormEstudiantesPage {
       Address: ['', [Validators.required, Validators.minLength(5)]],
       Email: ['', [Validators.required, Validators.email]],
       Phone: ['', [Validators.required, Validators.pattern(/^\d{7,12}$/)]],
-      // Grade may contain alphanumeric characters (e.g. "11A")
       Grade: ['', [Validators.required, Validators.minLength(1)]],
-      // Financial fields
       Discount: ['', [Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
       Installments: ['', [Validators.required, Validators.pattern(/^\d+$/)]],
       id_IE: ['', [Validators.required]],
@@ -53,13 +51,12 @@ export class FormEstudiantesPage {
   }
 
   public async submitStudentForm() {
-    //if (!this.studentForm.valid) {
-  //      this.toastSrv.showWarningToast('Por favor, complete todos los campos del formulario');
-    //  return;
-  //  }
+    if (!this.studentForm.valid) {
+      this.toastSrv.showWarningToast('Por favor, complete todos los campos del formulario');
+      return;
+    }
      try {
     await this.loadingSrv.showLoading("Registrando estudiante...");
-    let cicle = '001';
     const Student = {
       id_student: this.studentForm.value.TI,
       document_type: this.studentForm.value.DocumentType,
@@ -71,13 +68,13 @@ export class FormEstudiantesPage {
       grade: this.studentForm.value.Grade,
       discount: this.studentForm.value.Discount ? parseFloat(this.studentForm.value.Discount) : undefined,
       installments: this.studentForm.value.Installments ? parseInt(this.studentForm.value.Installments, 10) : undefined,
-      id_ie_cicle : this.studentForm.value.id_IE,
-      id_cicle : cicle
+      id_ie_cicle : this.studentForm.value.id_IE
     }
     console.log("Estudiante a registrar: " + JSON.stringify(Student));
     const response = await this.querySrv.execute_Function('register_student', Student);
     console.log(JSON.stringify(response));
     this.studentForm.reset();
+    this.autoSetEducationalInstitution();
     await this.loadingSrv.dismissLoading();
     await this.toastSrv.showSuccessToast('Estudiante registrado exitosamente.');
     } catch (error) {
@@ -90,7 +87,7 @@ export class FormEstudiantesPage {
      try {
       await this.loadingSrv.showLoading("Cargando instituciones educativas...");
       const institutions = await this.querySrv.execute_Function('get_ie_by_cicle', {p_id_cicle : '001'});
-      console.log("Instituciones educativas: " + JSON.stringify(institutions));
+      //console.log("Instituciones educativas: " + JSON.stringify(institutions));
       this.institutionsOptions = institutions.map((inst : any) : SelectOption => ({
         value: inst.id_ie_cicle_out,
         text: inst.name_out
@@ -104,12 +101,16 @@ export class FormEstudiantesPage {
 
   public async autoSetEducationalInstitution() {
       const credentials = await this.preferencesSrv.getPreferences("login");
-      if(credentials.role !== 'Coordinator'){
+      if(!credentials.is_coordinator){
         this.isCoordinator = false;
         return;
       }
-      const nit = credentials.coordData.Nit_Educational_Institution;
-      this.studentForm.get('Nit_Educational_Institution')?.setValue(nit);
+      const coordData =  await this.preferencesSrv.getPreferences("coordData");
+      if(!coordData){
+        return;
+      }
+      const id_ie_cicle = coordData.coordData.id_IE_Cicle;
+      this.studentForm.get('id_IE')?.setValue(id_ie_cicle);
     
   }
 }

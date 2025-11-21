@@ -49,7 +49,6 @@ export class FormCoordinadoresPage {
     }
     try {
       await this.loadingSrv.showLoading("Registrando coordinador...");
-      let id_cicle = '001';
       const Coordinator = {
         id_coordinator: this.coordinatorForm.value.CC,
         name: this.coordinatorForm.value.Name,
@@ -57,8 +56,7 @@ export class FormCoordinadoresPage {
         email: this.coordinatorForm.value.Email,
         address: this.coordinatorForm.value.Address,
         phone: this.coordinatorForm.value.Phone,
-        id_ie_cicle: this.coordinatorForm.value.id_IE,
-        id_cicle: id_cicle
+        id_ie_cicle: this.coordinatorForm.value.id_IE
       };
       const register = await this.authSrv.register(this.coordinatorForm.value.Email, this.coordinatorForm.value.Password);
       const result = await this.querySrv.execute_Function('register_coordinator', Coordinator);

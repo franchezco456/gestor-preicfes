@@ -48,9 +48,8 @@ export class FormInstitucionesPage {
         address: this.institutionForm.value.Address,
         email: this.institutionForm.value.Email,
         phone: this.institutionForm.value.Phone,
-        free_prices: this.institutionForm.value.FinancesPreicfes,
         discount: (this.institutionForm.value.Discount == '' || this.institutionForm.value.Discount == null) ? 0 : this.institutionForm.value.Discount,
-        id_cicle: this.id_cicle
+        free_prices: this.institutionForm.value.FinancesPreicfes
       }
       console.log('Institution to register:', Institution);
       const result = await this.querySrv.execute_Function('register_ie', Institution);
