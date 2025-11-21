@@ -11,15 +11,16 @@ import { Loading } from 'src/app/core/services/loading/loading';
 })
 export class DetallesEstudiantePage implements OnInit {
   public student = {
-    nombre: 'Juan',
-    apellido: 'Pérez',
-    correo: 'juan.perez@example.com',
-    identificacion: '1042576911',
-    direccion: 'Calle 123 #45-67',
-    institucion: 'IE San Patricio',
+    nombre: 'Jesus',
+    apellido: 'Ramos',
+    correo: 'jesus.ramos@unicolombo.com',
+    identificacion: '1142912485',
+    direccion: 'Calle 123',
+    institucion: 'IE San Nicolas',
     estado: 'Activo',
     grado: '11'
   };
+  
   public paymentSummary = {
     courseValue: 200000,
     totalPaid: 80000,
@@ -87,8 +88,29 @@ export class DetallesEstudiantePage implements OnInit {
       this.student.estado = sc?.Status || this.student.estado;
       console.log('[DetallesEstudiante] Enrollment cargado:', { grado: this.student.grado, estado: this.student.estado, institucion: this.student.institucion });
     } catch (e) {
-      console.warn('[DetallesEstudiante] No se pudo cargar inscripción', e);
+      console.warn('[DetallesEstudiante] No se pudo cargar inscripcion', e);
     }
   }
 
+
+  // Maneja las acciones del fab flotante
+  public onFabAction(action: any) {
+    const id = typeof action === 'string' ? action : (action?.id ?? '');
+    switch (id) {
+      case 'editar':
+        this.router.navigate(['/actualizar-estudiante', this.student.identificacion]);
+        break;
+      case 'eliminar':
+        this.router.navigate(['/eliminar-estudiante', this.student.identificacion]);
+        break;
+      case 'pago':
+        this.router.navigate(['/form-pagos', this.student.identificacion]);
+        break;
+      case 'volver':
+        this.router.navigate(['/home']);
+        break;
+      default:
+        break;
+    }
+  }
 }

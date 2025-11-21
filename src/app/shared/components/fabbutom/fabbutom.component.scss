@@ -16,6 +16,11 @@
   --box-shadow: 0 6px 14px rgba(0,0,0,0.12);
 }
 
+.fabbutom-root ion-fab-button .rotated {
+  transition: transform 0.3s ease;
+  transform: rotate(45deg);
+}
+
 /* Make all action buttons share the same background and icon color */
 .fabbutom-root ion-fab-list ion-fab-button.action {
   --background: #8FABD4; /* app accent color */

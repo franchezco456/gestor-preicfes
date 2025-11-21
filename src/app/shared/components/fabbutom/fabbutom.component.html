@@ -1,17 +1,27 @@
-<ion-fab class="fabbutom-root" vertical="bottom" horizontal="end" slot="fixed">
-  <ion-fab-button aria-label="Acciones" color="primary">
-    <ion-icon name="add"></ion-icon>
+<ion-fab
+  class="fabbutom-root"
+  [vertical]="position.includes('bottom') ? 'bottom' : 'top'"
+  [horizontal]="position.includes('right') ? 'end' : 'start'"
+  slot="fixed"
+>
+  <ion-fab-button
+    [color]="color"
+    aria-label="Acción principal"
+    [class.fab-open]="fabOpen"
+    (click)="fabOpen = !fabOpen"
+  >
+    <ion-icon [name]="fabOpen ? 'close' : 'add'" [class.rotated]="fabOpen"></ion-icon>
   </ion-fab-button>
-
   <ion-fab-list side="top">
-    <ion-fab-button class="action" title="Registrar Pago" (click)="onRegisterPayment()" aria-label="Registrar Pago">
-      <ion-icon name="card"></ion-icon>
-    </ion-fab-button>
-    <ion-fab-button class="action" title="Registrar Estudiante" (click)="onRegisterStudent()" aria-label="Registrar Estudiante">
-      <ion-icon name="person-add"></ion-icon>
-    </ion-fab-button>
-    <ion-fab-button class="action" title="Cerrar sesión" (click)="onLogout()" aria-label="Cerrar sesión">
-      <ion-icon name="log-out"></ion-icon>
-    </ion-fab-button>
+    <ng-container *ngFor="let action of actions">
+      <ion-fab-button
+        [color]="action.color || 'primary'"
+        aria-label="{{ action.label || 'Acción secundaria' }}"
+        (click)="onActionClick(action.id)"
+        class="secondary-action"
+      >
+        <ion-icon [name]="action.icon"></ion-icon>
+      </ion-fab-button>
+    </ng-container>
   </ion-fab-list>
 </ion-fab>

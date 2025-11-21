@@ -1,12 +1,8 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Coordinator as Co } from 'src/domain/models/Coordinator';
 import { Loading } from 'src/app/core/services/loading/loading';
 import { Preferences } from 'src/app/core/services/preferences/preferences';
 import { Toast } from 'src/app/core/services/toast/toast';
-import { Coordinator } from 'src/app/shared/services/coordinator/coordinator';
-import { Institution } from 'src/app/shared/services/institution/institution';
-import { Student as St } from 'src/domain/models/Student';
 import { Query } from 'src/app/core/services/query/query';
 
 type SelectOption = {
@@ -25,9 +21,7 @@ export class FormEstudiantesPage {
   public institutionsOptions: SelectOption[] = [];
   public isCoordinator: boolean = true;
 
-  constructor(private readonly formBuilder: FormBuilder, 
-    private readonly institutionSrv: Institution,
-    private readonly coordAuthSrv: Coordinator,
+  constructor(private readonly formBuilder: FormBuilder,
     private readonly querySrv: Query,
     private readonly loadingSrv: Loading,
     private readonly toastSrv: Toast,
@@ -46,28 +40,23 @@ export class FormEstudiantesPage {
       LastName: ['', [Validators.required, Validators.minLength(2)]],
       Address: ['', [Validators.required, Validators.minLength(5)]],
       Email: ['', [Validators.required, Validators.email]],
-      Number: ['', [Validators.required, Validators.pattern(/^\d{7,12}$/)]],
-      // Grade may contain alphanumeric characters (e.g. "11A")
-      Grade: ['', [Validators.required, Validators.minLength(5)]],
-      // Financial fields
+      Phone: ['', [Validators.required, Validators.pattern(/^\d{7,12}$/)]],
+      Grade: ['', [Validators.required, Validators.minLength(1)]],
       Discount: ['', [Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
       Installments: ['', [Validators.required, Validators.pattern(/^\d+$/)]],
-      Nit_Educational_Institution: ['', [Validators.required]],
+      id_IE: ['', [Validators.required]],
     });
 
     // No extra input required when selecting 'OT' (otros)
   }
 
   public async submitStudentForm() {
-    //if (!this.studentForm.valid) {
-  //      this.toastSrv.showWarningToast('Por favor, complete todos los campos del formulario');
-    //  return;
-  //  }
-    try {
+    if (!this.studentForm.valid) {
+      this.toastSrv.showWarningToast('Por favor, complete todos los campos del formulario');
+      return;
+    }
+     try {
     await this.loadingSrv.showLoading("Registrando estudiante...");
-    let phone = '9089786756';
-    let id_ie =  '001-123456';
-    let cicle = '001';
     const Student = {
       id_student: this.studentForm.value.TI,
       document_type: this.studentForm.value.DocumentType,
@@ -75,16 +64,17 @@ export class FormEstudiantesPage {
       lastname: this.studentForm.value.LastName,
       email: this.studentForm.value.Email,
       address: this.studentForm.value.Address,
-      phone : phone,
+      phone : this.studentForm.value.Phone,
       grade: this.studentForm.value.Grade,
       discount: this.studentForm.value.Discount ? parseFloat(this.studentForm.value.Discount) : undefined,
       installments: this.studentForm.value.Installments ? parseInt(this.studentForm.value.Installments, 10) : undefined,
-      id_ie_cicle : id_ie,
-      id_cicle : cicle
+      id_ie_cicle : this.studentForm.value.id_IE
     }
+    console.log("Estudiante a registrar: " + JSON.stringify(Student));
     const response = await this.querySrv.execute_Function('register_student', Student);
     console.log(JSON.stringify(response));
     this.studentForm.reset();
+    this.autoSetEducationalInstitution();
     await this.loadingSrv.dismissLoading();
     await this.toastSrv.showSuccessToast('Estudiante registrado exitosamente.');
     } catch (error) {
@@ -94,12 +84,13 @@ export class FormEstudiantesPage {
   }
 
   public async getEducationalInstitutions() {
-    try {
+     try {
       await this.loadingSrv.showLoading("Cargando instituciones educativas...");
-      const institutions = await this.institutionSrv.getAllInstitutions();
-      this.institutionsOptions = institutions.map((inst) : SelectOption => ({
-        value: inst.NIT,
-        text: inst.Name
+      const institutions = await this.querySrv.execute_Function('get_ie_by_cicle', {p_id_cicle : '001'});
+      //console.log("Instituciones educativas: " + JSON.stringify(institutions));
+      this.institutionsOptions = institutions.map((inst : any) : SelectOption => ({
+        value: inst.id_ie_cicle_out,
+        text: inst.name_out
       }));
       await this.loadingSrv.dismissLoading();
     } catch (error) {
@@ -110,12 +101,16 @@ export class FormEstudiantesPage {
 
   public async autoSetEducationalInstitution() {
       const credentials = await this.preferencesSrv.getPreferences("login");
-      if(credentials.role !== 'Coordinator'){
+      if(!credentials.is_coordinator){
         this.isCoordinator = false;
         return;
       }
-      const nit = credentials.coordData.Nit_Educational_Institution;
-      this.studentForm.get('Nit_Educational_Institution')?.setValue(nit);
+      const coordData =  await this.preferencesSrv.getPreferences("coordData");
+      if(!coordData){
+        return;
+      }
+      const id_ie_cicle = coordData.coordData.id_IE_Cicle;
+      this.studentForm.get('id_IE')?.setValue(id_ie_cicle);
     
   }
 }

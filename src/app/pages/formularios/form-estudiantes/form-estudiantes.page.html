@@ -127,7 +127,7 @@
                   type="tel"
                   inputmode="tel"
                   labelPosition="stacked"
-                  [control]="studentForm.get('Number')"
+                  [control]="studentForm.get('Phone')"
                 >
                 </app-input>
               </ion-col>
@@ -179,7 +179,7 @@
                   label="Institución educativa"
                   [disabled]="isCoordinator"
                   [options]="institutionsOptions"
-                  [control]="studentForm.get('Nit_Educational_Institution')"
+                  [control]="studentForm.get('id_IE')"
                 >
                 </app-select>
               </ion-col>
@@ -192,7 +192,7 @@
               expand="block"
               type="submit"
               label="Registrar estudiante"
-              [disabled]="false"
+              [disabled]="studentForm.invalid"
             >
               <ion-icon slot="start" name="save-outline"></ion-icon>
             </app-button>

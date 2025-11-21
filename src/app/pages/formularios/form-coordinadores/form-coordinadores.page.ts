@@ -3,9 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Auth } from 'src/app/core/services/auth/auth';
 import { Loading } from 'src/app/core/services/loading/loading';
 import { Toast } from 'src/app/core/services/toast/toast';
-import { Coordinator } from 'src/app/shared/services/coordinator/coordinator';
-import { Institution } from 'src/app/shared/services/institution/institution';
-import { Coordinator as Co } from 'src/domain/models/Coordinator';
+import { Query } from '../../../core/services/query/query';
 
 type SelectOption = {
   value: string;
@@ -23,9 +21,8 @@ export class FormCoordinadoresPage {
   public institutionsOptions: SelectOption[] = [];
 
   constructor(private readonly formBuilder: FormBuilder,
-    private readonly coordinatorSrv: Coordinator,
-    private readonly authSrv : Auth,
-    private readonly institutionSrv : Institution,
+    private readonly authSrv: Auth,
+    private readonly querySrv: Query,
     private readonly loadingSrv: Loading,
     private readonly toastSrv: Toast) {
     this.initForm();
@@ -39,9 +36,9 @@ export class FormCoordinadoresPage {
       LastName: ['', [Validators.required, Validators.minLength(2)]],
       Address: ['', [Validators.required, Validators.minLength(5)]],
       Email: ['', [Validators.required, Validators.email]],
-      Number: ['', [Validators.required, Validators.pattern(/^\d{7,12}$/)]],
-      Password : ['' , [Validators.required, Validators.minLength(6)]],
-      Nit_Educational_Institution: ['', [Validators.required]],
+      Phone: ['', [Validators.required, Validators.pattern(/^\d{7,12}$/)]],
+      Password: ['', [Validators.required, Validators.minLength(6)]],
+      id_IE: ['', [Validators.required]],
     });
   }
 
@@ -52,16 +49,17 @@ export class FormCoordinadoresPage {
     }
     try {
       await this.loadingSrv.showLoading("Registrando coordinador...");
-      const Coordinator: Co = {
-        CC: this.coordinatorForm.value.CC,
-        Name: this.coordinatorForm.value.Name,
-        LastName: this.coordinatorForm.value.LastName,
-        Address: this.coordinatorForm.value.Address,
-        Email: this.coordinatorForm.value.Email,
-       id_IE: this.coordinatorForm.value.Nit_Educational_Institution,
+      const Coordinator = {
+        id_coordinator: this.coordinatorForm.value.CC,
+        name: this.coordinatorForm.value.Name,
+        lastname: this.coordinatorForm.value.LastName,
+        email: this.coordinatorForm.value.Email,
+        address: this.coordinatorForm.value.Address,
+        phone: this.coordinatorForm.value.Phone,
+        id_ie_cicle: this.coordinatorForm.value.id_IE
       };
       const register = await this.authSrv.register(this.coordinatorForm.value.Email, this.coordinatorForm.value.Password);
-      const result = await this.coordinatorSrv.addCoordinator(Coordinator, this.coordinatorForm.value.Number);
+      const result = await this.querySrv.execute_Function('register_coordinator', Coordinator);
       this.coordinatorForm.reset();
       await this.loadingSrv.dismissLoading();
       await this.toastSrv.showSuccessToast('Coordinador registrado exitosamente.');
@@ -71,13 +69,14 @@ export class FormCoordinadoresPage {
     }
   }
 
-   public async getEducationalInstitutions() {
+  public async getEducationalInstitutions() {
     try {
       await this.loadingSrv.showLoading("Cargando instituciones educativas...");
-      const institutions = await this.institutionSrv.getAllInstitutions();
-      this.institutionsOptions = institutions.map((inst) : SelectOption => ({
-        value: inst.NIT,
-        text: inst.Name
+      const institutions = await this.querySrv.execute_Function('get_ie_by_cicle', { p_id_cicle: '001' });
+      console.log("Instituciones educativas: " + JSON.stringify(institutions));
+      this.institutionsOptions = institutions.map((inst: any): SelectOption => ({
+        value: inst.id_ie_cicle_out,
+        text: inst.name_out
       }));
       await this.loadingSrv.dismissLoading();
     } catch (error) {

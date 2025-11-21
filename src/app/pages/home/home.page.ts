@@ -19,7 +19,7 @@ type StudentModel = { TI: string; DocumentType: string; Name: string; LastName: 
 export class HomePage implements OnInit {
   public studentPagos: any;
   @ViewChild(ChartComponent, { static: false }) chartCmp?: ChartComponent;
-  
+
   private allStudents: StudentModel[] = [];
   public filteredResults: StudentModel[] = [];
   public searchQuery: string = '';
@@ -33,12 +33,12 @@ export class HomePage implements OnInit {
       this.filteredResults = [];
       return;
     }
-    
+
     if (this.allStudents.length === 0) {
       try {
         const list: any[] = await this.querySrv.getAll('Student');
         this.allStudents = Array.isArray(list) ? list.map(r => ({
-          
+
           TI: r.id ?? '',
           DocumentType: r.Document_Type ?? 'TI',
           Name: r.Name ?? '',
@@ -46,7 +46,7 @@ export class HomePage implements OnInit {
           Email: r.Email ?? '',
           Address: r.Address ?? '',
           Grade: '',
-          
+
         })) : [];
         console.log('[Home] Cargados desde BD', this.allStudents.length, 'estudiantes');
       } catch (e) {
@@ -72,7 +72,7 @@ export class HomePage implements OnInit {
       { status: 'Pending', count: 120000, label: 'Pago 2' },
       { status: 'Not Paid', count: 50000, label: 'Pago 3' },
     ];
-    
+
     const barData = datosDePagos.map((d) => ({ x: d.label, y: d.count }));
     this.studentPagos = this.chartSrv.createBarChart(
       barData,
@@ -81,7 +81,7 @@ export class HomePage implements OnInit {
         colors: ['#008FFB', '#00E396', '#FF4560'],
         height: 350,
         legendPosition: 'top',
-        xAxisTitle: 'Pago', 
+        xAxisTitle: 'Pago',
         yAxisTitle: 'Valor',
       }
     );
@@ -109,8 +109,8 @@ export class HomePage implements OnInit {
     private readonly preferencesSrv: Preferences,
     private readonly router: Router,
     private readonly route: ActivatedRoute,
-    
-  ) {}
+
+  ) { }
 
   public async execute() {
     const email_param: string = 'q@q.com';
@@ -122,7 +122,7 @@ export class HomePage implements OnInit {
   public async logout() {
     const logout = await this.authSrv.logout();
     console.log('TAG: LOGOUT' + JSON.stringify(logout));
-    await this.preferencesSrv.removePreferences('login');
+    await this.preferencesSrv.clearPreferences();
     this.router.navigate(['/login']);
   }
 
@@ -140,5 +140,23 @@ export class HomePage implements OnInit {
 
   public goToRegisterPayment() {
     this.router.navigate(['/form-pagos']);
+  }
+
+    // explicado en detalle estudiante
+  public onFabAction(action: any) {
+    const id = typeof action === 'string' ? action : (action?.id ?? '');
+    switch (id) {
+      case 'estudiante':
+        this.gotoRE();
+        break;
+      case 'pago':
+        this.goToRegisterPayment();
+        break;
+      case 'logout':
+        this.logout();
+        break;
+      default:
+        break;
+    }
   }
 }

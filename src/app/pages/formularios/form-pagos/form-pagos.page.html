@@ -20,15 +20,15 @@
         <app-searchbar
           cssClass="form-field"
           placeholder="Buscar estudiante por nombre, apellido o TI"
-          [value]="searchQuery"
-          (valueChange)="onSearchInput($event)">
+          [value]="studentSearchQuery"
+          (valueChange)="onStudentSearchInput($event)">
         </app-searchbar>
 
-        <ion-list *ngIf="filteredResults.length" class="search-results">
-          <ion-item *ngFor="let r of filteredResults" button (click)="selectSearchResult(r)">
+        <ion-list *ngIf="filteredStudentResults.length" class="search-results">
+          <ion-item *ngFor="let r of filteredStudentResults" button (click)="selectStudentSearchResult(r)">
             <ion-label>
               <h3>{{ r.Name }} {{ r.LastName }}</h3>
-              <p>ID: {{ r.ID }}</p>
+              <p>ID: {{ r.TI }}</p>
             </ion-label>
           </ion-item>
         </ion-list>

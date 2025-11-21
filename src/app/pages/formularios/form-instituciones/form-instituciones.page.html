@@ -35,12 +35,12 @@
                 <app-input
                   cssClass="form-field"
                   lines="none"
-                  label="NIT"
+                  label="DANE"
                   placeholder="Identificador de la institución"
-                  type="number"
-                  inputmode="numeric"
+                  type="text"
+                  inputmode="text"
                   labelPosition="stacked"
-                  [control]="institutionForm.get('Nit')">
+                  [control]="institutionForm.get('Dane')">
                 </app-input>
               </ion-col>
 
@@ -66,17 +66,61 @@
                 </app-input>
               </ion-col>
 
+               <ion-col size="12" size-md="6">
+                <app-input
+                  cssClass="form-field"
+                  lines="none"
+                  label="Correo electrónico"
+                  placeholder="contacto@institucion.edu"
+                  type="email"
+                  labelPosition="stacked"
+                  [control]="institutionForm.get('Email')">
+                </app-input>
+              </ion-col>
+
               <ion-col size="12" size-md="6">
                 <app-input
                   cssClass="form-field"
                   lines="none"
-                  label="Valor del curso"
-                  placeholder="Ej: 250000"
+                  label="Teléfono"
+                  placeholder="+57123456789"
+                  type="tel"
+                  inputmode="tel"
+                  labelPosition="stacked"
+                  [control]="institutionForm.get('Phone')">
+                </app-input>
+              </ion-col>
+
+              <ion-col size="12" size-md="6">
+                <app-input
+                  cssClass="form-field"
+                  lines="none"
+                  label="Descuento "
+                  placeholder="Ej: 5000"
                   type="number"
                   inputmode="decimal"
                   labelPosition="stacked"
-                  [control]="institutionForm.get('Course_Value')">
+                  [control]="institutionForm.get('Discount')">
                 </app-input>
+              </ion-col>
+
+                <ion-col size="12" size-md="6">
+                <div class="course-price">
+                  <div class="course-price__header">
+                    <h3>Valor del curso</h3>
+                    <small class="muted">Ciclo {{id_cicle}}</small>
+                  </div>
+                  <div class="course-price__value">
+                    <span class="price">{{ displayPrice }}</span>
+                  </div>
+                </div>
+              </ion-col>
+              <ion-col size="12">
+                <div class="checkbox-row">
+                  <app-checkbox [label]="'Institución financia el preicfes'" [control]="institutionForm.get('FinancesPreicfes')">
+                    Institución financia el preicfes
+                  </app-checkbox>
+                </div>
               </ion-col>
             </ion-row>
           </ion-grid>
