@@ -19,6 +19,9 @@ type StudentModel = { TI: string; DocumentType: string; Name: string; LastName: 
 export class HomePage implements OnInit {
   public studentPagos: any;
   @ViewChild(ChartComponent, { static: false }) chartCmp?: ChartComponent;
+  ionViewWillEnter(): void {
+    this.fetchStudents();
+  }
 
   private allStudents: StudentModel[] = [];
   public filteredResults: StudentModel[] = [];
@@ -34,26 +37,6 @@ export class HomePage implements OnInit {
       return;
     }
 
-    if (this.allStudents.length === 0) {
-      try {
-        const list: any[] = await this.querySrv.getAll('Student');
-        this.allStudents = Array.isArray(list) ? list.map(r => ({
-
-          TI: r.id ?? '',
-          DocumentType: r.Document_Type ?? 'TI',
-          Name: r.Name ?? '',
-          LastName: r.LastName ?? '',
-          Email: r.Email ?? '',
-          Address: r.Address ?? '',
-          Grade: '',
-
-        })) : [];
-        console.log('[Home] Cargados desde BD', this.allStudents.length, 'estudiantes');
-      } catch (e) {
-        console.error('[ERROR] Fallo carga de estudiantes', e);
-        this.allStudents = [];
-      }
-    }
     this.filteredResults = this.allStudents.filter((s) =>
       (s.Name || '').toLowerCase().includes(q) ||
       (s.LastName || '').toLowerCase().includes(q) ||
@@ -64,7 +47,9 @@ export class HomePage implements OnInit {
 
   ngOnInit(): void {
     this.initializeChart();
+    this.fetchStudents();
   }
+  
 
   private initializeChart(): void {
     const datosDePagos: PaymentStatusData[] = [
@@ -85,6 +70,31 @@ export class HomePage implements OnInit {
         yAxisTitle: 'Valor',
       }
     );
+  }
+
+  private async fetchStudents(){
+    try {
+      const coord = await this.preferencesSrv.getPreferences('coordData');
+        console.log(coord);
+        const id_IE = coord.coordData.id_IE_Cicle;
+        
+        console.log('[Home] id_IE_Cicle =', id_IE);
+        const list: any[] = await this.querySrv.execute_Function('get_students_by_ie_cicle', {p_id_ie_cicle: id_IE})
+        this.allStudents = Array.isArray(list) ? list.map(r => ({
+
+          TI: r.id_estudiante_out ?? '',
+          DocumentType: r.documento_tipo_out ?? 'TI',
+          Name: r.nombre_out ?? '',
+          LastName: r.apellido_out ?? '',
+          Email: r.email_out ?? '',
+          Address: r.direccion_out ?? '',
+          Grade: r.grado_out ??'',
+
+        })) : [];
+    } catch (error) {
+      console.error('[ERROR] Fallo carga de estudiantes', error);
+      this.allStudents = [];
+    }
   }
 
   public selectSearchResult(item: StudentModel) {
@@ -108,7 +118,6 @@ export class HomePage implements OnInit {
     private readonly chartSrv: ChartService,
     private readonly preferencesSrv: Preferences,
     private readonly router: Router,
-    private readonly route: ActivatedRoute,
 
   ) { }
 
