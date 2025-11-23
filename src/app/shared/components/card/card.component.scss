@@ -1,0 +1,71 @@
+.kpi-card {
+	display: flex;
+	flex-direction: row;
+		align-items: center;
+		justify-content: flex-start;
+		padding: 14px 18px;
+		min-height: 88px;
+		border-radius: 16px;
+		background: var(--ion-background-color, #fff);
+		box-shadow: 0 10px 30px rgba(11,17,20,0.06);
+}
+
+/* Ensure KPI cards don't inherit outer margins and take full column width
+	 (fixes visual differences between plain .kpi-card divs and <app-card> usage). */
+.kpi-card {
+	margin: 0;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+/* Reset ion-card margin inside this component to avoid global overrides */
+:host ion-card {
+	margin: 0;
+}
+
+.kpi-card .kpi-value {
+	font-size: 16px;
+		font-size: 20px;
+		font-weight: 800;
+		line-height: 1;
+		color: rgba(11,17,20,0.95);
+}
+
+.kpi-card .kpi-label {
+	font-size: 12px;
+		color: var(--ion-color-medium);
+		margin-top: 4px;
+		font-weight: 600;
+}
+
+.kpi-card ion-card-content {
+	display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		justify-content: center;
+		padding: 0;
+}
+
+.card-text { margin-top: 6px; color: var(--ion-color-medium); }
+:host {
+	display: block;
+	width: 100%;
+	min-width: 0;
+	box-sizing: border-box;
+}
+
+@media (max-width: 600px) {
+	:host { width: 100%; }
+}
+
+@media (max-width: 420px) {
+	.kpi-card {
+		padding: 10px;
+	}
+	.kpi-card .kpi-value {
+		font-size: 18px;
+	}
+	.kpi-card .kpi-label {
+		font-size: 11px;
+	}
+}

@@ -1,0 +1,20 @@
+.bottom-tabbar ion-toolbar { padding: 4px 6px }
+.bottom-tabbar ion-button { padding:0 }
+.bottom-tabbar .tab-btn {
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:0 !important;
+  height:52px !important;
+  padding:2px 0 !important;
+}
+.bottom-tabbar .tab-btn ion-icon {
+  font-size:36px !important;
+  line-height:1 !important;
+  color: var(--ion-color-primary, #0088ff) !important;
+}
+
+:host {
+  display: block;
+}
