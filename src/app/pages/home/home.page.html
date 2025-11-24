@@ -24,20 +24,47 @@
     </div>
   </div>
 
-  <div>
-    <ion-card>
-      <app-chart [chartOptions]="studentPagos" cssClass="home-chart">
-      </app-chart>
-    </ion-card>
-  </div>
 
-  <div class="home-actions">
-    <ion-button (click)="execute()">Go</ion-button>
-    <ion-button (click)="logout()">logout</ion-button>
-    <ion-button (click)="gotoRE()">registrar estudiantes</ion-button>
-    <ion-button (click)="gotoRC()">registrar coordinadores</ion-button>
-    <ion-button (click)="gotoRI()">registrar institucionies educativas</ion-button>
-  </div>
+  <section class="dashboard-hero">
+    <div class="hero-left">
+      <div class="user-badge">
+        <div class="user-info">
+          <div class="user-name">Bienvenido Coordinador</div>
+          <div class="user-sub muted">Mi cuenta</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="dashboard-grid">
+    <div class="kpis">
+      <ng-container *ngFor="let k of kpis">
+        <app-card variant="kpi" [value]="k.value" [label]="k.label"></app-card>
+      </ng-container>
+    </div>
+
+    <div class="chart-card">
+      <app-card title="Estado de Pagos">
+        <app-chart [chartOptions]="studentPagos" cssClass="home-chart"></app-chart>
+      </app-card>
+    </div>
+  </section>
+
+  <section class="dashboard-bottom">
+    <div class="recent-activity">
+      <app-card title="Actividad reciente">
+        <ion-list>
+          <ion-item *ngFor="let i of [1,2,3,4]">
+            <ion-label>
+              <h3>Nuevo estudiante registrado</h3>
+              <p class="muted">hace 2 horas — Juan Pérez</p>
+            </ion-label>
+            <app-button fill="clear" slot="end" (click)="router.navigate(['/detalles-estudiante','1142912485'])" label="Ver"></app-button>
+          </ion-item>
+        </ion-list>
+      </app-card>
+    </div>
+  </section>
 
   <app-fabbutom icon="menu" label="Acciones" color="primary" position="bottom-right" [actions]="[
       { id: 'estudiante', icon: 'person-add', label: 'Estudiante', color: 'secondary' },
@@ -45,3 +72,4 @@
       { id: 'logout', icon: 'log-out', label: 'Salir', color: 'secondary' }
     ]" (actionClick)="onFabAction($event)"></app-fabbutom>
 </ion-content>
+<app-bottom-tabbar [tabs]="tabButtons"></app-bottom-tabbar>

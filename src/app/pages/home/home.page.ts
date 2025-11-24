@@ -2,6 +2,7 @@ import { Component, ViewChild, OnInit } from '@angular/core';
 import { ChartComponent } from 'src/app/shared/components/chart/chart.component';
 import { SidebarComponent } from 'src/app/shared/components/sidebar/sidebar.component';
 import { Router, ActivatedRoute } from '@angular/router';
+import { ActionSheetController } from '@ionic/angular';
 import { Auth } from 'src/app/core/services/auth/auth';
 import { Preferences } from 'src/app/core/services/preferences/preferences';
 import { Query } from 'src/app/core/services/query/query';
@@ -26,6 +27,20 @@ export class HomePage implements OnInit {
   private allStudents: StudentModel[] = [];
   public filteredResults: StudentModel[] = [];
   public searchQuery: string = '';
+
+  public tabButtons = [
+    { icon: 'home-outline', route: '/home', aria: 'Inicio' },
+    { icon: 'people-outline', route: '/form-estudiantes', aria: 'Estudiantes' },
+    { icon: 'card-outline', route: '/form-pagos', aria: 'Pagos' },
+  ];
+
+  //items para las carticas en el dashboard
+  public kpis: Array<{ value: string | number; label: string }> = [
+    { value: '1,234', label: 'Estudiantes' },
+    { value: 87, label: 'Pagos pendientes' },
+    { value: 512, label: 'Pagos realizados' },
+    { value: 'COP 12.540.000', label: 'Ingresos (mes)' },
+  ];
 
 
   public async onSearchInput(value: string) {
@@ -116,8 +131,8 @@ export class HomePage implements OnInit {
     public readonly querySrv: Query,
     private readonly chartSrv: ChartService,
     private readonly preferencesSrv: Preferences,
-    private readonly router: Router,
-
+    public readonly router: Router,
+    private readonly route: ActivatedRoute,
   ) { }
 
   public async execute() {

@@ -17,6 +17,7 @@ export class ButtonComponent  implements OnInit {
   @Input () type : ButtonType = 'button';
   @Input () expand : ButtonExpand = 'default';
   @Input () cssClass : string = '';
+  @Input() slot: string | undefined;
   constructor() { }
 
   ngOnInit() {}

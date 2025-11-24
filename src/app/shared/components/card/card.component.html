@@ -1,15 +1,19 @@
-<ion-card>
-  <img [src]="imgSrc" *ngIf="imgSrc"/>
-  <ion-card-header>
-    @if(title){
-      <ion-card-title *ngIf="title">{{ title }}</ion-card-title>
-    }
-    @if(subtitle){
-      <ion-card-subtitle *ngIf="subtitle">{{ subtitle }}</ion-card-subtitle>
-    }
+<ion-card [ngClass]="{'kpi-card': variant === 'kpi'}">
+  <img [src]="imgSrc" *ngIf="imgSrc" />
+  <ion-card-header *ngIf="title || subtitle || variant !== 'kpi'">
+    <ion-card-title *ngIf="title">{{ title }}</ion-card-title>
+    <ion-card-subtitle *ngIf="subtitle">{{ subtitle }}</ion-card-subtitle>
   </ion-card-header>
+
   <ion-card-content>
-    <ng-content></ng-content>
-    {{ text }}
+    <ng-container *ngIf="variant === 'kpi'">
+      <div class="kpi-value">{{ value }}</div>
+      <div class="kpi-label">{{ label }}</div>
+    </ng-container>
+
+    <ng-container *ngIf="variant !== 'kpi'">
+      <ng-content></ng-content>
+      <div class="card-text">{{ text }}</div>
+    </ng-container>
   </ion-card-content>
 </ion-card>
