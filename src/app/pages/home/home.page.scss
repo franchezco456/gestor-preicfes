@@ -157,49 +157,79 @@
   --padding-end: 12px;
 }
 
-/* Enhanced, professional look & animations for the results panel */
+/* Dark overlay look & animations (mirrors payments form) */
 .home-search-wrapper .search-results {
-  background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(250,252,254,0.98));
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 40;
+  /* Liquid glass base (clearer) */
+  /* Transparent liquid glass: remove gray tint, keep blur */
+  /* subtle gray-tinted frosted glass: keeps blur but adds gentle gray tone */
+  background: linear-gradient(180deg, rgba(34,36,42,0.14), rgba(28,30,36,0.12));
+  /* frame remains light but the overall panel reads gray because of the tint */
+  border: 1px solid rgba(255,255,255,0.06);
   border-radius: 14px;
-  padding: 10px;
-  box-shadow: 0 18px 40px rgba(30,45,80,0.08), 0 6px 18px rgba(11,17,20,0.04);
-  backdrop-filter: blur(6px) saturate(1.05);
+  padding: 8px;
+  /* very subtle shadow, avoid heavy gray halo */
+  /* strengthen outer shadow slightly to give a grayer halo */
+  box-shadow: 0 14px 36px rgba(6,8,12,0.10);
+  inset: 0 1px 0 rgba(255,255,255,0.02);
+  /* keep strong backdrop blur for frosted effect */
+  backdrop-filter: blur(12px) saturate(1.08);
+  -webkit-backdrop-filter: blur(12px) saturate(1.08);
+  max-height: 320px;
+  overflow: auto;
   transform-origin: top center;
   animation: popIn 220ms cubic-bezier(.2,.9,.28,1) forwards;
+  position: absolute;
+}
+
+/* glossy sheen layer to create 'liquid' movement */
+.home-search-wrapper .search-results::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: 14px;
+  /* very subtle sheen to imply liquid surface, low opacity (almost white) */
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.356) 0%, rgba(255,255,255,0.05) 45%, rgba(255,255,255,0.12) 55%, rgba(255,255,255,0.04) 80%, rgba(255,255,255,0.085) 100%);
+  mix-blend-mode: overlay;
+  transform: translateX(-18%);
+  filter: blur(3px) saturate(1.02);
+  opacity: 0.55;
+  animation: sheenSlide 3.0s linear infinite;
 }
 
 .home-search-wrapper .search-results ion-item {
   margin: 6px 0;
   border-radius: 10px;
   overflow: hidden;
-  --padding-start: 14px;
-  --padding-end: 14px;
+  --padding-start: 12px;
+  --padding-end: 12px;
   background: transparent;
   transition: transform 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
   display: flex;
   align-items: center;
-}
-
-.home-search-wrapper .search-results ion-item:hover {
-  transform: translateX(6px);
-  background: rgba(127,175,224,0.06); /* subtle highlight using accent */
-  box-shadow: 0 8px 20px rgba(33,53,105,0.06);
-}
-
-/* Icon and label styling */
-.home-search-wrapper .search-results ion-item ion-icon {
-  color: rgb(var(--form-accent-rgb));
-  font-size: 18px;
-  margin-left: 6px;
-  opacity: 0.9;
-}
-
-/* Staggered appearance for each item */
-.home-search-wrapper .search-results ion-item {
   opacity: 0;
   transform: translateY(8px) scale(0.995);
   animation: itemIn 260ms cubic-bezier(.2,.9,.28,1) forwards;
 }
+
+.home-search-wrapper .search-results ion-item:hover {
+  transform: translateX(6px);
+  background: rgba(var(--form-accent-rgb, 127,175,224), 0.06);
+  box-shadow: 0 8px 20px rgba(33,53,105,0.06);
+}
+
+.home-search-wrapper .search-results ion-item ion-icon {
+  color: rgba(var(--form-accent-rgb, 127,175,224), 0.95);
+  font-size: 18px;
+  margin-left: 6px;
+  opacity: 0.95;
+}
+
 .home-search-wrapper .search-results ion-item:nth-child(1) { animation-delay: 0.04s; }
 .home-search-wrapper .search-results ion-item:nth-child(2) { animation-delay: 0.08s; }
 .home-search-wrapper .search-results ion-item:nth-child(3) { animation-delay: 0.12s; }
@@ -210,12 +240,19 @@
 .home-search-wrapper .search-results ion-item:nth-child(8) { animation-delay: 0.32s; }
 .home-search-wrapper .search-results ion-item:nth-child(9) { animation-delay: 0.36s; }
 .home-search-wrapper .search-results ion-item:nth-child(10) { animation-delay: 0.40s; }
-.home-search-wrapper .search-results ion-item:nth-child(11) { animation-delay: 0.44s; }
-.home-search-wrapper .search-results ion-item:nth-child(12) { animation-delay: 0.48s; }
 
-/* small separator line made subtle */
+/* subtle separators */
 .home-search-wrapper .search-results ion-item::part(native) {
-  border-bottom: 1px solid rgba(11,17,20,0.04);
+  border-bottom: 1px solid rgba(255,255,255,0.02);
+}
+
+/* Liquid sheen keyframe */
+@keyframes sheenSlide {
+  0% { transform: translateX(-40%); opacity: 0.0; }
+  10% { opacity: 0.7; }
+  50% { transform: translateX(20%); opacity: 1; }
+  90% { opacity: 0.6; }
+  100% { transform: translateX(60%); opacity: 0.0; }
 }
 
 /* Animations */
