@@ -81,7 +81,7 @@ export class HomePage implements OnInit {
         const list: any[] = await this.querySrv.execute_Function('get_students_by_ie_cicle', {p_id_ie_cicle: id_IE})
         this.allStudents = Array.isArray(list) ? list.map(r => ({
 
-          TI: r.id_estudiante_out ?? '',
+          TI: r.invoice_id_out ?? '',
           DocumentType: r.documento_tipo_out ?? 'TI',
           Name: r.nombre_out ?? '',
           LastName: r.apellido_out ?? '',
