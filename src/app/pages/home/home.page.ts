@@ -98,7 +98,7 @@ export class HomePage implements OnInit {
 
   public selectSearchResult(item: StudentModel) {
     console.log('[Home] Selected search item:', item);
-    this.searchQuery = `${item.Name} ${item.LastName}`;
+    this.searchQuery = '';
     this.filteredResults = [];
     console.log('[Home] Navegando a /detalles-estudiante/', item.TI);
     this.router.navigate(['/detalles-estudiante', item.TI]);
