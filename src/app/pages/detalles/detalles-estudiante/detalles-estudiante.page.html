@@ -22,29 +22,29 @@
       </ion-card-header>
       <ion-card-content>
         <div class="student-grid">
-          <div class="label">Nombre</div>
-          <div class="value">{{ student.nombre }}</div>
+          <div class="p-label">Nombre : </div>
+          <div class="p-value">{{ student.nombre }}</div>
 
-          <div class="label">Apellido</div>
-          <div class="value">{{ student.apellido }}</div>
+          <div class="p-label">Apellido</div>
+          <div class="p-value">{{ student.apellido }}</div>
 
-          <div class="label">Correo</div>
-          <div class="value">{{ student.correo }}</div>
+          <div class="p-label">Correo</div>
+          <div class="p-value">{{ student.correo }}</div>
 
-          <div class="label">ID</div>
-          <div class="value">{{ student.identificacion }}</div>
+          <div class="p-label">ID</div>
+          <div class="p-value">{{ student.identificacion }}</div>
 
-          <div class="label">IE</div>
-          <div class="value">{{ student.institucion }}</div>
+          <div class="p-label">Institucion Educativa</div>
+          <div class="p-value">{{ student.institucion }}</div>
 
-          <div class="label">Dirección</div>
-          <div class="value">{{ student.direccion }}</div>
+          <div class="p-label">Dirección</div>
+          <div class="p-value">{{ student.direccion }}</div>
 
-          <div class="label">Estado</div>
-          <div class="value">{{ student.estado }}</div>
+          <div class="p-label">Estado</div>
+          <div class="p-value">{{ student.estado }}</div>
 
-          <div class="label">Grado</div>
-          <div class="value">{{ student.grado }}</div>
+          <div class="p-label">Grado</div>
+          <div class="p-value">{{ student.grado }}</div>
         </div>
       </ion-card-content>
     </ion-card>
@@ -67,9 +67,6 @@
 
           <div class="p-label">Pendiente:</div>
           <div class="p-value">{{ paymentSummary.pending | currency:'COP' }}</div>
-
-          <div></div>
-          <div></div>
         </div>
       </ion-card-content>
     </ion-card>
@@ -77,7 +74,8 @@
   </section>
 
   <ng-template #loadingOrEmpty>
-    <div class="loading-state" *ngIf="loading" style="display:flex;align-items:center;justify-content:center;height:50vh;">
+    <div class="loading-state" *ngIf="loading"
+      style="display:flex;align-items:center;justify-content:center;height:50vh;">
       <ion-spinner name="crescent"></ion-spinner>
     </div>
     <ion-card *ngIf="!loading && notFound" class="form-card">
@@ -95,17 +93,12 @@
    son caracteristicas visuales, puse ejemplo de colores que pueden usar, no es simplemente
    escribir red o blue ok bebe?-->
 
-  <app-fabbutom
-    color="primary"
-    position="bottom-right"
-    [actions]="[
+  <app-fabbutom color="primary" position="bottom-right" [actions]="[
       { id: 'editar', icon: 'create', label: 'Editar', color: 'primary' },
       { id: 'eliminar', icon: 'trash', label: 'Eliminar', color: 'danger' },
       { id: 'pago', icon: 'card', label: 'Registrar pago', color: 'success' },
       { id: 'volver', icon: 'arrow-back', label: 'Volver', color: 'secondary' }
-    ]"
-    (actionClick)="onFabAction($event)"
-  ></app-fabbutom>
+    ]" (actionClick)="onFabAction($event)"></app-fabbutom>
 
 
 
