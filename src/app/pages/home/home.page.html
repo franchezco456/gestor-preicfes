@@ -24,6 +24,30 @@
     </div>
   </div>
 
+<!-- Single stats card with 2x2 layout -->
+<ion-card class="stats-card">
+  <ion-card-content>
+    <div class="stats-grid">
+      <div class="stat-cell">
+        <div class="stat-value">1,234</div>
+        <div class="stat-label">Estudiantes</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-value">87</div>
+        <div class="stat-label">Pagos pendientes</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-value">512</div>
+        <div class="stat-label">Pagos realizados</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-value">COP 12.540.000</div>
+        <div class="stat-label">Ingresos (mes)</div>
+      </div>
+    </div>
+  </ion-card-content>
+</ion-card>
+
   <div>
     <ion-card>
       <app-chart [chartOptions]="studentPagos" cssClass="home-chart">
