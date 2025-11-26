@@ -19,6 +19,5 @@ import { BottomTabbarComponent } from './components/bottom-tabbar/bottom-tabbar.
   declarations: [CardComponent, InputComponent, ButtonComponent, SelectComponent, ChartComponent, SidebarComponent, SearchbarComponent, FabbutomComponent, CheckboxComponent, ListComponent, BottomTabbarComponent],
   imports: [CommonModule, ReactiveFormsModule, IonicModule, NgApexchartsModule],
   exports: [CardComponent,ListComponent, InputComponent, ButtonComponent, SelectComponent, ChartComponent, SidebarComponent, SearchbarComponent, FabbutomComponent, CheckboxComponent, BottomTabbarComponent],
-
 })
 export class SharedModule {}

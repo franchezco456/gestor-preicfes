@@ -29,25 +29,45 @@
     </div>
   </div>
 
-
   <section class="dashboard-hero">
     <div class="hero-left">
       <div class="user-badge">
         <div class="user-info">
-          <div class="user-name">Bienvenido Coordinador</div>
+          <div class="user-name">Bienvenido {{ coordinatorName }}</div>
           <div class="user-sub muted">Mi cuenta</div>
         </div>
       </div>
     </div>
   </section>
 
-
   <section class="dashboard-grid">
-    <div class="kpis">
-      <ng-container *ngFor="let k of kpis">
-        <app-card variant="kpi" [value]="k.value" [label]="k.label"></app-card>
-      </ng-container>
-    </div>
+    <ion-card class="stats-card">
+      <ion-card-content>
+        <div class="stats-grid">
+          <div class="stat-cell">
+            <div class="stat-value">{{ kpis[0]?.value }}</div>
+            <div class="stat-label">{{ kpis[0]?.label }}</div>
+          </div>
+          <div class="stat-cell">
+            <div class="stat-value">
+              <ng-container *ngIf="kpis[1]?.value === 'COP 0'; else saldoValue">
+                No tiene saldos pendientes
+              </ng-container>
+              <ng-template #saldoValue>{{ kpis[1]?.value }}</ng-template>
+            </div>
+            <div class="stat-label">{{ kpis[1]?.label }}</div>
+          </div>
+          <div class="stat-cell">
+            <div class="stat-value">{{ kpis[2]?.value }}</div>
+            <div class="stat-label">{{ kpis[2]?.label }}</div>
+          </div>
+          <div class="stat-cell">
+            <div class="stat-value">{{ kpis[3]?.value }}</div>
+            <div class="stat-label">{{ kpis[3]?.label }}</div>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
     <div class="chart-card">
       <app-card title="Estado de Pagos">
         <div style="margin-bottom: 1rem;">

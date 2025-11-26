@@ -113,4 +113,8 @@ export class DetallesEstudiantePage implements OnInit {
         break;
     }
   }
+
+  public goToEdit() {
+    this.router.navigate(['/actualizar-estudiante', this.student.identificacion]);
+  }
 }

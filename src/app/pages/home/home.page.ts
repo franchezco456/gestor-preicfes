@@ -20,6 +20,7 @@ import { FormControl } from '@angular/forms';
 })
 export class HomePage implements OnInit {
   public kpis: Array<{ value: string | number; label: string }> = [];
+  public coordinatorName: string = '';
 
   public tabButtons = [
     { icon: 'home-outline', route: '/home', aria: 'Inicio' },
@@ -70,6 +71,12 @@ export class HomePage implements OnInit {
     try {
       const coord = await this.preferencesSrv.getPreferences('coordData');
       const id_IE = coord.coordData.id_IE_Cicle;
+      // Obtener nombre y apellido del coordinador
+      if (coord && coord.coordData) {
+        const name = coord.coordData.Name || '';
+        const lastName = coord.coordData.LastName || '';
+        this.coordinatorName = `${name} ${lastName}`.trim();
+      }
 
       await Promise.all([
         this.fetchPayments(id_IE),
@@ -138,9 +145,11 @@ export class HomePage implements OnInit {
       { ingresosTotales: 0, saldoPendienteTotal: 0 }
     );
 
+    const saldoPendienteFinal = Math.max(0, saldoPendienteTotal);
+
     this.kpis = [
       { value: totalEstudiantes, label: 'Estudiantes' },
-      { value: this.formatCurrency(saldoPendienteTotal), label: 'Saldo pendiente' },
+      { value: this.formatCurrency(saldoPendienteFinal), label: 'Saldo pendiente' },
       { value: pagosRealizados, label: 'Pagos realizados' },
       { value: this.formatCurrency(ingresosTotales), label: 'Ingresos (total)' },
     ];

@@ -4,7 +4,6 @@ type data = {
   title: string;
   detail: string;
   button?: string | null;
-  studentId?: string;
 }
 @Component({
   selector: 'app-list',

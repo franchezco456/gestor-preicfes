@@ -1,29 +1,109 @@
+#container {
+  text-align: center;
 
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+#container strong {
+  font-size: 20px;
+  line-height: 26px;
+}
+
+#container p {
+  font-size: 16px;
+  line-height: 22px;
+
+  color: #8c8c8c;
+
+  margin: 0;
+}
+
+#container a {
+  text-decoration: none;
+}
+
+/* Topbar: menu button + searchbar */
+.home-topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 16px 12px 16px !important;
+  background: transparent;
+  
+}
 
 .menu-btn {
-  width: 52px;
-  height: 52px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  width: 52px;
+  height: 52px;
+  border: none;
+  background: transparent;
+  color: var(--ion-color-primary, #0B1114);
   border-radius: 10px;
-  background: rgba(var(--form-accent-rgb), 0.06);
-  color: rgba(11, 17, 20, 0.9);
+  transition: background-color 120ms ease, transform 120ms ease;
+}
+
+.menu-btn:hover {
+  background: rgba(0,0,0,0.04);
+  transform: translateY(-1px);
 }
 
 .menu-btn ion-icon {
-  font-size: 22px;
+  font-size: 22px; /* larger icon */
   width: 22px;
-  height: 22px
+  height: 22px;
+
 }
 
 .home-search-wrapper {
   flex: 1 1 auto;
-  position: relative;
-  width: 100%
 }
 
-.search-results,
+.search-results {
+  margin-top: 6px;
+}
+
+/* Apply form aesthetic tokens to the home topbar and actions */
+.form-page .home-topbar {
+  padding: 14px 18px;
+  gap: 14px;
+  align-items: center;
+  background: transparent;
+}
+
+/* Remove default grid/col paddings so the searchbar and menu align flush */
+.form-page .home-topbar ion-grid,
+.form-page .home-topbar ion-row,
+.form-page .home-topbar ion-col {
+  padding: 0;
+  margin: 0;
+}
+
+/* Slightly reduce overall topbar padding to avoid large empty areas */
+.form-page .home-topbar {
+  padding: 8px 10px;
+}
+
+/* make topbar a positioning context so results can overlay content */
+.form-page .home-topbar {
+  position: relative;
+}
+
+/* If the results list is rendered directly inside the search wrapper, make it overlay */
+.home-search-wrapper {
+  position: relative;
+  /* constrain the search box so results align to the input width */
+  flex: 1 1 auto;
+  max-width: 720px; /* limits expansion on wide screens */
+  min-width: 220px;
+}
+
 .home-search-wrapper .search-results {
   position: absolute;
   top: calc(100% + 6px);
@@ -32,80 +112,271 @@
   z-index: 40;
   background: var(--ion-background-color, #fff);
   border-radius: 12px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
   max-height: 320px;
   overflow: auto;
-  margin: 0
+  margin: 0;
 }
 
-.dashboard-grid {
-  display: grid;
-  grid-template-columns: 1fr 2fr;
-  gap: 12px;
-  padding: 0 10px
+.home-search-wrapper app-searchbar {
+  display: block;
+  width: 100%;
 }
 
-.dashboard-hero {
+.home-search-wrapper {
+  margin: 0;
+}
+
+.search-results-container {
+  padding: 0 10px;
+  width: 100%;
+  position: absolute; /* overlay */
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 40;
+}
+
+.search-results {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  background: var(--ion-background-color, #fff);
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  max-height: 320px;
+  overflow: auto;
+}
+
+.search-results ion-item {
+  margin: 6px 0;
+  border-radius: 12px;
+  overflow: hidden;
+  --padding-start: 12px; 
+  --padding-end: 12px;
+}
+
+
+.home-search-wrapper .search-results {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 40;
+  
+  background: linear-gradient(180deg, rgba(34,36,42,0.14), rgba(28,30,36,0.12));
+  
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 14px;
+  padding: 8px;
+  
+  box-shadow: 0 14px 36px rgba(6,8,12,0.10);
+  inset: 0 1px 0 rgba(255,255,255,0.02);
+  
+  backdrop-filter: blur(12px) saturate(1.08);
+  -webkit-backdrop-filter: blur(12px) saturate(1.08);
+  max-height: 320px;
+  overflow: auto;
+  transform-origin: top center;
+  animation: popIn 220ms cubic-bezier(.2,.9,.28,1) forwards;
+  position: absolute;
+}
+
+
+.home-search-wrapper .search-results::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: 14px;
+  /* very subtle sheen to imply liquid surface, low opacity (almost white) */
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.356) 0%, rgba(255,255,255,0.05) 45%, rgba(255,255,255,0.12) 55%, rgba(255,255,255,0.04) 80%, rgba(255,255,255,0.085) 100%);
+  mix-blend-mode: overlay;
+  transform: translateX(-18%);
+  filter: blur(3px) saturate(1.02);
+  opacity: 0.55;
+  animation: sheenSlide 3.0s linear infinite;
+}
+
+.home-search-wrapper .search-results ion-item {
+  margin: 6px 0;
+  border-radius: 10px;
+  overflow: hidden;
+  --padding-start: 12px;
+  --padding-end: 12px;
+  background: transparent;
+  transition: transform 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 12px 16px
+  opacity: 0;
+  transform: translateY(8px) scale(0.995);
+  animation: itemIn 260ms cubic-bezier(.2,.9,.28,1) forwards;
 }
 
-.kpis {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(120px, 1fr));
-  column-gap: 12px;
-  row-gap: 12px;
-  align-items: start
+.home-search-wrapper .search-results ion-item:hover {
+  transform: translateX(6px);
+  background: rgba(var(--form-accent-rgb, 127,175,224), 0.06);
+  box-shadow: 0 8px 20px rgba(33,53,105,0.06);
 }
 
-.kpis>* {
-  margin: 0
+.home-search-wrapper .search-results ion-item ion-icon {
+  color: rgba(var(--form-accent-rgb, 127,175,224), 0.95);
+  font-size: 18px;
+  margin-left: 6px;
+  opacity: 0.95;
 }
 
-.dashboard-bottom {
+.home-search-wrapper .search-results ion-item:nth-child(1) { animation-delay: 0.04s; }
+.home-search-wrapper .search-results ion-item:nth-child(2) { animation-delay: 0.08s; }
+.home-search-wrapper .search-results ion-item:nth-child(3) { animation-delay: 0.12s; }
+.home-search-wrapper .search-results ion-item:nth-child(4) { animation-delay: 0.16s; }
+.home-search-wrapper .search-results ion-item:nth-child(5) { animation-delay: 0.20s; }
+.home-search-wrapper .search-results ion-item:nth-child(6) { animation-delay: 0.24s; }
+.home-search-wrapper .search-results ion-item:nth-child(7) { animation-delay: 0.28s; }
+.home-search-wrapper .search-results ion-item:nth-child(8) { animation-delay: 0.32s; }
+.home-search-wrapper .search-results ion-item:nth-child(9) { animation-delay: 0.36s; }
+.home-search-wrapper .search-results ion-item:nth-child(10) { animation-delay: 0.40s; }
+
+
+.home-search-wrapper .search-results ion-item::part(native) {
+  border-bottom: 1px solid rgba(255,255,255,0.02);
+}
+
+/* Liquid sheen keyframe */
+@keyframes sheenSlide {
+  0% { transform: translateX(-40%); opacity: 0.0; }
+  10% { opacity: 0.7; }
+  50% { transform: translateX(20%); opacity: 1; }
+  90% { opacity: 0.6; }
+  100% { transform: translateX(60%); opacity: 0.0; }
+}
+
+/* Animations */
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.98) translateY(-4px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes itemIn {
+  from { opacity: 0; transform: translateY(8px) scale(0.995); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Make the chart card expand reasonably and remove large side gaps */
+ion-card.home-chart, ion-card {
+  margin: 10px;
+}
+
+.search-results ion-item {
+  margin: 6px 0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.home-actions {
   display: flex;
   gap: 12px;
-  padding: 12px 10px
+  flex-wrap: wrap;
+  padding: 16px;
+  justify-content: center;
 }
 
-.dashboard-bottom .recent-activity,
-.dashboard-bottom .quick-actions {
-  flex: 1
+.home-actions ion-button {
+  --border-radius: 12px;
+  --padding-top: 10px;
+  --padding-bottom: 10px;
+  --padding-start: 18px;
+  --padding-end: 18px;
+  text-transform: none;
+  font-weight: 600;
+  background: linear-gradient(135deg, rgba(var(--form-accent-rgb),1) 0%, rgba(var(--form-accent-rgb),0.9) 100%);
+  color: #fff;
+  box-shadow: 0 12px 30px rgba(var(--form-accent-dark-rgb), 0.14);
 }
 
-@media (max-width:768px) {
-  .dashboard-grid {
-    grid-template-columns: 1fr
-  }
-
-  .kpis {
-    grid-template-columns: repeat(2, minmax(120px, 1fr))
-  }
-
-  .dashboard-bottom {
-    flex-direction: column
-  }
+.home-actions ion-button[fill="clear"] {
+  background: transparent;
+  color: rgba(11,17,20,0.86);
+  box-shadow: none;
 }
 
-.bottom-tabbar ion-toolbar {
-  padding: 6px
+/* Single stats card with 2x2 layout */
+
+/* Make stats card match app's form-card look and behaviour */
+.stats-card {
+  border-radius: 12px; /* slightly smaller */
+  margin: 8px 0 12px;
+  padding: 6px; /* reduced padding to make card smaller */
+  background: rgba(255,255,255,0.98);
+  box-shadow: 0 14px 36px rgba(11,17,20,0.06);
+  border: 1px solid rgba(11,17,20,0.04);
+  position: relative;
+  overflow: hidden;
+  transition: transform 180ms cubic-bezier(.2,.9,.28,1), box-shadow 180ms ease;
 }
 
-.bottom-tabbar .tab-btn {
+.stats-card:hover { transform: translateY(-4px); box-shadow: 0 20px 44px rgba(11,17,20,0.08); }
+
+/* subtle overlay like other cards */
+.stats-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, rgba(255,255,255,0.04), transparent 55%);
+  opacity: 1;
+  pointer-events: none;
+}
+
+.stats-card .stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-flow: dense;
+  gap: 8px; /* tighter gap */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.stat-cell {
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  height: 52px
+  align-items: flex-start;
+  padding: 8px 10px; /* reduced cell padding */
+  border-radius: 8px;
+  background: transparent; /* card surface remains unified */
+  border: none;
+  box-shadow: none;
+  transition: transform 140ms ease, background-color 140ms ease;
 }
 
-.bottom-tabbar .tab-btn ion-icon {
-  font-size: 36px;
-  color: var(--ion-color-primary, #0088ff)
+.stat-cell:hover { transform: translateY(-2px); background: rgba(11,17,20,0.02); }
+
+.stat-cell .stat-value {
+  font-size: 1.0rem; /* reduced size */
+  font-weight: 700;
+  color: rgba(11,17,20,0.88);
+  margin-bottom: 4px;
 }
 
-:host ion-content {
-  padding-bottom: 64px
+.stat-cell .stat-label {
+  font-size: 0.72rem; /* reduced label size */
+  color: rgba(11,17,20,0.58);
 }
+
+/* Keep two columns on most mobile widths; collapse only on very narrow screens */
+/* collapse to single column only on very narrow screens */
+@media (max-width: 320px) {
+  .stats-card .stats-grid { grid-template-columns: 1fr; }
+}
+
+/* Ensure card and grid take full available width */
+.stats-card { width: 100%; }
+.stats-card .stats-grid { width: 100%; }
+
+/* Make the menu button more visible on the light background */
+.menu-btn {
+  background: rgba(var(--form-accent-rgb), 0.06);
+  color: rgba(11,17,20,0.9);
+}
+
+.menu-btn:hover { background: rgba(var(--form-accent-rgb), 0.09); }

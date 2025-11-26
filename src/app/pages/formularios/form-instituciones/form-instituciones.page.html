@@ -1,14 +1,19 @@
-
-
 <ion-content class="form-page" [fullscreen]="true">
   <div class="form-wrapper">
     <section class="form-header">
       <ion-buttons slot="start">
-      <ion-back-button defaultHref="/home" text="Atrás" icon="chevron-back-outline"></ion-back-button>
-    </ion-buttons>
+        <ion-back-button
+          defaultHref="/home"
+          text="Atrás"
+          icon="chevron-back-outline"
+        ></ion-back-button>
+      </ion-buttons>
       <ion-text color="light">
         <h1>Administra instituciones aliadas</h1>
-        <p>Registra nuevas instituciones educativas junto con la información clave para la oferta académica.</p>
+        <p>
+          Registra nuevas instituciones educativas junto con la información
+          clave para la oferta académica.
+        </p>
       </ion-text>
       <div class="header-meta">
         <ion-chip class="meta-chip" color="light" [outline]="true">
@@ -24,11 +29,15 @@
 
     <ion-card class="form-card">
       <ion-card-header>
-        <ion-card-subtitle>Formulario</ion-card-subtitle>
         <ion-card-title>Datos de la institución</ion-card-title>
+        <ion-card-subtitle>Formulario</ion-card-subtitle>
       </ion-card-header>
       <ion-card-content>
-        <form [formGroup]="institutionForm" (ngSubmit)="submitInstitutionForm()" novalidate>
+        <form
+          [formGroup]="institutionForm"
+          (ngSubmit)="submitInstitutionForm()"
+          novalidate
+        >
           <ion-grid fixed class="form-grid">
             <ion-row>
               <ion-col size="12" size-md="6">
@@ -40,7 +49,8 @@
                   type="text"
                   inputmode="text"
                   labelPosition="stacked"
-                  [control]="institutionForm.get('Dane')">
+                  [control]="institutionForm.get('Dane')"
+                >
                 </app-input>
               </ion-col>
 
@@ -51,7 +61,8 @@
                   label="Nombre"
                   placeholder="Nombre de la institución"
                   labelPosition="stacked"
-                  [control]="institutionForm.get('Name')">
+                  [control]="institutionForm.get('Name')"
+                >
                 </app-input>
               </ion-col>
 
@@ -62,11 +73,12 @@
                   label="Dirección"
                   placeholder="Dirección principal"
                   labelPosition="stacked"
-                  [control]="institutionForm.get('Address')">
+                  [control]="institutionForm.get('Address')"
+                >
                 </app-input>
               </ion-col>
 
-               <ion-col size="12" size-md="6">
+              <ion-col size="12" size-md="6">
                 <app-input
                   cssClass="form-field"
                   lines="none"
@@ -74,7 +86,8 @@
                   placeholder="contacto@institucion.edu"
                   type="email"
                   labelPosition="stacked"
-                  [control]="institutionForm.get('Email')">
+                  [control]="institutionForm.get('Email')"
+                >
                 </app-input>
               </ion-col>
 
@@ -87,7 +100,8 @@
                   type="tel"
                   inputmode="tel"
                   labelPosition="stacked"
-                  [control]="institutionForm.get('Phone')">
+                  [control]="institutionForm.get('Phone')"
+                >
                 </app-input>
               </ion-col>
 
@@ -100,11 +114,12 @@
                   type="number"
                   inputmode="decimal"
                   labelPosition="stacked"
-                  [control]="institutionForm.get('Discount')">
+                  [control]="institutionForm.get('Discount')"
+                >
                 </app-input>
               </ion-col>
 
-                <ion-col size="12" size-md="6">
+              <ion-col size="12" size-md="6">
                 <div class="course-price">
                   <div class="course-price__header">
                     <h3>Valor del curso</h3>
@@ -117,7 +132,10 @@
               </ion-col>
               <ion-col size="12">
                 <div class="checkbox-row">
-                  <app-checkbox [label]="'Institución financia el preicfes'" [control]="institutionForm.get('FinancesPreicfes')">
+                  <app-checkbox
+                    [label]="'Institución financia el preicfes'"
+                    [control]="institutionForm.get('FinancesPreicfes')"
+                  >
                     Institución financia el preicfes
                   </app-checkbox>
                 </div>
@@ -131,9 +149,9 @@
               expand="block"
               type="submit"
               label="Registrar institución"
-               [disabled]="!institutionForm.valid">
+              [disabled]="!institutionForm.valid"
+            >
               <ion-icon slot="start" name="ribbon-outline"></ion-icon>
-
             </app-button>
           </div>
         </form>

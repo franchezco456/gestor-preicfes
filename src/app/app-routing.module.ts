@@ -33,6 +33,10 @@ const routes: Routes = [
     loadChildren: () => import('./pages/detalles/detalles-estudiante/detalles-estudiante.module').then(m => m.DetallesEstudiantePageModule)
   },
   {
+    path: 'actualizar-estudiante',
+    loadChildren: () => import('./pages/formularios/actualizar-estudiante/actualizar-estudiante.module').then( m => m.ActualizarEstudiantePageModule)
+  },
+  {
     path: '',
     redirectTo: 'login',
     pathMatch: 'full'

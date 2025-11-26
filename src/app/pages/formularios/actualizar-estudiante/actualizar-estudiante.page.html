@@ -1,14 +1,13 @@
-<ion-content class="form-page" [fullscreen]="true">
+<ion-content class="form-page page-enter" [fullscreen]="true">
   <div class="form-wrapper">
     <section class="form-header">
        <ion-buttons slot="start">
       <ion-back-button defaultHref="/home" text="Atrás" icon="chevron-back-outline"></ion-back-button>
     </ion-buttons>
       <ion-text color="light">
-        <h1>Inscribe nuevos estudiantes</h1>
+        <h1>Actualizar estudiante</h1>
         <p>
-          Completa la información básica del estudiante y asigna la institución
-          educativa correspondiente.
+          Modifica la información del estudiante y guarda los cambios.
         </p>
       </ion-text>
       <div class="header-meta">
@@ -23,7 +22,24 @@
       </div>
     </section>
 
-    <ion-card class="form-card">
+    <!-- Searchbar: buscar por número de documento (TI) - Home-like client-side search -->
+    <div style="width:100%; max-width:1024px; margin: 0 auto 18px; padding-inline: clamp(16px, 3vw, 28px); box-sizing: border-box;">
+      <div class="home-search-wrapper">
+        <app-searchbar cssClass="form-field" placeholder="Buscar un estudiante" [value]="searchQuery" (valueChange)="onSearchInput($event)">
+        </app-searchbar>
+
+        <ion-list *ngIf="filteredResults.length" class="search-results stagger">
+          <ion-item *ngFor="let r of filteredResults; let i = index" button (click)="selectSearchResult(r)" class="list-item-enter" [style.--i]="i">
+            <ion-label>
+              <h3>{{ r.Name }} {{ r.LastName }}</h3>
+              <p>ID: {{ r.TI }}</p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </div>
+    </div>
+
+    <ion-card class="form-card anim-slide-in-left">
       <ion-card-header>
         <ion-card-title>Datos del estudiante</ion-card-title>
         <ion-card-subtitle>Formulario</ion-card-subtitle>
@@ -56,17 +72,15 @@
               <!-- No extra input when 'Otro' is selected; DocumentType will be submitted as-is -->
 
               <ion-col size="12" size-md="3">
-                <app-input
-                  cssClass="form-field"
-                  lines="none"
-                  label="Número de documento"
-                  placeholder="Documento del estudiante"
-                  type="number"
-                  inputmode="numeric"
-                  labelPosition="stacked"
-                  [control]="studentForm.get('TI')"
-                >
-                </app-input>
+                <ion-item class="form-field" lines="none">
+                  <ion-label position="stacked">Número de documento</ion-label>
+                  <ion-input
+                    type="text"
+                    inputmode="numeric"
+                    formControlName="TI"
+                    [disabled]="!!updatingStudentId"
+                  ></ion-input>
+                </ion-item>
               </ion-col>
 
               <ion-col size="12" size-md="6">
@@ -189,10 +203,10 @@
 
           <div class="actions">
             <app-button
-              cssClass="submit-button"
+              cssClass="submit-button anim-pop"
               expand="block"
               type="submit"
-              label="Registrar estudiante"
+              label="Actualizar estudiante"
               [disabled]="studentForm.invalid"
             >
               <ion-icon slot="start" name="save-outline"></ion-icon>
