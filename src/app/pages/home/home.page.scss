@@ -1,29 +1,105 @@
+#container {
+  text-align: center;
 
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+#container strong {
+  font-size: 20px;
+  line-height: 26px;
+}
+
+#container p {
+  font-size: 16px;
+  line-height: 22px;
+
+  color: #8c8c8c;
+
+  margin: 0;
+}
+
+#container a {
+  text-decoration: none;
+}
+
+/* Topbar: menu button + searchbar */
+.home-topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 16px 12px 16px !important;
+  background: transparent;
+  
+}
 
 .menu-btn {
-  width: 52px;
-  height: 52px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  width: 52px;
+  height: 52px;
+  border: none;
+  background: transparent;
+  color: var(--ion-color-primary, #0B1114);
   border-radius: 10px;
-  background: rgba(var(--form-accent-rgb), 0.06);
-  color: rgba(11, 17, 20, 0.9);
+  transition: background-color 120ms ease, transform 120ms ease;
+}
+
+.menu-btn:hover {
+  background: rgba(0,0,0,0.04);
+  transform: translateY(-1px);
 }
 
 .menu-btn ion-icon {
-  font-size: 22px;
+  font-size: 22px; /* larger icon */
   width: 22px;
-  height: 22px
+  height: 22px;
+
 }
 
 .home-search-wrapper {
   flex: 1 1 auto;
-  position: relative;
-  width: 100%
 }
 
-.search-results,
+.search-results {
+  margin-top: 6px;
+}
+
+/* Apply form aesthetic tokens to the home topbar and actions */
+.form-page .home-topbar {
+  padding: 14px 18px;
+  gap: 14px;
+  align-items: center;
+  background: transparent;
+}
+
+/* Remove default grid/col paddings so the searchbar and menu align flush */
+.form-page .home-topbar ion-grid,
+.form-page .home-topbar ion-row,
+.form-page .home-topbar ion-col {
+  padding: 0;
+  margin: 0;
+}
+
+/* Slightly reduce overall topbar padding to avoid large empty areas */
+.form-page .home-topbar {
+  padding: 8px 10px;
+}
+
+/* make topbar a positioning context so results can overlay content */
+.form-page .home-topbar {
+  position: relative;
+}
+
+/* If the results list is rendered directly inside the search wrapper, make it overlay */
+.home-search-wrapper {
+  position: relative;
+}
+
 .home-search-wrapper .search-results {
   position: absolute;
   top: calc(100% + 6px);
@@ -32,80 +108,93 @@
   z-index: 40;
   background: var(--ion-background-color, #fff);
   border-radius: 12px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
   max-height: 320px;
   overflow: auto;
-  margin: 0
+  margin: 0;
 }
 
-.dashboard-grid {
-  display: grid;
-  grid-template-columns: 1fr 2fr;
+.home-search-wrapper app-searchbar {
+  display: flex;
+}
+
+/* Make the search wrapper and results take full available width */
+.home-search-wrapper {
+  width: 100%;
+  margin: 0;
+}
+
+.search-results-container {
+  padding: 0 10px;
+  width: 100%;
+  position: absolute; /* overlay */
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 40;
+}
+
+.search-results {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  background: var(--ion-background-color, #fff);
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  max-height: 320px;
+  overflow: auto;
+}
+
+.search-results ion-item {
+  margin: 6px 0;
+  border-radius: 12px;
+  overflow: hidden;
+  --padding-start: 12px; /* reduce left inset */
+  --padding-end: 12px;
+}
+
+/* Make the chart card expand reasonably and remove large side gaps */
+ion-card.home-chart, ion-card {
+  margin: 10px;
+}
+
+.search-results ion-item {
+  margin: 6px 0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.home-actions {
+  display: flex;
   gap: 12px;
-  padding: 0 10px
-}
-
-.dashboard-hero {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 16px
-}
-
-.kpis {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(120px, 1fr));
-  column-gap: 12px;
-  row-gap: 12px;
-  align-items: start
-}
-
-.kpis>* {
-  margin: 0
-}
-
-.dashboard-bottom {
-  display: flex;
-  gap: 12px;
-  padding: 12px 10px
-}
-
-.dashboard-bottom .recent-activity,
-.dashboard-bottom .quick-actions {
-  flex: 1
-}
-
-@media (max-width:768px) {
-  .dashboard-grid {
-    grid-template-columns: 1fr
-  }
-
-  .kpis {
-    grid-template-columns: repeat(2, minmax(120px, 1fr))
-  }
-
-  .dashboard-bottom {
-    flex-direction: column
-  }
-}
-
-.bottom-tabbar ion-toolbar {
-  padding: 6px
-}
-
-.bottom-tabbar .tab-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  flex-wrap: wrap;
+  padding: 16px;
   justify-content: center;
-  height: 52px
 }
 
-.bottom-tabbar .tab-btn ion-icon {
-  font-size: 36px;
-  color: var(--ion-color-primary, #0088ff)
+.home-actions ion-button {
+  --border-radius: 12px;
+  --padding-top: 10px;
+  --padding-bottom: 10px;
+  --padding-start: 18px;
+  --padding-end: 18px;
+  text-transform: none;
+  font-weight: 600;
+  background: linear-gradient(135deg, rgba(var(--form-accent-rgb),1) 0%, rgba(var(--form-accent-rgb),0.9) 100%);
+  color: #fff;
+  box-shadow: 0 12px 30px rgba(var(--form-accent-dark-rgb), 0.14);
 }
 
-:host ion-content {
-  padding-bottom: 64px
+.home-actions ion-button[fill="clear"] {
+  background: transparent;
+  color: rgba(11,17,20,0.86);
+  box-shadow: none;
 }
+
+/* Make the menu button more visible on the light background */
+.menu-btn {
+  background: rgba(var(--form-accent-rgb), 0.06);
+  color: rgba(11,17,20,0.9);
+}
+
+.menu-btn:hover { background: rgba(var(--form-accent-rgb), 0.09); }
