@@ -12,10 +12,11 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { SearchbarComponent } from './components/searchbar/searchbar.component';
 import { FabbutomComponent } from './components/fabbutom/fabbutom.component';
 import { CheckboxComponent } from './components/checkbox/checkbox.component';
+import { ListComponent } from './components/list/list.component';
 
 @NgModule({
-  declarations: [CardComponent, InputComponent, ButtonComponent, SelectComponent, ChartComponent, SidebarComponent, SearchbarComponent, FabbutomComponent, CheckboxComponent],
+  declarations: [CardComponent, ListComponent,InputComponent, ButtonComponent, SelectComponent, ChartComponent, SidebarComponent, SearchbarComponent, FabbutomComponent, CheckboxComponent],
   imports: [CommonModule, ReactiveFormsModule, IonicModule, NgApexchartsModule],
-  exports: [CardComponent, InputComponent, ButtonComponent, SelectComponent, ChartComponent, SidebarComponent, SearchbarComponent, FabbutomComponent, CheckboxComponent],
+  exports: [CardComponent,ListComponent, InputComponent, ButtonComponent, SelectComponent, ChartComponent, SidebarComponent, SearchbarComponent, FabbutomComponent, CheckboxComponent],
 })
 export class SharedModule {}

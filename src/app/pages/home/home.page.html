@@ -31,13 +31,7 @@
     </ion-card>
   </div>
 
-  <div class="home-actions">
-    <ion-button (click)="execute()">Go</ion-button>
-    <ion-button (click)="logout()">logout</ion-button>
-    <ion-button (click)="gotoRE()">registrar estudiantes</ion-button>
-    <ion-button (click)="gotoRC()">registrar coordinadores</ion-button>
-    <ion-button (click)="gotoRI()">registrar institucionies educativas</ion-button>
-  </div>
+  <app-list [items]="payments"></app-list>
 
   <app-fabbutom icon="menu" label="Acciones" color="primary" position="bottom-right" [actions]="[
       { id: 'estudiante', icon: 'person-add', label: 'Estudiante', color: 'secondary' },
