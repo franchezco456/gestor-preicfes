@@ -155,9 +155,7 @@ ion-card-content {
 	color: rgba(255, 255, 255, 0.75);
 }
 
-/* form interactions (hover/focus/invalid/error-text) moved to global.scss */
 
-/* actions spacing is global */
 
 .submit-button::part(native) {
 	background: linear-gradient(135deg, rgba(var(--page-accent-rgb), 1) 0%, rgba(var(--page-accent-rgb), 0.6) 100%);
@@ -169,7 +167,7 @@ ion-card-content {
 	transition: transform 200ms ease, box-shadow 220ms ease, filter 200ms ease;
 }
 
-/* submit-button hover/active interactions centralized in global.scss */
+
 
 .submit-button ion-icon {
 	font-size: 1.1rem;
