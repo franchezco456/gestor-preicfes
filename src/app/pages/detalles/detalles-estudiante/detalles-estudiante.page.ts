@@ -31,6 +31,11 @@ export class DetallesEstudiantePage implements OnInit {
   public loading = false;
   public notFound = false;
 
+  async ionViewWillEnter() {
+    await this.loadingSrv.showLoading('Cargando estudiante...');
+    await this.loadStudent();
+    await this.loadingSrv.dismissLoading();
+  }
   constructor(
     private readonly route: ActivatedRoute,
     private readonly router: Router,
@@ -39,11 +44,13 @@ export class DetallesEstudiantePage implements OnInit {
   ) {}
 
   async ngOnInit() {
-    const id = this.route.snapshot.paramMap.get('id');
+  }
+
+  private async loadStudent(){
+      const id = this.route.snapshot.paramMap.get('id');
     console.log('[DetallesEstudiante] Param id =', id);
     if (!id) { this.notFound = true; return; }
     this.loading = true;
-    await this.loadingSrv.showLoading('Cargando estudiante...');
     try {
       const rows: any[] = await this.querySrv.execute_Function('get_students_by_ie_cicle', {p_id_student : id});
       const s = Array.isArray(rows) ? rows[0] : null;
