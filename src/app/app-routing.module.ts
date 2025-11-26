@@ -36,7 +36,11 @@ const routes: Routes = [
     path: '',
     redirectTo: 'login',
     pathMatch: 'full'
+  },  {
+    path: 'actualizar-estudiante',
+    loadChildren: () => import('./pages/formularios/actualizar-estudiante/actualizar-estudiante.module').then( m => m.ActualizarEstudiantePageModule)
   },
+
 
 
 ];
