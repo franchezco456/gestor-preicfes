@@ -49,7 +49,7 @@ export class HomePage implements OnInit {
   ngOnInit(): void {
     this.initializeChart();
   }
-
+//prueba
   // explicado en detalle estudiante
   public onFabAction(action: any) {
     const id = typeof action === 'string' ? action : (action?.id ?? '');
