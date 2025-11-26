@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute} from '@angular/router';
 import { Loading } from 'src/app/core/services/loading/loading';
 import { Preferences } from 'src/app/core/services/preferences/preferences';
 import { Toast } from 'src/app/core/services/toast/toast';
@@ -15,6 +15,7 @@ export class ActualizarEstudiantePage implements OnInit {
   public studentForm !: FormGroup;
   public institutionsOptions: { value: string; text: string }[] = [];
   public isCoordinator: boolean = true;
+  public searchTI: string = '';
   // Client-side search like Home: cache students and filtered results
   private allStudents: any[] = [];
   public filteredResults: any[] = [];
@@ -24,7 +25,6 @@ export class ActualizarEstudiantePage implements OnInit {
   constructor(
     private readonly formBuilder: FormBuilder,
     private readonly route: ActivatedRoute,
-    private readonly router: Router,
     private readonly querySrv: Query,
     private readonly loadingSrv: Loading,
     private readonly toastSrv: Toast,
@@ -33,9 +33,9 @@ export class ActualizarEstudiantePage implements OnInit {
     this.initForm();
   }
 
-  private patchStudentRow(s: any, fallbackId?: string) {
+  private patchStudentRow(s: any) {
     if (!s) return;
-    const tiValue = s.invoice_id_out ?? s.id_estudiante_out ?? fallbackId ?? '';
+    const tiValue = s.id_estudiante_out ?? '';
     this.updatingStudentId = tiValue;
     this.studentForm.patchValue({
       DocumentType: s.documento_tipo_out ?? 'TI',
@@ -47,8 +47,7 @@ export class ActualizarEstudiantePage implements OnInit {
       Phone: s.telefono_out ?? '',
       Grade: s.grado_out ?? '',
       Discount: s.descuento_out ?? '',
-      Installments: s.cuotas_out ?? '',
-      id_IE: s.id_ie_cicle_out ?? this.studentForm.get('id_IE')?.value,
+      Installments: s.cuotas_out ?? ''
     });
     
     try {
@@ -70,7 +69,7 @@ export class ActualizarEstudiantePage implements OnInit {
 
   private initForm() {
     this.studentForm = this.formBuilder.group({
-      DocumentType: ['TI', [Validators.required]],
+      DocumentType: ['TI', []],
       TI: ['', [Validators.required, Validators.pattern(/^\d{6,12}$/)]],
       Name: ['', [Validators.required, Validators.minLength(2)]],
       LastName: ['', [Validators.required, Validators.minLength(2)]],
@@ -106,30 +105,23 @@ export class ActualizarEstudiantePage implements OnInit {
         address: raw.Address,
         phone: raw.Phone,
         grade: raw.Grade,
-        discount: raw.Discount ? parseFloat(raw.Discount) : undefined,
-        installments: raw.Installments ? parseInt(raw.Installments, 10) : undefined,
+        discount: raw.Discount ? parseFloat(raw.Discount) : 0,
+        installments: raw.Installments ? parseInt(raw.Installments, 10) : 3,
         id_ie_cicle: raw.id_IE,
       };
 
       
       try {
-        const response = await this.querySrv.execute_Function('update_student', Student);
+        const response = await this.querySrv.execute_Function('register_student', Student);
         console.log('Respuesta update_student:', response);
       } catch (rpcErr) {
         
         console.warn('update_student RPC falló o no existe, intentando fallback con Query.update()', rpcErr);
-        
-        try {
-          await this.querySrv.update('students', { id_student: Student.id_student }, Student);
-        } catch (upErr) {
-          console.error('Fallback update falló', upErr);
-          throw upErr;
-        }
       }
-
+      this.studentForm.reset();
+      this.autoSetEducationalInstitution();
       await this.loadingSrv.dismissLoading();
       await this.toastSrv.showSuccessToast('Estudiante actualizado correctamente.');
-      this.router.navigate(['/home']);
     } catch (error) {
       console.error('Error actualizando estudiante', error);
       this.toastSrv.showErrorToast('Error al actualizar el estudiante.');
@@ -139,15 +131,12 @@ export class ActualizarEstudiantePage implements OnInit {
 
   public async getEducationalInstitutions() {
     try {
-      await this.loadingSrv.showLoading('Cargando instituciones educativas...');
       const institutions: any = await this.querySrv.execute_Function('get_ie');
       this.institutionsOptions = Array.isArray(institutions)
         ? institutions.map((inst: any) => ({ value: inst.id_ie_cicle_out, text: inst.name_out }))
         : [];
-      await this.loadingSrv.dismissLoading();
     } catch (error) {
       this.toastSrv.showErrorToast('Error al cargar las instituciones educativas.');
-      await this.loadingSrv.dismissLoading();
     }
   }
 
@@ -166,7 +155,6 @@ export class ActualizarEstudiantePage implements OnInit {
   public async loadStudent(id: string) {
     try {
       console.log('[ActualizarEstudiante] loadStudent id =', id);
-      await this.loadingSrv.showLoading('Cargando estudiante...');
 
       // Primero intentamos compatibilidad: si el backend acepta p_id_student
       let rows: any[] = [];
@@ -180,24 +168,6 @@ export class ActualizarEstudiantePage implements OnInit {
       console.log('[ActualizarEstudiante] filas devueltas por p_id_student =', rows);
       let s: any = Array.isArray(rows) && rows.length > 0 ? rows[0] : null;
 
-      
-      if (!s) {
-        const coordData = await this.preferencesSrv.getPreferences('coordData');
-        const id_ie_cicle = coordData?.coordData?.id_IE_Cicle;
-        if (id_ie_cicle) {
-          try {
-            const list: any[] = await this.querySrv.execute_Function('get_students_by_ie_cicle', { p_id_ie_cicle: id_ie_cicle });
-            if (Array.isArray(list) && list.length > 0) {
-              console.log('[ActualizarEstudiante] filas devueltas por p_id_ie_cicle=', id_ie_cicle, list.length);
-              s = list.find((r: any) => (r.invoice_id_out && r.invoice_id_out.toString() === id.toString()) || (r.id_estudiante_out && r.id_estudiante_out.toString() === id.toString()));
-              console.log('[ActualizarEstudiante] fila encontrada por filtro =', s);
-            }
-          } catch (e) {
-            console.warn('No se pudo obtener lista por id_ie_cicle', e);
-          }
-        }
-      }
-
       if (!s) {
         this.toastSrv.showWarningToast('Estudiante no encontrado.');
         await this.loadingSrv.dismissLoading();
@@ -206,62 +176,17 @@ export class ActualizarEstudiantePage implements OnInit {
 
       // Mapeamos la fila al formulario
       console.log('[ActualizarEstudiante] fila a mapear =', s);
-      this.patchStudentRow(s, id);
+      this.patchStudentRow(s);
       await this.toastSrv.showSuccessToast('Estudiante cargado.');
 
-      await this.loadingSrv.dismissLoading();
     } catch (error) {
       console.error('Error cargando estudiante', error);
       this.toastSrv.showErrorToast('Error al cargar el estudiante.');
-      await this.loadingSrv.dismissLoading();
     }
   }
 
   
-  public searchTI: string = '';
 
-  public async searchStudentByTI() {
-    const ti = (this.searchTI || this.studentForm.value.TI || '').toString().trim();
-    if (!ti) {
-      this.toastSrv.showWarningToast('Ingresa el número de documento para buscar.');
-      return;
-    }
-
-    console.log('[ActualizarEstudiante] searchStudentByTI ->', ti);
-    
-    await this.loadStudent(ti);
-
-    
-    if (!this.updatingStudentId) {
-      try {
-        await this.loadingSrv.showLoading('Buscando estudiante en instituciones...');
-        const institutions: any[] = await this.querySrv.execute_Function('get_ie');
-        for (const inst of institutions || []) {
-          const id_ie_cicle = inst.id_ie_cicle_out;
-          try {
-            const list: any[] = await this.querySrv.execute_Function('get_students_by_ie_cicle', { p_id_ie_cicle: id_ie_cicle });
-            console.log('[ActualizarEstudiante] consultando institución', id_ie_cicle, 'registros=', Array.isArray(list) ? list.length : 'n/a');
-            if (Array.isArray(list) && list.length > 0) {
-              const found = list.find((r: any) => (r.invoice_id_out && r.invoice_id_out.toString() === ti) || (r.id_estudiante_out && r.id_estudiante_out.toString() === ti));
-              if (found) {
-                
-                this.patchStudentRow(found, ti);
-                await this.toastSrv.showSuccessToast('Estudiante cargado.');
-                break;
-              }
-            }
-          } catch (e) {
-            
-            console.warn('Error buscando en institución', id_ie_cicle, e);
-          }
-        }
-      } catch (err) {
-        console.warn('Error buscando instituciones', err);
-      } finally {
-        await this.loadingSrv.dismissLoading();
-      }
-    }
-  }
 
   public onSearchInput(ev: any) {
     
@@ -284,11 +209,6 @@ export class ActualizarEstudiantePage implements OnInit {
     console.log('[ActualizarEstudiante] Filtrados', this.filteredResults.length, 'estudiantes para query =', q);
   }
 
-  public onSearchChange(ev: any) {
-    const v = ev?.detail?.value ?? ev?.target?.value ?? '';
-    console.log('[ActualizarEstudiante] ionChange value=', v);
-  }
-
   public async fetchStudents() {
     try {
       const coord = await this.preferencesSrv.getPreferences('coordData');
@@ -300,7 +220,7 @@ export class ActualizarEstudiantePage implements OnInit {
 
       const list: any[] = await this.querySrv.execute_Function('get_students_by_ie_cicle', { p_id_ie_cicle: id_IE });
       this.allStudents = Array.isArray(list) ? list.map(r => ({
-        TI: (r.invoice_id_out ?? r.id_estudiante_out ?? '').toString(),
+        TI: (r.id_estudiante_out ?? '').toString(),
         DocumentType: r.documento_tipo_out ?? 'TI',
         Name: r.nombre_out ?? '',
         LastName: r.apellido_out ?? '',
@@ -321,11 +241,8 @@ export class ActualizarEstudiantePage implements OnInit {
     this.filteredResults = [];
     
     if (item && item.raw) {
-      this.patchStudentRow(item.raw, item.TI);
-      this.toastSrv.showSuccessToast('Estudiante cargado.');
-    } else if (item) {
-      this.patchStudentRow(item, item.TI);
-      this.toastSrv.showSuccessToast('Estudiante cargado.');
+      this.patchStudentRow(item.raw);
+      this.toastSrv.showSuccessToast('Estudiante cargado');
     }
   }
 
