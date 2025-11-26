@@ -50,7 +50,7 @@ export class ActualizarEstudiantePage implements OnInit {
       Installments: s.cuotas_out ?? '',
       id_IE: s.id_ie_cicle_out ?? this.studentForm.get('id_IE')?.value,
     });
-    // Make TI non-editable when loading an existing student
+    
     try {
       this.studentForm.get('TI')?.disable();
     } catch (e) {
@@ -93,7 +93,7 @@ export class ActualizarEstudiantePage implements OnInit {
     try {
       await this.loadingSrv.showLoading(this.updatingStudentId ? 'Actualizando estudiante...' : 'Procesando...');
 
-      // Use getRawValue to include disabled controls, prefer updatingStudentId if present
+      
       const raw = this.studentForm.getRawValue ? this.studentForm.getRawValue() : this.studentForm.value;
       const idStudentValue = this.updatingStudentId ?? raw.TI;
 
@@ -111,14 +111,14 @@ export class ActualizarEstudiantePage implements OnInit {
         id_ie_cicle: raw.id_IE,
       };
 
-      // Intentamos llamar a una función RPC específica para actualizar si existe
+      
       try {
         const response = await this.querySrv.execute_Function('update_student', Student);
         console.log('Respuesta update_student:', response);
       } catch (rpcErr) {
-        // Si la RPC no existe en el backend, intentamos un fallback usando update() directo (requiere conocer la tabla)
+        
         console.warn('update_student RPC falló o no existe, intentando fallback con Query.update()', rpcErr);
-        // NOTA: Cambiar 'students' por el nombre real de la tabla si se conoce
+        
         try {
           await this.querySrv.update('students', { id_student: Student.id_student }, Student);
         } catch (upErr) {
@@ -180,8 +180,7 @@ export class ActualizarEstudiantePage implements OnInit {
       console.log('[ActualizarEstudiante] filas devueltas por p_id_student =', rows);
       let s: any = Array.isArray(rows) && rows.length > 0 ? rows[0] : null;
 
-      // Si no se obtuvo nada, entonces pedimos los estudiantes por institucion (p_id_ie_cicle)
-      // y filtramos por número de documento / invoice_id_out o id_estudiante_out
+      
       if (!s) {
         const coordData = await this.preferencesSrv.getPreferences('coordData');
         const id_ie_cicle = coordData?.coordData?.id_IE_Cicle;
@@ -218,7 +217,7 @@ export class ActualizarEstudiantePage implements OnInit {
     }
   }
 
-  /** Buscar estudiante por número de documento (TI) desde la searchbar */
+  
   public searchTI: string = '';
 
   public async searchStudentByTI() {
@@ -229,10 +228,10 @@ export class ActualizarEstudiantePage implements OnInit {
     }
 
     console.log('[ActualizarEstudiante] searchStudentByTI ->', ti);
-    // Primero intentamos usar loadStudent directo (por compatibilidad)
+    
     await this.loadStudent(ti);
 
-    // Si no se cargó (no updatingStudentId) intentamos buscar en todas las instituciones
+    
     if (!this.updatingStudentId) {
       try {
         await this.loadingSrv.showLoading('Buscando estudiante en instituciones...');
@@ -245,14 +244,14 @@ export class ActualizarEstudiantePage implements OnInit {
             if (Array.isArray(list) && list.length > 0) {
               const found = list.find((r: any) => (r.invoice_id_out && r.invoice_id_out.toString() === ti) || (r.id_estudiante_out && r.id_estudiante_out.toString() === ti));
               if (found) {
-                // cargamos el estudiante encontrado directamente
+                
                 this.patchStudentRow(found, ti);
                 await this.toastSrv.showSuccessToast('Estudiante cargado.');
                 break;
               }
             }
           } catch (e) {
-            // ignore errors por institución
+            
             console.warn('Error buscando en institución', id_ie_cicle, e);
           }
         }
@@ -265,7 +264,7 @@ export class ActualizarEstudiantePage implements OnInit {
   }
 
   public onSearchInput(ev: any) {
-    // Accept either a string value (from app-searchbar valueChange) or an Ion event
+    
     const v = (typeof ev === 'string') ? ev : (ev?.detail?.value ?? ev?.target?.value ?? '');
     this.searchTI = v;
     this.searchQuery = v;
@@ -320,7 +319,7 @@ export class ActualizarEstudiantePage implements OnInit {
     console.log('[ActualizarEstudiante] Selected search item:', item);
     this.searchQuery = '';
     this.filteredResults = [];
-    // Patch the form using the original raw row when possible
+    
     if (item && item.raw) {
       this.patchStudentRow(item.raw, item.TI);
       this.toastSrv.showSuccessToast('Estudiante cargado.');

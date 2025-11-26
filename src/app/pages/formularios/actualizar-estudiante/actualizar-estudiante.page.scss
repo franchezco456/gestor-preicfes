@@ -55,8 +55,6 @@
 	backdrop-filter: blur(6px);
 	color: var(--ion-color-light);
 }
-
-/* Ensure back button in the header is visible and matches page tone */
 .form-header ion-back-button {
   --color: var(--ion-color-light);
 }
@@ -78,8 +76,6 @@
 	max-width: 620px;
 	opacity: 0.85;
 }
-
-/* Search wrapper styles (copied from Home to match searchbar/results visuals) */
 .home-search-wrapper {
 	flex: 1 1 auto;
 	min-width: 0;
@@ -100,8 +96,6 @@
 	overflow: auto;
 	margin: 0;
 }
-
-/* animate list items similarly to other lists */
 .search-results ion-item {
 	animation: fadeIn var(--anim-fast, 180ms) ease both;
 }
@@ -132,8 +126,6 @@
 	transition: transform 180ms ease, box-shadow 200ms ease;
 }
 
-/* meta-chip hover moved to global.scss */
-
 .meta-chip ion-icon {
 	font-size: 1rem;
 }
@@ -153,8 +145,6 @@
 	overflow: hidden;
 	animation: cardFloat 0.85s cubic-bezier(0.21, 0.8, 0.32, 1) 0.08s both;
 }
-
-/* card overlay moved to global.scss */
 
 ion-card-header {
 	padding-inline: clamp(20px, 3vw, 28px);
@@ -218,8 +208,6 @@ ion-card-content {
 	color: rgba(255, 255, 255, 0.7);
 }
 
-/* form interactions (hover/focus/invalid/error-text) moved to global.scss */
-
 .actions {
 	margin-top: clamp(20px, 4vw, 30px);
 }
@@ -233,8 +221,6 @@ ion-card-content {
 	box-shadow: 0 20px 38px rgba(var(--page-accent-rgb), 0.4);
 	transition: transform 200ms ease, box-shadow 220ms ease, filter 200ms ease;
 }
-
-/* submit-button hover/active interactions centralized in global.scss */
 
 .submit-button ion-icon {
 	font-size: 1.1rem;
