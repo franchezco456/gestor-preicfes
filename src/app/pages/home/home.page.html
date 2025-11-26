@@ -13,14 +13,19 @@
         (valueChange)="onSearchInput($event)">
       </app-searchbar>
 
-      <ion-list *ngIf="filteredResults.length" class="search-results">
-        <ion-item *ngFor="let r of filteredResults" button (click)="selectSearchResult(r)">
-          <ion-label>
-            <h3>{{ r.Name }} {{ r.LastName }}</h3>
-            <p>ID: {{ r.TI }}</p>
-          </ion-label>
-        </ion-item>
-      </ion-list>
+      <app-list
+        *ngIf="filteredResults.length"
+        [items]="filteredResults"
+        titleField="Name"
+        titleField2="LastName"
+        subtitleField="id"
+        cardTitle="Resultados de búsqueda"
+        emptyText="No hay estudiantes encontrados"
+        [showButton]="false"
+        [showCardTitle]="false"
+        (view)="selectSearchResult($event)"
+        class="search-results"
+      ></app-list>
     </div>
   </div>
 
@@ -36,36 +41,47 @@
     </div>
   </section>
 
+
   <section class="dashboard-grid">
     <div class="kpis">
       <ng-container *ngFor="let k of kpis">
         <app-card variant="kpi" [value]="k.value" [label]="k.label"></app-card>
       </ng-container>
     </div>
-
     <div class="chart-card">
       <app-card title="Estado de Pagos">
-        <app-chart [chartOptions]="studentPagos" cssClass="home-chart"></app-chart>
+        <div style="margin-bottom: 1rem;">
+          <app-select
+            [label]="'Filtrar por'"
+            [placeholder]="'Selecciona filtro'"
+            [options]="[
+              { value: 'dia', text: 'Día' },
+              { value: 'mes', text: 'Mes' },
+              { value: 'año', text: 'Año' }
+            ]"
+            [control]="filterControl"
+            cssClass="filter-select"
+            lines="none"
+            interface="popover"
+          ></app-select>
+        </div>
+        <app-chart *ngIf="studentPagos" [chartOptions]="studentPagos" cssClass="home-chart"></app-chart>
       </app-card>
     </div>
   </section>
 
   <section class="dashboard-bottom">
-    <div class="recent-activity">
-      <app-card title="Actividad reciente">
-        <ion-list>
-          <ion-item *ngFor="let i of [1,2,3,4]">
-            <ion-label>
-              <h3>Nuevo estudiante registrado</h3>
-              <p class="muted">hace 2 horas — Juan Pérez</p>
-            </ion-label>
-            <app-button fill="clear" slot="end" (click)="router.navigate(['/detalles-estudiante','1142912485'])" label="Ver"></app-button>
-          </ion-item>
-        </ion-list>
-      </app-card>
+    <div class="recent-activity-header">
+      <app-list
+        [items]="payments"
+        titleField="title"
+        subtitleField="detail"
+        cardTitle="Últimos pagos registrados"
+        emptyText="No hay pagos registrados"
+        (view)="goToStudentDetail($event)">
+      </app-list>
     </div>
   </section>
-
   <app-fabbutom icon="menu" label="Acciones" color="primary" position="bottom-right" [actions]="[
       { id: 'estudiante', icon: 'person-add', label: 'Estudiante', color: 'secondary' },
       { id: 'pago', icon: 'card', label: 'Pago', color: 'secondary' },

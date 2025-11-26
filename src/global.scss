@@ -25,6 +25,276 @@
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
 
+/* Shared form tokens and common UI used by multiple pages */
+:root {
+	--form-accent: #7FAFE0; /* slightly bluer accent */
+	--form-accent-rgb: 127,175,224;
+	--form-accent-dark-rgb: 33,53,105;
+	--form-accent-strong-rgb: 56,120,200;
+	--form-bg: #f6f7f8;
+}
+
+/* Common layout for forms */
+.form-page {
+	min-height: 100%;
+	display: flex;
+	justify-content: center;
+}
+
+.form-wrapper {
+	position: relative;
+	z-index: 1;
+	width: min(1024px, 100%);
+	padding: clamp(14px, 2.6vw, 28px);
+	box-sizing: border-box;
+	animation: fadeInUp 0.72s ease-out forwards;
+}
+
+/* Header shared styles */
+.form-header {
+	margin-bottom: clamp(20px, 4vw, 30px);
+	padding-left: clamp(14px, 3vw, 26px);
+	border-left: 3px solid rgba(255,255,255,0.12);
+	backdrop-filter: blur(6px);
+}
+.form-header h1 { margin: 0 0 8px; font-weight: 600; }
+.form-header p { margin: 0; opacity: 0.85; }
+
+/* Consistent back button styling for form headers */
+.form-header ion-back-button,
+.form-page .form-header ion-back-button {
+  --color: var(--ion-color-light);
+}
+
+.form-header ion-back-button::part(native) {
+  padding-inline-start: 6px;
+  padding-inline-end: 6px;
+  font-weight: 600;
+}
+
+/* Card/base container used in forms */
+.form-card {
+	position: relative;
+	background: rgba(255,255,255,0.98);
+	border: 1px solid rgba(11,17,20,0.04);
+	border-radius: 16px;
+	box-shadow: 0 18px 48px rgba(11,17,20,0.06);
+	overflow: hidden;
+}
+
+/* Decorative page accents (per-page sizes/colors left in page scss) */
+.form-page::before,
+.form-page::after {
+	content: '';
+	position: absolute;
+	border-radius: 50%;
+	pointer-events: none;
+}
+
+/* Card overlay used across form cards */
+.form-card::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(120deg, rgba(255,255,255,0.08), transparent 55%);
+	opacity: 0;
+	transition: opacity 260ms ease;
+	pointer-events: none;
+}
+.form-card:hover::after { opacity: 1; }
+
+/* Meta chips used in headers */
+.meta-chip {
+	--background: transparent;
+	--color: var(--ion-color-light);
+}
+.meta-chip::part(container) {
+	background: rgba(255,255,255,0.08);
+	border: 1px solid rgba(255,255,255,0.2);
+	border-radius: 18px;
+	padding: 0 14px;
+	gap: 6px;
+	transition: transform 180ms ease, box-shadow 220ms ease;
+}
+.meta-chip::part(container):hover { transform: translateY(-2px); }
+.meta-chip::part(container):hover { box-shadow: 0 10px 24px rgba(var(--page-accent-rgb, var(--form-accent-rgb)), 0.35); }
+
+/* Submit button interactions centralized; pages may override background/box-shadow */
+.submit-button::part(native) {
+	transition: transform 200ms ease, box-shadow 220ms ease, filter 200ms ease;
+}
+.submit-button:hover::part(native) {
+	transform: translateY(-2px);
+	box-shadow: 0 26px 46px rgba(var(--page-accent-rgb, var(--form-accent-rgb)), 0.45);
+	filter: brightness(1.02);
+}
+.submit-button:active::part(native) {
+	transform: translateY(1px);
+	box-shadow: 0 16px 30px rgba(var(--page-accent-rgb, var(--form-accent-rgb)), 0.35);
+}
+
+/* Default error text */
+.error-text {
+	display: block;
+	margin: 4px 2px 16px;
+	font-size: 0.82rem;
+	letter-spacing: 0.01em;
+}
+
+/* Inputs / fields */
+.form-field {
+	--background: #ffffff;
+	--border-radius: 12px;
+	--padding-start: 14px;
+	margin-bottom: 10px;
+	border: 1px solid rgba(11,17,20,0.04);
+	transition: border-color 160ms ease, transform 160ms ease, box-shadow 180ms ease;
+}
+.form-field ion-label { color: rgba(11,17,20,0.6); }
+.form-field ion-input, .form-field ion-select { --color: rgba(11,17,20,0.92); }
+.form-field:hover { transform: translateY(-2px); border-color: rgba(var(--page-accent-rgb, var(--form-accent-rgb)), 0.35); }
+.form-field:focus-within { border-color: rgba(var(--page-accent-rgb, var(--form-accent-rgb)), 0.58); box-shadow: 0 0 0 4px rgba(var(--page-accent-rgb, var(--form-accent-rgb)), 0.12); }
+
+/* Invalid field state (centralized) */
+.form-field.invalid {
+	border-color: rgba(var(--ion-color-danger-rgb), 0.7);
+	box-shadow: 0 0 0 2px rgba(var(--ion-color-danger-rgb), 0.35);
+}
+.form-field.invalid ion-label { color: var(--ion-color-danger); }
+
+/* Buttons */
+.actions { margin-top: clamp(18px, 3.6vw, 28px); }
+.submit-button::part(native) {
+	background: linear-gradient(135deg, rgba(var(--form-accent-rgb),1) 0%, rgba(var(--form-accent-rgb),0.75) 100%);
+	border-radius: 12px;
+	padding: 12px 20px;
+	font-weight: 600;
+	box-shadow: 0 14px 36px rgba(var(--form-accent-dark-rgb), 0.08);
+}
+
+/* Result card common look */
+.result-card {
+	margin-top: clamp(20px, 4vw, 34px);
+	background: #ffffff;
+	border: 1px solid rgba(11,17,20,0.04);
+	border-radius: 16px;
+	box-shadow: 0 22px 48px rgba(11,17,20,0.06);
+}
+
+/* Useful keyframes used by multiple forms */
+@keyframes fadeInUp {
+	from { opacity: 0; transform: translate3d(0, 16px, 0); }
+	to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+@keyframes cardFloat {
+	0% { opacity: 0; transform: translate3d(0, 24px, 0); }
+	100% { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+@keyframes pulseGlow {
+	0%,100% { transform: scale(1); opacity: 0.7; }
+	50% { transform: scale(1.06); opacity: 1; }
+}
+
+@keyframes drift {
+	0% { transform: translate3d(0,0,0) rotate(0deg); }
+	50% { transform: translate3d(12px,-8px,0) rotate(1deg); }
+	100% { transform: translate3d(0,0,0) rotate(0deg); }
+}
+
+/* -----------------------
+	 Global animation toolkit
+	 - utilities (apply classes in markup)
+	 - keyframes for page transitions and small UI touches
+	 - stagger mechanism using CSS custom property `--i`
+	 ----------------------- */
+
+:root {
+	--anim-fast: 180ms;
+	--anim-medium: 320ms;
+	--anim-slow: 560ms;
+	--stagger-step: 0.06s;
+}
+
+/* Respect user preference for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+	.anim-fade-in,
+	.anim-slide-in-left,
+	.anim-slide-in-right,
+	.anim-pop,
+	.anim-float,
+	.stagger > * {
+		animation-duration: 0.001ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.001ms !important;
+		transform: none !important;
+		opacity: 1 !important;
+	}
+}
+
+/* Page / element entrance animations */
+@keyframes slideInLeft {
+	from { opacity: 0; transform: translateX(-14px); }
+	to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideInRight {
+	from { opacity: 0; transform: translateX(14px); }
+	to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fadeIn {
+	from { opacity: 0; }
+	to { opacity: 1; }
+}
+
+@keyframes pop {
+	0% { opacity: 0; transform: scale(0.98) translateY(-6px); }
+	60% { opacity: 1; transform: scale(1.02) translateY(0); }
+	100% { transform: scale(1) translateY(0); }
+}
+
+@keyframes floatSlow {
+	0% { transform: translateY(0); }
+	50% { transform: translateY(-6px); }
+	100% { transform: translateY(0); }
+}
+
+/* Utilities - apply these classes to pages/components */
+.anim-fade-in { animation: fadeIn var(--anim-medium) ease both; }
+.anim-slide-in-left { animation: slideInLeft var(--anim-medium) cubic-bezier(.2,.9,.28,1) both; }
+.anim-slide-in-right { animation: slideInRight var(--anim-medium) cubic-bezier(.2,.9,.28,1) both; }
+.anim-pop { animation: pop var(--anim-fast) cubic-bezier(.2,.9,.28,1) both; }
+.anim-float { animation: floatSlow 6s ease-in-out infinite; }
+
+/* Stagger container: set `--stagger-step` on the container (optional)
+	 and assign `--i` on each child (1-based) or rely on a server/templating
+	 to set it. This keeps stagger logic in CSS only. */
+.stagger { --stagger-step: var(--stagger-step, 0.06s); }
+.stagger > * {
+	opacity: 0;
+	transform: translateY(8px) scale(0.995);
+	animation: fadeIn var(--anim-medium) cubic-bezier(.2,.9,.28,1) both;
+	animation-delay: calc(var(--i, 0) * var(--stagger-step));
+}
+
+/* Helpful page-level helpers */
+.page-enter .form-wrapper { animation: fadeIn var(--anim-medium) ease both; }
+.page-pop .form-wrapper { animation: pop var(--anim-fast) ease both; }
+
+/* Small helpers for list items that only need a subtle slide */
+.list-item-enter { animation: slideInRight var(--anim-fast) ease both; }
+
+/* Accessibility: focus-visible polish for animated elements */
+.anim-fade-in:focus-visible,
+.anim-slide-in-left:focus-visible,
+.anim-pop:focus-visible {
+	outline: 3px solid rgba(var(--form-accent-rgb),0.12);
+	outline-offset: 4px;
+}
+
+
 /**
  * Ionic Dark Mode
  * -----------------------------------------------------

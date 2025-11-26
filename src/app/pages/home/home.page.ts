@@ -8,8 +8,9 @@ import { Preferences } from 'src/app/core/services/preferences/preferences';
 import { Query } from 'src/app/core/services/query/query';
 import { ChartService } from 'src/app/shared/services/chart/chart-service';
 import { PaymentStatusData } from 'src/domain/models';
-
-type StudentModel = { TI: string; DocumentType: string; Name: string; LastName: string; Email: string; Address: string; Grade: string };
+import { Student } from 'src/domain/models/Student';
+import { Loading } from '../../core/services/loading/loading';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-home',
@@ -18,12 +19,7 @@ type StudentModel = { TI: string; DocumentType: string; Name: string; LastName: 
   standalone: false,
 })
 export class HomePage implements OnInit {
-  public studentPagos: any;
-  @ViewChild(ChartComponent, { static: false }) chartCmp?: ChartComponent;
-
-  private allStudents: StudentModel[] = [];
-  public filteredResults: StudentModel[] = [];
-  public searchQuery: string = '';
+  public kpis: Array<{ value: string | number; label: string }> = [];
 
   public tabButtons = [
     { icon: 'home-outline', route: '/home', aria: 'Inicio' },
@@ -31,132 +27,214 @@ export class HomePage implements OnInit {
     { icon: 'card-outline', route: '/form-pagos', aria: 'Pagos' },
   ];
 
-  //items para las carticas en el dashboard
-  public kpis: Array<{ value: string | number; label: string }> = [
-    { value: '1,234', label: 'Estudiantes' },
-    { value: 87, label: 'Pagos pendientes' },
-    { value: 512, label: 'Pagos realizados' },
-    { value: 'COP 12.540.000', label: 'Ingresos (mes)' },
-  ];
+  public studentPagos: any;
+  public filterType: 'dia' | 'mes' | 'año' = 'mes';
+  public filterControl = new FormControl<'dia' | 'mes' | 'año'>(this.filterType);
+  public searchQuery: string = '';
+  public filteredResults: Student[] = [];
+  public payments: any[] = [];
+  private allStudents: Student[] = [];
 
+  private readonly FILTER_CONFIG = {
+    dia: { label: 'Día', format: (d: Date) => d.toISOString().slice(0, 10) },
+    mes: { label: 'Mes', format: (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}` },
+    año: { label: 'Año', format: (d: Date) => String(d.getFullYear()) }
+  } as const;
+
+  @ViewChild(ChartComponent, { static: false }) chartCmp?: ChartComponent;
+  @ViewChild('sidebar', { static: false }) sidebar?: SidebarComponent;
+
+  constructor(
+    private readonly authSrv: Auth,
+    public readonly querySrv: Query,
+    private readonly loadingSrv: Loading,
+    private readonly chartSrv: ChartService,
+    private readonly preferencesSrv: Preferences,
+    private readonly router: Router,
+  ) { }
+
+  ngOnInit(): void {
+    this.filterControl.valueChanges.subscribe(val => {
+      if (val && val !== this.filterType) {
+        this.setFilterType(val);
+      }
+    });
+  }
+
+  ionViewWillEnter() {
+    this.loadData();
+  }
+
+  private async loadData() {
+    this.loadingSrv.showLoading();
+    try {
+      const coord = await this.preferencesSrv.getPreferences('coordData');
+      const id_IE = coord.coordData.id_IE_Cicle;
+
+      await Promise.all([
+        this.fetchPayments(id_IE),
+        this.fetchStudents(id_IE)
+      ]);
+
+      this.updateChartByFilter();
+      this.updateKpis();
+    } catch (error) {
+      console.error('[ERROR] Fallo al cargar datos', error);
+    } finally {
+      this.loadingSrv.dismissLoading();
+    }
+  }
+
+  private async fetchStudents(id_IE: string) {
+    try {
+      console.log('[Home] id_IE_Cicle =', id_IE);
+      const list: any[] = await this.querySrv.execute_Function('get_students_by_ie_cicle', {
+        p_id_ie_cicle: id_IE
+      });
+
+      this.allStudents = Array.isArray(list) ? list.map(r => ({
+        id: r.invoice_id_out ?? '',
+        document_type: r.documento_tipo_out ?? 'TI',
+        Name: r.nombre_out ?? '',
+        LastName: r.apellido_out ?? '',
+        Email: r.email_out ?? '',
+        Address: r.direccion_out ?? '',
+        id_IE: r.id_ie_out ?? '',
+        Grade: r.grado_out ?? '',
+        cicle_id: r.cicle_id ?? r.id_ciclo ?? '',
+      })) : [];
+    } catch (error) {
+      console.error('[ERROR] Fallo carga de estudiantes', error);
+      this.allStudents = [];
+    }
+  }
+
+  private async fetchPayments(id_IE: string) {
+    try {
+      const list: any[] = await this.querySrv.execute_Function('get_payments', { id_ie: id_IE });
+
+      this.payments = Array.isArray(list) ? list.map(r => ({
+        title: r.student_name,
+        detail: `Fecha : ${r.payment_date} / Valor : ${r.payment_value}`,
+        button: r.payment_id,
+        studentId: r.invoice_id,
+        remaining_debt: r.remaining_debt ?? 0
+      })) : [];
+    } catch (error) {
+      console.error('[ERROR] Fallo carga de pagos', error);
+      this.payments = [];
+    }
+  }
+
+  private updateKpis() {
+
+    const totalEstudiantes = this.allStudents.length;
+    const pagosRealizados = this.payments.length;
+    const { ingresosTotales, saldoPendienteTotal } = this.payments.reduce(
+      (acc, pago) => ({
+        ingresosTotales: acc.ingresosTotales + this.extractValue(pago.detail),
+        saldoPendienteTotal: acc.saldoPendienteTotal + (Number(pago.remaining_debt) || 0)
+      }),
+      { ingresosTotales: 0, saldoPendienteTotal: 0 }
+    );
+
+    this.kpis = [
+      { value: totalEstudiantes, label: 'Estudiantes' },
+      { value: this.formatCurrency(saldoPendienteTotal), label: 'Saldo pendiente' },
+      { value: pagosRealizados, label: 'Pagos realizados' },
+      { value: this.formatCurrency(ingresosTotales), label: 'Ingresos (total)' },
+    ];
+  }
+
+  private formatCurrency(value: number): string {
+    return `COP ${value.toLocaleString('es-CO')}`;
+  }
+
+  private groupPaymentsBy(type: 'dia' | 'mes' | 'año') {
+    const groups: Record<string, number> = {};
+
+    for (const pago of this.payments) {
+      const date = this.extractDate(pago.detail);
+      if (!date) continue;
+
+      const key = this.FILTER_CONFIG[type].format(date);
+      const value = this.extractValue(pago.detail);
+      groups[key] = (groups[key] || 0) + value;
+    }
+
+    return Object.entries(groups).map(([label, count]) => ({ label, count }));
+  }
+
+  public updateChartByFilter() {
+    const data = this.groupPaymentsBy(this.filterType);
+    const config = this.FILTER_CONFIG[this.filterType];
+
+    this.studentPagos = this.chartSrv.createBarChart(
+      data.map(d => ({ x: d.label, y: d.count })),
+      {
+        title: `Pagos agrupados por ${config.label.toLowerCase()}`,
+        colors: ['#008FFB', '#00E396', '#FF4560'],
+        height: 350,
+        legendPosition: 'top',
+        xAxisTitle: config.label,
+        yAxisTitle: 'Total Pagado',
+      }
+    );
+  }
+
+  public setFilterType(type: 'dia' | 'mes' | 'año') {
+    if (this.filterType !== type) {
+      this.filterType = type;
+      this.updateChartByFilter();
+    }
+  }
+
+  private extractDate(detail: string): Date | null {
+    const match = detail.match(/Fecha ?: ?([\d\-T: ]+)/);
+    if (!match?.[1]) return null;
+
+    const date = new Date(match[1]);
+    return isNaN(date.getTime()) ? null : date;
+  }
+
+  private extractValue(detail: string): number {
+    const match = detail.match(/Valor ?: ?([\d.]+)/);
+    return match?.[1] ? parseFloat(match[1].replace(/\./g, '')) : 0;
+  }
 
   public async onSearchInput(value: string) {
-    this.searchQuery = value ?? '';
-    const q = (this.searchQuery || '').trim().toLowerCase();
+    const q = (value || '').trim().toLowerCase();
+    this.searchQuery = q;
     console.log('[Home] onSearchInput query =', q);
+
     if (!q) {
       this.filteredResults = [];
       return;
     }
 
-    if (this.allStudents.length === 0) {
-      try {
-        const list: any[] = await this.querySrv.getAll('Student');
-        this.allStudents = Array.isArray(list) ? list.map(r => ({
-
-          TI: r.id ?? '',
-          DocumentType: r.Document_Type ?? 'TI',
-          Name: r.Name ?? '',
-          LastName: r.LastName ?? '',
-          Email: r.Email ?? '',
-          Address: r.Address ?? '',
-          Grade: '',
-
-        })) : [];
-        console.log('[Home] Cargados desde BD', this.allStudents.length, 'estudiantes');
-      } catch (e) {
-        console.error('[ERROR] Fallo carga de estudiantes', e);
-        this.allStudents = [];
-      }
-    }
-    this.filteredResults = this.allStudents.filter((s) =>
-      (s.Name || '').toLowerCase().includes(q) ||
-      (s.LastName || '').toLowerCase().includes(q) ||
-      (s.TI || '').toLowerCase().includes(q)
+    this.filteredResults = this.allStudents.filter(s =>
+      [s.Name, s.LastName, s.id].some(field =>
+        (field || '').toLowerCase().includes(q)
+      )
     );
+
     console.log('[Home] Filtrados', this.filteredResults.length, 'estudiantes para query =', q);
   }
 
-  ngOnInit(): void {
-    this.initializeChart();
-  }
-
-  private initializeChart(): void {
-    const datosDePagos: PaymentStatusData[] = [
-      { status: 'Paid', count: 80000, label: 'Pago 1' },
-      { status: 'Pending', count: 120000, label: 'Pago 2' },
-      { status: 'Not Paid', count: 50000, label: 'Pago 3' },
-    ];
-
-    const barData = datosDePagos.map((d) => ({ x: d.label, y: d.count }));
-    this.studentPagos = this.chartSrv.createBarChart(
-      barData,
-      {
-        title: 'Estado de Pagos',
-        colors: ['#008FFB', '#00E396', '#FF4560'],
-        height: 350,
-        legendPosition: 'top',
-        xAxisTitle: 'Pago',
-        yAxisTitle: 'Valor',
-      }
-    );
-  }
-
-  public selectSearchResult(item: StudentModel) {
-    console.log('[Home] Selected search item:', item);
-    this.searchQuery = `${item.Name} ${item.LastName}`;
+  public selectSearchResult(student: Student) {
+    console.log('[Home] Selected search item:', student);
+    this.searchQuery = '';
     this.filteredResults = [];
-    console.log('[Home] Navegando a /detalles-estudiante/', item.TI);
-    this.router.navigate(['/detalles-estudiante', item.TI]);
+    console.log('[Home] Navegando a /detalles-estudiante/', student.id);
+    this.router.navigate(['/detalles-estudiante', student.id]);
   }
 
-  @ViewChild('sidebar', { static: false }) sidebar?: SidebarComponent;
-
-  public async toggleMenu() {
-    if (!this.sidebar) return;
-    await this.sidebar.toggle();
+  public goToStudentDetail(item: any) {
+    console.log('[Home] Selected search item:', item);
+    console.log('[Home] Navegando a /detalles-estudiante/', item.id);
+    this.router.navigate(['/detalles-estudiante', item.studentId]);
   }
 
-  constructor(
-    private readonly authSrv: Auth,
-    public readonly querySrv: Query,
-    private readonly chartSrv: ChartService,
-    private readonly preferencesSrv: Preferences,
-    public readonly router: Router,
-    private readonly route: ActivatedRoute,
-  ) { }
-
-  public async execute() {
-    const email_param: string = 'q@q.com';
-    const response = await this.querySrv.execute_Function('is_coordinator', {
-      email_param: email_param,
-    });
-    console.log(response);
-  }
-  public async logout() {
-    const logout = await this.authSrv.logout();
-    console.log('TAG: LOGOUT' + JSON.stringify(logout));
-    await this.preferencesSrv.clearPreferences();
-    this.router.navigate(['/login']);
-  }
-
-  public gotoRE() {
-    this.router.navigate(['/form-estudiantes']);
-  }
-
-  public gotoRC() {
-    this.router.navigate(['/form-coordinadores']);
-  }
-
-  public gotoRI() {
-    this.router.navigate(['/form-instituciones']);
-  }
-
-  public goToRegisterPayment() {
-    this.router.navigate(['/form-pagos']);
-  }
-
-    // explicado en detalle estudiante
   public onFabAction(action: any) {
     const id = typeof action === 'string' ? action : (action?.id ?? '');
     switch (id) {
@@ -172,5 +250,25 @@ export class HomePage implements OnInit {
       default:
         break;
     }
+  }
+
+  public async logout() {
+    const logout = await this.authSrv.logout();
+    console.log('TAG: LOGOUT' + JSON.stringify(logout));
+    await this.preferencesSrv.clearPreferences();
+    this.router.navigate(['/login']);
+  }
+
+  public gotoRE() {
+    this.router.navigate(['/form-estudiantes']);
+  }
+
+  public goToRegisterPayment() {
+    this.router.navigate(['/form-pagos']);
+  }
+
+  public async toggleMenu() {
+    if (!this.sidebar) return;
+    await this.sidebar.toggle();
   }
 }

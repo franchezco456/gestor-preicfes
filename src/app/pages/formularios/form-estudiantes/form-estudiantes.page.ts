@@ -86,8 +86,8 @@ export class FormEstudiantesPage {
   public async getEducationalInstitutions() {
      try {
       await this.loadingSrv.showLoading("Cargando instituciones educativas...");
-      const institutions = await this.querySrv.execute_Function('get_ie_by_cicle', {p_id_cicle : '001'});
-      //console.log("Instituciones educativas: " + JSON.stringify(institutions));
+      const institutions = await this.querySrv.execute_Function('get_ie');
+      console.log("Instituciones educativas: " + JSON.stringify(institutions));
       this.institutionsOptions = institutions.map((inst : any) : SelectOption => ({
         value: inst.id_ie_cicle_out,
         text: inst.name_out

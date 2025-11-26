@@ -25,8 +25,7 @@ export class DetallesEstudiantePage implements OnInit {
     courseValue: 200000,
     totalPaid: 80000,
     discount: 0,
-    pending: 120000,
-    totalPreicfes: 120000
+    pending: 120000
   };
 
   public loading = false;
@@ -46,18 +45,18 @@ export class DetallesEstudiantePage implements OnInit {
     this.loading = true;
     await this.loadingSrv.showLoading('Cargando estudiante...');
     try {
-      const rows: any[] = await this.querySrv.getOne('Student', { id });
+      const rows: any[] = await this.querySrv.execute_Function('get_students_by_ie_cicle', {p_id_student : id});
       const s = Array.isArray(rows) ? rows[0] : null;
       if (!s) { this.notFound = true; return; }
       this.student = {
-        nombre: s.Name ?? '',
-        apellido: s.LastName ?? '',
-        correo: s.Email ?? '',
-        identificacion: s.id ?? id,
-        direccion: s.Address ?? '',
+        nombre: s.nombre_out ?? '',
+        apellido: s.apellido_out ?? '',
+        correo: s.email_out ?? '',
+        identificacion: s.invoice_id_out ?? id,
+        direccion: s.direccion_out ?? '',
         institucion: '',
         estado: '',
-        grado: ''
+        grado: s.grado_out ?? ''
       };
       console.log('[DetallesEstudiante] Estudiante cargado:', this.student);
       await this.loadEnrollment(this.student.identificacion);
@@ -72,21 +71,22 @@ export class DetallesEstudiantePage implements OnInit {
 
   private async loadEnrollment(studentId: string) {
     try {
-      const scRows: any[] = await this.querySrv.getOne('Student_Cicle', { id_Student: studentId }).catch(() => []);
-      if (!Array.isArray(scRows) || scRows.length === 0) return;
-      const sc = scRows[0];
-      if (sc?.id_IE_Cicle) {
-        const iecRows: any[] = await this.querySrv.getOne('IE_Cicle', { id: sc.id_IE_Cicle }).catch(() => []);
-        const iec = Array.isArray(iecRows) ? iecRows[0] : null;
-        if (iec?.id_IE) {
-          const ieRows: any[] = await this.querySrv.getOne('IE', { DANE: iec.id_IE }).catch(() => []);
-          const ie = Array.isArray(ieRows) ? ieRows[0] : null;
-          if (ie) this.student.institucion = ie.Name || '';
-        }
+
+      const invoiceData = await this.querySrv.execute_Function('get_invoices', { id_student: studentId });
+      if(!invoiceData || invoiceData.length === 0) {
+        return ;
       }
-      this.student.grado = sc?.Grade || this.student.grado;
-      this.student.estado = sc?.Status || this.student.estado;
-      console.log('[DetallesEstudiante] Enrollment cargado:', { grado: this.student.grado, estado: this.student.estado, institucion: this.student.institucion });
+      const invoice = invoiceData[0];
+      if(!invoice.status) {
+        this.student.estado = 'Pendiente'
+      }else{
+        this.student.estado = 'Pagado';
+      }
+      this.student.institucion = invoice.ie_name;
+      this.paymentSummary.courseValue = invoice.total_value ;
+      this.paymentSummary.totalPaid = invoice.paid_amount;
+      this.paymentSummary.pending = invoice.remaining_debt;
+      this.paymentSummary.discount = invoice.discount;
     } catch (e) {
       console.warn('[DetallesEstudiante] No se pudo cargar inscripcion', e);
     }

@@ -56,6 +56,15 @@
 	color: var(--ion-color-light);
 }
 
+/* Ensure back button in the header is visible and matches page tone */
+.form-header ion-back-button {
+  --color: var(--ion-color-light);
+}
+
+.form-header ion-back-button::part(native) {
+  padding-inline-start: 6px;
+}
+
 .form-header h1 {
 	margin: 0 0 8px;
 	font-size: clamp(1.85rem, 4vw, 2.5rem);
@@ -91,10 +100,7 @@
 	transition: transform 180ms ease, box-shadow 200ms ease;
 }
 
-.meta-chip::part(container):hover {
-	transform: translateY(-2px);
-	box-shadow: 0 10px 24px rgba(var(--page-accent-rgb), 0.35);
-}
+/* meta-chip hover moved to global.scss */
 
 .meta-chip ion-icon {
 	font-size: 1rem;
@@ -116,19 +122,7 @@
 	animation: cardFloat 0.85s cubic-bezier(0.21, 0.8, 0.32, 1) 0.08s both;
 }
 
-.form-card::after {
-	content: '';
-	position: absolute;
-	inset: 0;
-	background: linear-gradient(120deg, rgba(255, 255, 255, 0.08), transparent 55%);
-	opacity: 0;
-	transition: opacity 260ms ease;
-	pointer-events: none;
-}
-
-.form-card:hover::after {
-	opacity: 1;
-}
+/* card overlay moved to global.scss */
 
 ion-card-header {
 	padding-inline: clamp(20px, 3vw, 28px);
@@ -141,12 +135,14 @@ ion-card-subtitle {
 	letter-spacing: 0.14em;
 	font-weight: 500;
 	opacity: 0.75;
+	color:whitesmoke
 }
 
 ion-card-title {
 	font-size: clamp(1.2rem, 3vw, 1.55rem);
 	font-weight: 600;
 	letter-spacing: 0.02em;
+	color: whitesmoke
 }
 
 ion-card-content {
@@ -190,31 +186,7 @@ ion-card-content {
 	color: rgba(255, 255, 255, 0.7);
 }
 
-.form-field:hover {
-	transform: translateY(-2px);
-	border-color: rgba(var(--page-accent-rgb), 0.35);
-}
-
-.form-field:focus-within {
-	border-color: rgba(var(--page-accent-rgb), 0.58);
-	box-shadow: 0 0 0 2px rgba(var(--page-accent-rgb), 0.2);
-}
-
-.form-field.invalid {
-	border-color: rgba(var(--ion-color-danger-rgb), 0.7);
-	box-shadow: 0 0 0 2px rgba(var(--ion-color-danger-rgb), 0.35);
-}
-
-.form-field.invalid ion-label {
-	color: var(--ion-color-danger);
-}
-
-.error-text {
-	display: block;
-	margin: 4px 2px 16px;
-	font-size: 0.82rem;
-	letter-spacing: 0.01em;
-}
+/* form interactions (hover/focus/invalid/error-text) moved to global.scss */
 
 .actions {
 	margin-top: clamp(20px, 4vw, 30px);
@@ -230,16 +202,7 @@ ion-card-content {
 	transition: transform 200ms ease, box-shadow 220ms ease, filter 200ms ease;
 }
 
-.submit-button:hover::part(native) {
-	transform: translateY(-2px);
-	box-shadow: 0 26px 46px rgba(var(--page-accent-rgb), 0.45);
-	filter: brightness(1.02);
-}
-
-.submit-button:active::part(native) {
-	transform: translateY(1px);
-	box-shadow: 0 16px 30px rgba(var(--page-accent-rgb), 0.35);
-}
+/* submit-button hover/active interactions centralized in global.scss */
 
 .submit-button ion-icon {
 	font-size: 1.1rem;

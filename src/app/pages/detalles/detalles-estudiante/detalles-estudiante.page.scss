@@ -1,5 +1,18 @@
 
 /* Page-specific styles for detalles-estudiante */
+
+.form-page {
+  /* Override global centering so content stays scrollable within ion-content */
+  display: block;
+  min-height: auto;
+  /* leave extra space at the bottom so the FAB doesn't cover the last card */
+  padding-bottom: 96px;
+}
+
+.data-student {
+	align-content: space-around;
+}
+
 .student-card {
 	border-radius: var(--card-radius);
 	padding: 8px 12px;

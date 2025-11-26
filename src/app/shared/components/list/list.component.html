@@ -1,0 +1,43 @@
+  <section class="dashboard-bottom">
+    <div class="recent-activity">
+      <ng-container *ngIf="showCardTitle; else noCard">
+        <app-card [title]="cardTitle">
+          <ion-list>
+            <ng-container *ngIf="items.length === 0; else listBlock">
+              <p class="muted">{{ emptyText }}</p>
+            </ng-container>
+            <ng-template #listBlock>
+                <ion-item *ngFor="let i of items | slice:0:5" (click)="view.emit(i)">
+                  <ion-label>
+                    <h3>{{ i[titleField] }}<ng-container *ngIf="titleField2 && i[titleField2]"> {{ i[titleField2] }}</ng-container></h3>
+                    <p class="muted">{{ i[subtitleField] }}</p>
+                  </ion-label>
+                  <ng-container *ngIf="showButton">
+                    
+                    <app-button fill="clear" slot="end" label="Ver" tabindex="-1" style="pointer-events: none; opacity: 0.7;"></app-button>
+                  </ng-container>
+                </ion-item>
+            </ng-template>
+          </ion-list>
+        </app-card>
+      </ng-container>
+      <ng-template #noCard>
+        <ion-list>
+          <ng-container *ngIf="items.length === 0; else listBlock2">
+            <p class="muted">{{ emptyText }}</p>
+          </ng-container>
+          <ng-template #listBlock2>
+              <ion-item *ngFor="let i of items | slice:0:5" (click)="!showButton && view.emit(i)">
+                <ion-label>
+                  <h3>{{ i[titleField] }}<ng-container *ngIf="titleField2 && i[titleField2]"> {{ i[titleField2] }}</ng-container></h3>
+                  <p class="muted">{{ i[subtitleField] }}</p>
+                </ion-label>
+                <ng-container *ngIf="showButton">
+                  <app-button fill="clear" slot="end" label="Ver" (click)="onButtonClick(i); $event.stopPropagation()"></app-button>
+                </ng-container>
+              </ion-item>
+          </ng-template>
+        </ion-list>
+      </ng-template>
+    </div>
+  </section>
