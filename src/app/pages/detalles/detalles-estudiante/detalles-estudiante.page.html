@@ -21,10 +21,14 @@
         <h2>DATOS DEL ESTUDIANTE</h2>
       </ion-card-header>
       <ion-card-content>
-        <div style="display:flex;justify-content:flex-end;margin-bottom:12px;">
+        <div style="display:flex;gap:8px;justify-content:flex-end;margin-bottom:12px;">
           <ion-button color="primary" fill="solid" size="small" (click)="goToEdit()">
             <ion-icon slot="start" name="create"></ion-icon>
             Editar
+          </ion-button>
+          <ion-button color="danger" fill="solid" size="small" (click)="deletedStudent()">
+            <ion-icon slot="start" name="trash"></ion-icon>
+            Eliminar
           </ion-button>
         </div>
         <div class="student-grid">

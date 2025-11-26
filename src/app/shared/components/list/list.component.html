@@ -5,12 +5,12 @@
           @if(this.items.length === 0) {
             <p class="muted">No hay pagos registrados</p>
           } @else {
-          <ion-item *ngFor="let i of this.items | slice:0:5">
+          <ion-item *ngFor="let i of this.items | slice:0:5" button (click)="onButtonClick(i)">
             <ion-label>
               <h3>Estudiante : {{ i.title }}</h3>
               <p class="muted">{{i.detail}}</p>
             </ion-label>
-            <app-button fill="clear" slot="end" label="Ver" (click)="onButtonClick(i)"></app-button>
+            <app-button fill="clear" slot="end" label="Ver"></app-button>
           </ion-item>
           }
         </ion-list>
