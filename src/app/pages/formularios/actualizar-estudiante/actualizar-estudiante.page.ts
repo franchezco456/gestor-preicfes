@@ -108,15 +108,14 @@ export class ActualizarEstudiantePage implements OnInit {
 
       try {
         const response = await this.querySrv.execute_Function('register_student', Student);
-        const coord = await this.preferencesSrv.getPreferences('coordData');
-        await this.loadStudents(coord);
         console.log('Respuesta update_student:', response);
       } catch (rpcErr) {
-
         console.warn('update_student RPC falló o no existe, intentando fallback con Query.update()', rpcErr);
       }
       this.studentForm.reset();
-      await this.ionViewWillEnter();
+      const coord = await this.preferencesSrv.getPreferences('coordData');
+      await this.loadStudents(coord);
+      await this.autoSetEducationalInstitution(coord);
       await this.loadingSrv.dismissLoading();
       await this.toastSrv.showSuccessToast('Estudiante actualizado correctamente.');
     } catch (error) {

@@ -55,24 +55,31 @@ export class DetallesEstudiantePage implements OnInit , OnDestroy {
     this.invoicesSubscription?.unsubscribe();
   }
   public async loadData(){
+    await this.loadingSrv.showLoading('');
     const id = this.route.snapshot.paramMap.get('id');
+    const coord = await this.preferencesSrv.getPreferences('coordData');
+    const existStudents = this.dataSrv.currentStudents.length > 0;
     if(!id){
       this.notFound = true;
       this.loading = false;
+      await this.loadingSrv.dismissLoading();
       return;
     }
-      try {
-        this.loading = true;
-      await this.loadingSrv.showLoading();
-      const coord = await this.preferencesSrv.getPreferences('coordData');
-      if (coord) {
-        const data = coord.coordData || coord;
-        const id_IE: string = data?.id_IE_Cicle;
-        await this.dataSrv.loadStudents({ id_IE: id_IE });
-        await this.dataSrv.loadInvoices({ id_IE: id_IE });
-      } else {
-        await this.dataSrv.loadStudents({});
-        await this.dataSrv.loadInvoices({});
+    try {
+      this.loading = true;
+      if (!existStudents) {
+        await this.loadStudents(coord);
+        this.findStudent(id);
+      }else{
+        this.findStudent(id);
+      }
+      
+      const existInvoices = this.dataSrv.currentInvoices.length > 0;
+      if (!existInvoices) {
+        await this.loadInvoices(coord);
+        this.findInvoice(id);
+      }else{
+        this.findInvoice(id);
       }
 
       if(!this.allStudents || this.allStudents.length === 0){
@@ -85,8 +92,8 @@ export class DetallesEstudiantePage implements OnInit , OnDestroy {
         return;
       }
 
-      this.student = this.allStudents.find(s => s.id_student === id)!;
-      this.invoiceSummary = this.allInvoices.find(i => i.invoice_id === id)!;
+      
+      
       console.log('[Pagos] Suscrito a estudiantes, total =', this.allStudents);
       console.log('[Pagos] Suscrito a facturas, total =', this.allInvoices);
       this.notFound = false;
@@ -98,6 +105,34 @@ export class DetallesEstudiantePage implements OnInit , OnDestroy {
       this.loading = false;
       await this.loadingSrv.dismissLoading();
     }
+  }
+
+  private async loadStudents(coord : any) {
+    if (coord) {
+      const data = coord.coordData || coord;
+      const id_IE: string = data?.id_IE_Cicle;
+      await this.dataSrv.loadStudents({ id_IE: id_IE });
+    } else {
+      await this.dataSrv.loadStudents({});
+    }
+  }
+
+  private findStudent(id : string) {
+    this.student = this.allStudents.find(s => s.id_student === id)!;
+  }
+
+  private async loadInvoices(coord : any) {
+    if (coord) {
+      const data = coord.coordData || coord;
+      const id_IE: string = data?.id_IE_Cicle;
+      await this.dataSrv.loadInvoices({ id_IE: id_IE });
+    } else {
+      await this.dataSrv.loadInvoices({});
+    }
+  }
+
+  private findInvoice(id : string) {
+    this.invoiceSummary = this.allInvoices.find(i => i.invoice_id === id)!;
   }
 
   // Maneja las acciones del fab flotante
