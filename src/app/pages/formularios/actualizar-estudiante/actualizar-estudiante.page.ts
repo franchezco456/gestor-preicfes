@@ -217,10 +217,10 @@ export class ActualizarEstudiantePage implements OnInit {
       return;
     }
 
-    this.filteredResults = this.allStudents.filter((s: any) =>
-      (s.Name || '').toLowerCase().includes(q) ||
-      (s.LastName || '').toLowerCase().includes(q) ||
-      (s.TI || '').toLowerCase().includes(q)
+    this.filteredResults = this.allStudents.filter((s: Student) =>
+      (s.name || '').toLowerCase().includes(q) ||
+      (s.lastname || '').toLowerCase().includes(q) ||
+      (s.no_document || '').toLowerCase().includes(q)
     );
     console.log('[ActualizarEstudiante] Filtrados', this.filteredResults.length, 'estudiantes para query =', q);
   }
@@ -230,8 +230,8 @@ export class ActualizarEstudiantePage implements OnInit {
     this.searchQuery = '';
     this.filteredResults = [];
     
-    if (item && item.raw) {
-      this.patchStudentRow(item.raw);
+    if (item) {
+      this.patchStudentRow(item);
       this.toastSrv.showSuccessToast('Estudiante cargado');
     }
   }
