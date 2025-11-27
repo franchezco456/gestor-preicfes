@@ -180,6 +180,9 @@ export class DetallesEstudiantePage implements OnInit , OnDestroy {
     await this.loadingSrv.showLoading('Eliminando estudiante...');
     try {
       const result = await this.querySrv.delete('Student_Cicle', { id: this.student.id_student });
+      const coord = await this.preferencesSrv.getPreferences('coordData');
+      await this.loadStudents(coord);
+      await this.loadInvoices(coord);
       console.log('[DetallesEstudiante] Resultado de eliminación:', result);
       await this.toastSrv.showSuccessToast('Estudiante eliminado correctamente.');
       this.loading = false;
