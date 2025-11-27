@@ -13,7 +13,6 @@ type data = {
 })
 export class ListComponent implements OnInit {
   @Input() items: data[] = [];
-
   @Output() itemClick = new EventEmitter<data>();
   constructor() {}
 
