@@ -99,59 +99,6 @@ export class DetallesEstudiantePage implements OnInit , OnDestroy {
       await this.loadingSrv.dismissLoading();
     }
   }
-  // private async loadStudent(){
-  //   const id = this.route.snapshot.paramMap.get('id');
-  //   console.log('[DetallesEstudiante] Param id =', id);
-  //   if (!id) { this.notFound = true; return; }
-  //   this.loading = true;
-  //   try {
-  //     const rows: any[] = await this.querySrv.execute_Function('get_students_by_ie_cicle', { p_id_student: id });
-  //     const s = Array.isArray(rows) ? rows[0] : null;
-  //     if (!s) { this.notFound = true; return; }
-  //     this.student = {
-  //       nombre: s.nombre_out ?? '',
-  //       apellido: s.apellido_out ?? '',
-  //       correo: s.email_out ?? '',
-  //       identificacion: s.invoice_id_out ?? id,
-  //       direccion: s.direccion_out ?? '',
-  //       institucion: '',
-  //       estado: '',
-  //       grado: s.grado_out ?? ''
-  //     };
-  //     console.log('[DetallesEstudiante] Estudiante cargado:', this.student);
-  //     await this.loadPayments(this.student.identificacion);
-  //   } catch (e) {
-  //     console.error('[DetallesEstudiante] Error cargando estudiante', e);
-  //     this.notFound = true;
-  //   } finally {
-  //     this.loading = false;
-  //     await this.loadingSrv.dismissLoading();
-  //   }
-  // }
-
-  // private async loadPayments(studentId: string) {
-  //   try {
-
-  //     const invoiceData = await this.querySrv.execute_Function('get_invoices', { id_student: studentId });
-  //     if (!invoiceData || invoiceData.length === 0) {
-  //       return;
-  //     }
-  //     const invoice = invoiceData[0];
-  //     if (!invoice.status) {
-  //       this.student.estado = 'Pendiente'
-  //     } else {
-  //       this.student.estado = 'Pagado';
-  //     }
-  //     this.student.institucion = invoice.ie_name;
-  //     this.invoiceSummary.courseValue = invoice.total_value;
-  //     this.invoiceSummary.totalPaid = invoice.paid_amount;
-  //     this.invoiceSummary.pending = invoice.remaining_debt;
-  //     this.invoiceSummary.discount = invoice.discount;
-  //   } catch (e) {
-  //     console.warn('[DetallesEstudiante] No se pudo cargar pago', e);
-  //   }
-  // }
-
 
   // Maneja las acciones del fab flotante
   public async onFabAction(action: any) {

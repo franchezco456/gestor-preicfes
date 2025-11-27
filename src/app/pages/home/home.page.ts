@@ -1,4 +1,4 @@
-import { Component, ViewChild, OnInit } from '@angular/core';
+import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
 import { ChartComponent } from 'src/app/shared/components/chart/chart.component';
 import { SidebarComponent } from 'src/app/shared/components/sidebar/sidebar.component';
 import { Router } from '@angular/router';
@@ -18,7 +18,7 @@ import { Student, Payment, Invoices } from 'src/domain/models/index';
   styleUrls: ['home.page.scss'],
   standalone: false,
 })
-export class HomePage implements OnInit {
+export class HomePage implements OnInit, OnDestroy {
   public studentPagos: any;
   @ViewChild(ChartComponent, { static: false }) chartCmp?: ChartComponent;
   ionViewWillEnter() {

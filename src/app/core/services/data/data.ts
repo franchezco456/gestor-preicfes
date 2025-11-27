@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Query } from '../query/query';
 import { BehaviorSubject } from 'rxjs';
-import { Invoices, Student } from 'src/domain/models/index';
+import { Invoices, Student, Payment, Institution } from 'src/domain/models/index';
 
 @Injectable({
   providedIn: 'root'
@@ -9,8 +9,8 @@ import { Invoices, Student } from 'src/domain/models/index';
 export class Data {
 
   private _students = new BehaviorSubject<Student[]>([]);
-  private _payments = new BehaviorSubject<any[]>([]);
-  private _institutions = new BehaviorSubject<any[]>([]);
+  private _payments = new BehaviorSubject<Payment[]>([]);
+  private _institutions = new BehaviorSubject<Institution[]>([]);
   private _invoices = new BehaviorSubject<Invoices[]>([]);
 
   public students$ = this._students.asObservable();
