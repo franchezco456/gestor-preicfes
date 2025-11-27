@@ -31,8 +31,8 @@
         <ion-list *ngIf="filteredResults.length" class="search-results stagger">
           <ion-item *ngFor="let r of filteredResults; let i = index" button (click)="selectSearchResult(r)" class="list-item-enter" [style.--i]="i">
             <ion-label>
-              <h3>{{ r.Name }} {{ r.LastName }}</h3>
-              <p>ID: {{ r.TI }}</p>
+              <h3>{{ r.name }} {{ r.lastname }}</h3>
+              <p>ID: {{ r.no_document }}</p>
             </ion-label>
           </ion-item>
         </ion-list>

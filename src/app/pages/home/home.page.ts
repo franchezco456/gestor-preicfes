@@ -1,16 +1,16 @@
-import { Component, ViewChild, OnInit } from '@angular/core';
+import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
 import { ChartComponent } from 'src/app/shared/components/chart/chart.component';
 import { SidebarComponent } from 'src/app/shared/components/sidebar/sidebar.component';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { Auth } from 'src/app/core/services/auth/auth';
 import { Preferences } from 'src/app/core/services/preferences/preferences';
 import { Query } from 'src/app/core/services/query/query';
 import { ChartService } from 'src/app/shared/services/chart/chart-service';
-import { PaymentStatusData } from 'src/domain/models';
 import { Loading } from '../../core/services/loading/loading';
 import { FormControl } from '@angular/forms';
-
-type StudentModel = { TI: string; DocumentType: string; Name: string; LastName: string; Email: string; Address: string; Grade: string };
+import { Subscription } from 'rxjs';
+import { Data } from 'src/app/core/services/data/data';
+import { Student, Payment, Invoices } from 'src/domain/models/index';
 
 @Component({
   selector: 'app-home',
@@ -18,18 +18,21 @@ type StudentModel = { TI: string; DocumentType: string; Name: string; LastName: 
   styleUrls: ['home.page.scss'],
   standalone: false,
 })
-export class HomePage implements OnInit {
+export class HomePage implements OnInit, OnDestroy {
   public studentPagos: any;
   @ViewChild(ChartComponent, { static: false }) chartCmp?: ChartComponent;
   ionViewWillEnter() {
     this.loadData();
   }
-
-  private allStudents: StudentModel[] = [];
-  public filteredResults: StudentModel[] = [];
+  private studentsSubscription?: Subscription;
+  private invoicesSubscription?: Subscription;
+  private paymentsSubscription?: Subscription;
+  private allStudents: Student[] = [];
+  public allPayments: Payment[] = [];
+  public allInvoices: Invoices[] = [];
+  public dataList: any[] = [];
+  public filteredResults: Student[] = [];
   public searchQuery: string = '';
-  public payments: any[] = [];
-  public invoices: any[] = [];
 
   @ViewChild('sidebar', { static: false }) sidebar?: SidebarComponent;
 
@@ -39,18 +42,37 @@ export class HomePage implements OnInit {
     private readonly loadingSrv: Loading,
     private readonly chartSrv: ChartService,
     private readonly preferencesSrv: Preferences,
+    private readonly dataSrv: Data,
     private readonly router: Router,
 
   ) { }
 
   ngOnInit(): void {
+    this.studentsSubscription = this.dataSrv.students$.subscribe(students => {
+      this.allStudents = students;
+    });
+
+    this.paymentsSubscription = this.dataSrv.payments$.subscribe(payments => {
+      this.allPayments = payments;
+    });
+    this.invoicesSubscription = this.dataSrv.invoices$.subscribe(invoices => {
+      this.allInvoices = invoices;
+    });
+
+    console.log('[Home] Suscrito a estudiantes, total =', this.allStudents);
     this.filterControl.valueChanges.subscribe(val => {
       if (val && val !== this.filterType) {
         this.setFilterType(val);
       }
     });
   }
-  
+
+  ngOnDestroy(): void {
+    this.studentsSubscription?.unsubscribe();
+    this.paymentsSubscription?.unsubscribe();
+    this.invoicesSubscription?.unsubscribe();
+  }
+
   // explicado en detalle estudiante
   public onFabAction(action: any) {
     const id = typeof action === 'string' ? action : (action?.id ?? '');
@@ -89,58 +111,12 @@ export class HomePage implements OnInit {
     await this.sidebar.toggle();
   }
 
-  public async fetchPayments() {
-    try {
-      const coord = await this.preferencesSrv.getPreferences('coordData');
-      console.log(coord);
-      const id_IE = coord.coordData.id_IE_Cicle;
-      const list: any[] = await this.querySrv.execute_Function('get_payments', { id_ie: id_IE })
-      this.payments = Array.isArray(list) ? list.map(r => ({
-        title: r.student_name,
-        date: new Date(r.payment_date),
-        value: r.payment_value,
-        detail: `Fecha : ${r.payment_date} / Valor : ${r.payment_value}`,
-        button: r.payment_id,
-        id: r.invoice_id,
-        remaining_debt: r.remaining_debt
-      })) : [];
-    } catch (error) {
-      console.error('[ERROR] Fallo carga de pagos', error);
-      this.payments = [];
-    }
-  }
-
-  private async fetchStudents() {
-    try {
-      const coord = await this.preferencesSrv.getPreferences('coordData');
-      console.log(coord);
-      const id_IE = coord.coordData.id_IE_Cicle;
-
-      console.log('[Home] id_IE_Cicle =', id_IE);
-      const list: any[] = await this.querySrv.execute_Function('get_students_by_ie_cicle', { p_id_ie_cicle: id_IE })
-      this.allStudents = Array.isArray(list) ? list.map(r => ({
-
-        TI: r.invoice_id_out ?? '',
-        DocumentType: r.documento_tipo_out ?? 'TI',
-        Name: r.nombre_out ?? '',
-        LastName: r.apellido_out ?? '',
-        Email: r.email_out ?? '',
-        Address: r.direccion_out ?? '',
-        Grade: r.grado_out ?? '',
-
-      })) : [];
-    } catch (error) {
-      console.error('[ERROR] Fallo carga de estudiantes', error);
-      this.allStudents = [];
-    }
-  }
-
-  public selectSearchResult(item: StudentModel) {
+  public selectSearchResult(item: Student) {
     console.log('[Home] Selected search item:', item);
     this.searchQuery = '';
     this.filteredResults = [];
-    console.log('[Home] Navegando a /detalles-estudiante/', item.TI);
-    this.router.navigate(['/detalles-estudiante', item.TI]);
+    console.log('[Home] Navegando a /detalles-estudiante/', item.id_student);
+    this.router.navigate(['/detalles-estudiante', item.id_student]);
   }
 
   public async onSearchInput(value: string) {
@@ -153,9 +129,9 @@ export class HomePage implements OnInit {
     }
 
     this.filteredResults = this.allStudents.filter((s) =>
-      (s.Name || '').toLowerCase().includes(q) ||
-      (s.LastName || '').toLowerCase().includes(q) ||
-      (s.TI || '').toLowerCase().includes(q)
+      (s.name || '').toLowerCase().includes(q) ||
+      (s.lastname || '').toLowerCase().includes(q) ||
+      (s.id_student || '').toLowerCase().includes(q)
     );
     console.log('[Home] Filtrados', this.filteredResults.length, 'estudiantes para query =', q);
   }
@@ -182,50 +158,63 @@ export class HomePage implements OnInit {
     return `COP ${value.toLocaleString('es-CO')}`;
   }
 
-   public setFilterType(type: 'dia' | 'mes' | 'año') {
+  public async setFilterType(type: 'dia' | 'mes' | 'año') {
     if (this.filterType !== type) {
       this.filterType = type;
-      this.updateChartByFilter();
+      await this.updateChartByFilter();
     }
   }
 
   private async loadData() {
-    this.loadingSrv.showLoading();
     try {
+      await this.loadingSrv.showLoading();
       const coord = await this.preferencesSrv.getPreferences('coordData');
-      // Obtener nombre y apellido del coordinador
-      if (coord && coord.coordData) {
-        const name = coord.coordData.Name || '';
-        const lastName = coord.coordData.LastName || '';
+      if (coord) {
+        const data = coord.coordData || coord;
+        const name = data.Name || '';
+        const lastName = data.LastName || '';
         this.coordinatorName = `${name} ${lastName}`.trim();
+        const id_IE: string = data?.id_IE_Cicle;
+        await this.dataSrv.loadStudents({ id_IE: id_IE });
+        await this.dataSrv.loadInvoices({ id_IE: id_IE });
+        await this.dataSrv.loadPayments({ id_IE: id_IE });
+      } else {
+        await this.dataSrv.loadStudents({});
+        await this.dataSrv.loadInvoices({});
+        await this.dataSrv.loadPayments({});
       }
 
-      //cargar los datos
-      await Promise.all([
-        this.fetchPayments(),
-        this.fetchStudents()
-      ]);
+      this.dataList = this.allPayments.map(pago => {
+      const student = this.allStudents.find(s => s.id_student === pago.invoice_id);
+      const fullName = student ? `${student.name} ${student.lastname}` : 'Estudiante Desconocido';
 
-      const id_IE = coord.coordData.id_IE_Cicle;
-      const invoicesList: any[] = await this.querySrv.execute_Function('get_invoices', { id_ie: id_IE });
-      this.invoices = Array.isArray(invoicesList) ? invoicesList : [];
+      return {
+        title: fullName,                                
+        detail: this.formatCurrency(pago.payment_value), 
+        button: pago.payment_id                         
+      };
+    });
 
-      //actualizar graficas y KPI
-      this.updateChartByFilter();
+      await this.updateChartByFilter();
       this.updateKpis();
+
+      console.log('[Pagos] Suscrito a estudiantes, total =', this.allStudents);
+      console.log('[Pagos] Suscrito a facturas, total =', this.allInvoices);
+
+      await this.loadingSrv.dismissLoading();
     } catch (error) {
       console.error('[ERROR] Fallo al cargar datos', error);
-    } finally {
       await this.loadingSrv.dismissLoading();
     }
+    
   }
 
   //para actualizar los kpis, muestra la suma de los pagos realizados, saldo pendiente, total estudiantes
   private updateKpis() {
     const totalEstudiantes = this.allStudents.length;
-    const pagosRealizados = this.payments.length;
-    const saldoPendienteTotal = this.invoices.reduce((acc, invoice) => acc + (Number(invoice.remaining_debt) || 0), 0);
-    const ingresosTotales = this.payments.reduce((acc, pago) => acc + pago.value, 0);
+    const pagosRealizados = this.allPayments.length;
+    const saldoPendienteTotal = this.allInvoices.reduce((acc, invoice) => acc + (Number(invoice.remaining_debt) || 0), 0);
+    const ingresosTotales = this.allPayments.reduce((acc, pago) => acc + pago.payment_value, 0);
 
     const saldoPendienteFinal = Math.max(0, saldoPendienteTotal);
     this.kpis = [
@@ -240,23 +229,23 @@ export class HomePage implements OnInit {
   private groupPaymentsBy(type: 'dia' | 'mes' | 'año') {
     const groups: Record<string, number> = {};
 
-    for (const pago of this.payments) {
-      const date = pago.date;
+    for (const pago of this.allPayments) {
+      const date = pago.payment_date;
       if (!date) continue;
 
-      const key = this.FILTER_CONFIG[type].format(date);
-      const value = pago.value;
+      const key = this.FILTER_CONFIG[type].format(new Date (date));
+      const value = pago.payment_value;
       groups[key] = (groups[key] || 0) + value;
     }
 
     return Object.entries(groups).map(([label, count]) => ({ label, count }));
   }
-//para actualizar las graficas 
-  public updateChartByFilter() {
+  //para actualizar las graficas 
+  public async updateChartByFilter() {
     const data = this.groupPaymentsBy(this.filterType);
     const config = this.FILTER_CONFIG[this.filterType];
 
-    this.studentPagos = this.chartSrv.createBarChart(
+    this.studentPagos = await this.chartSrv.createBarChart(
       data.map(d => ({ x: d.label, y: d.count })),
       {
         title: `Pagos agrupados por ${config.label.toLowerCase()}`,
@@ -270,9 +259,9 @@ export class HomePage implements OnInit {
   }
 
   //para ir a detalles estudiante pero desde la lista de pagos (hay que editar)
-   public goToStudentDetail(item: any) {
+  public goToStudentDetail(item: any) {
     console.log('[Home] Selected search item:', item);
-    console.log('[Home] Navegando a /detalles-estudiante/', item.id);
-    this.router.navigate(['/detalles-estudiante', item.id]);
+    console.log('[Home] Navegando a /detalles-estudiante/', item.button);
+    this.router.navigate(['/detalles-estudiante/', item.id]);
   }
 }

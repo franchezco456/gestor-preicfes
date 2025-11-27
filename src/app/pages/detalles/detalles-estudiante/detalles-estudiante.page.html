@@ -16,42 +16,33 @@
 
   <section class="form-wrapper" *ngIf="!loading && !notFound; else loadingOrEmpty">
     <!-- Student info card (rounded) -->
+  @if(student){ 
     <ion-card class="form-card student-card">
       <ion-card-header>
         <h2>DATOS DEL ESTUDIANTE</h2>
       </ion-card-header>
       <ion-card-content>
-        <div style="display:flex;gap:8px;justify-content:flex-end;margin-bottom:12px;">
-          <ion-button color="primary" fill="solid" size="small" (click)="goToEdit()">
-            <ion-icon slot="start" name="create"></ion-icon>
-            Editar
-          </ion-button>
-          <ion-button color="danger" fill="solid" size="small" (click)="deletedStudent()">
-            <ion-icon slot="start" name="trash"></ion-icon>
-            Eliminar
-          </ion-button>
-        </div>
         <div class="student-grid">
           <div class="p-label">Nombre : </div>
-          <div class="p-value">{{ student.nombre }}</div>
+          <div class="p-value">{{ student.name }}</div>
 
           <div class="p-label">Apellido</div>
-          <div class="p-value">{{ student.apellido }}</div>
+          <div class="p-value">{{ student.lastname }}</div>
 
           <div class="p-label">Correo</div>
-          <div class="p-value">{{ student.correo }}</div>
+          <div class="p-value">{{ student.email }}</div>
 
           <div class="p-label">ID</div>
-          <div class="p-value">{{ student.identificacion }}</div>
+          <div class="p-value">{{ student.id_student }}</div>
 
           <div class="p-label">Institucion Educativa</div>
-          <div class="p-value">{{ student.institucion }}</div>
+          <div class="p-value">{{ student.id_IE }}</div>
 
           <div class="p-label">Dirección</div>
-          <div class="p-value">{{ student.direccion }}</div>
+          <div class="p-value">{{ student.address }}</div>
 
           <div class="p-label">Estado</div>
-          <div class="p-value">{{ student.estado }}</div>
+          <div class="p-value">{{ invoiceSummary.status ? 'Pagado' : 'Pendiente' }}</div>
 
           <div class="p-label">Grado</div>
           <div class="p-value">{{ student.grado }}</div>
@@ -67,26 +58,25 @@
       <ion-card-content>
         <div class="payment-grid">
           <div class="p-label">Valor del Curso:</div>
-          <div class="p-value">{{ paymentSummary.courseValue | currency:'COP' }}</div>
+          <div class="p-value">{{ invoiceSummary.total_value | currency:'COP' }}</div>
 
           <div class="p-label">Total Abonado:</div>
-          <div class="p-value">{{ paymentSummary.totalPaid | currency:'COP' }}</div>
+          <div class="p-value">{{ invoiceSummary.paid_amount | currency:'COP' }}</div>
 
           <div class="p-label">Descuento:</div>
-          <div class="p-value">{{ paymentSummary.discount | currency:'COP' }}</div>
+          <div class="p-value">{{ invoiceSummary.discount | currency:'COP' }}</div>
 
           <div class="p-label">Pendiente:</div>
-          <div class="p-value">{{ paymentSummary.pending | currency:'COP' }}</div>
+          <div class="p-value">{{ invoiceSummary.remaining_debt | currency:'COP' }}</div>
         </div>
       </ion-card-content>
     </ion-card>
-
+    }
   </section>
 
   <ng-template #loadingOrEmpty>
     <div class="loading-state" *ngIf="loading"
       style="display:flex;align-items:center;justify-content:center;height:50vh;">
-      <ion-spinner name="crescent"></ion-spinner>
     </div>
     <ion-card *ngIf="!loading && notFound" class="form-card">
       <ion-card-header>
@@ -106,8 +96,7 @@
   <app-fabbutom color="primary" position="bottom-right" [actions]="[
       { id: 'editar', icon: 'create', label: 'Editar', color: 'primary' },
       { id: 'eliminar', icon: 'trash', label: 'Eliminar', color: 'danger' },
-      { id: 'pago', icon: 'card', label: 'Registrar pago', color: 'success' },
-      { id: 'volver', icon: 'arrow-back', label: 'Volver', color: 'secondary' }
+      { id: 'pago', icon: 'card', label: 'Registrar pago', color: 'success' }
     ]" (actionClick)="onFabAction($event)"></app-fabbutom>
 
 

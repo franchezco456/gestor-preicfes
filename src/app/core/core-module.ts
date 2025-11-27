@@ -8,6 +8,7 @@ import { Cleaner } from './providers/cleaner/cleaner';
 import { Loading } from './services/loading/loading';
 import { Preferences } from './services/preferences/preferences';
 import { Toast } from './services/toast/toast';
+import { Data } from './services/data/data';
 
 
 
@@ -18,7 +19,7 @@ import { Toast } from './services/toast/toast';
     useFactory: () => {
       return createClient(env.SUPABASE_APP.URL, env.SUPABASE_APP.API_KEY);
     }
-  }, Auth, Query, Cleaner, Loading, Preferences, Toast],
+  }, Auth, Query, Cleaner, Loading, Preferences, Toast, Data],
   imports: [
     CommonModule
   ]

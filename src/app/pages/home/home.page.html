@@ -16,8 +16,8 @@
       <ion-list *ngIf="filteredResults.length" class="search-results">
         <ion-item *ngFor="let r of filteredResults" button (click)="selectSearchResult(r)">
           <ion-label>
-            <h3>{{ r.Name }} {{ r.LastName }}</h3>
-            <p>ID: {{ r.TI }}</p>
+            <h3>{{ r.name }} {{ r.lastname }}</h3>
+            <p>ID: {{ r.id_student }}</p>
           </ion-label>
         </ion-item>
       </ion-list>
@@ -77,7 +77,7 @@
   </section>
 
 
-  <app-list [items]="payments" (itemClick)="goToStudentDetail($event)"></app-list>
+  <app-list [items]="dataList" (itemClick)="goToStudentDetail($event)"></app-list>
 
   <app-fabbutom icon="menu" label="Acciones" color="primary" position="bottom-right" [actions]="[
       { id: 'estudiante', icon: 'person-add', label: 'Estudiante', color: 'secondary' },

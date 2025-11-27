@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Preferences } from './core/services/preferences/preferences';
+import { Data } from './core/services/data/data';
 
 @Component({
   selector: 'app-root',
@@ -6,6 +8,6 @@ import { Component } from '@angular/core';
   styleUrls: ['app.component.scss'],
   standalone: false,
 })
-export class AppComponent {
-  constructor() {}
+export class AppComponent  {
+  constructor() { }
 }

@@ -1,26 +1,38 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute} from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { Loading } from 'src/app/core/services/loading/loading';
 import { Preferences } from 'src/app/core/services/preferences/preferences';
 import { Toast } from 'src/app/core/services/toast/toast';
 import { Query } from 'src/app/core/services/query/query';
+import { Subscription } from 'rxjs';
+import { Data } from 'src/app/core/services/data/data';
+import { Student , Institution } from 'src/domain/models/index';
 @Component({
   selector: 'app-actualizar-estudiante',
   templateUrl: './actualizar-estudiante.page.html',
   styleUrls: ['./actualizar-estudiante.page.scss'],
-  standalone:false
+  standalone: false
 })
 export class ActualizarEstudiantePage implements OnInit {
   public studentForm !: FormGroup;
   public institutionsOptions: { value: string; text: string }[] = [];
   public isCoordinator: boolean = true;
   public searchTI: string = '';
+  private institutionSubscription !: Subscription;
+  private studentsSubscription?: Subscription;
+  public allInstitutions: Institution[] = [];
   // Client-side search like Home: cache students and filtered results
   private allStudents: any[] = [];
   public filteredResults: any[] = [];
   public searchQuery: string = '';
   public updatingStudentId: string | null = null;
+
+
+  async ionViewWillEnter() {
+    await this.loadData();
+  }
+
 
   constructor(
     private readonly formBuilder: FormBuilder,
@@ -29,42 +41,21 @@ export class ActualizarEstudiantePage implements OnInit {
     private readonly loadingSrv: Loading,
     private readonly toastSrv: Toast,
     private readonly preferencesSrv: Preferences,
+    private readonly dataSrv: Data
   ) {
     this.initForm();
   }
 
-  private patchStudentRow(s: any) {
-    if (!s) return;
-    const tiValue = s.id_estudiante_out ?? '';
-    this.updatingStudentId = tiValue;
-    this.studentForm.patchValue({
-      DocumentType: s.documento_tipo_out ?? 'TI',
-      TI: tiValue,
-      Name: s.nombre_out ?? '',
-      LastName: s.apellido_out ?? '',
-      Email: s.email_out ?? '',
-      Address: s.direccion_out ?? '',
-      Phone: s.telefono_out ?? '',
-      Grade: s.grado_out ?? '',
-      Discount: s.descuento_out ?? '',
-      Installments: s.cuotas_out ?? ''
-    });
-    
-    try {
-      this.studentForm.get('TI')?.disable();
-    } catch (e) {
-      console.warn('[ActualizarEstudiante] Could not disable TI control', e);
-    }
-  }
 
   ngOnInit() {
-    this.getEducationalInstitutions();
-    this.autoSetEducationalInstitution();
-    this.fetchStudents();
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.loadStudent(id);
-    }
+    this.institutionSubscription = this.dataSrv.institutions$.subscribe(institutions => {
+      this.allInstitutions = institutions;
+    });
+
+    this.studentsSubscription = this.dataSrv.students$.subscribe(students => {
+      this.allStudents = students;
+    });
+    
   }
 
   private initForm() {
@@ -92,7 +83,7 @@ export class ActualizarEstudiantePage implements OnInit {
     try {
       await this.loadingSrv.showLoading(this.updatingStudentId ? 'Actualizando estudiante...' : 'Procesando...');
 
-      
+
       const raw = this.studentForm.getRawValue ? this.studentForm.getRawValue() : this.studentForm.value;
       const idStudentValue = this.updatingStudentId ?? raw.TI;
 
@@ -110,12 +101,12 @@ export class ActualizarEstudiantePage implements OnInit {
         id_ie_cicle: raw.id_IE,
       };
 
-      
+
       try {
         const response = await this.querySrv.execute_Function('register_student', Student);
         console.log('Respuesta update_student:', response);
       } catch (rpcErr) {
-        
+
         console.warn('update_student RPC falló o no existe, intentando fallback con Query.update()', rpcErr);
       }
       this.studentForm.reset();
@@ -129,67 +120,92 @@ export class ActualizarEstudiantePage implements OnInit {
     }
   }
 
-  public async getEducationalInstitutions() {
-    try {
-      const institutions: any = await this.querySrv.execute_Function('get_ie');
-      this.institutionsOptions = Array.isArray(institutions)
-        ? institutions.map((inst: any) => ({ value: inst.id_ie_cicle_out, text: inst.name_out }))
-        : [];
-    } catch (error) {
-      this.toastSrv.showErrorToast('Error al cargar las instituciones educativas.');
-    }
-  }
-
-  public async autoSetEducationalInstitution() {
-    const credentials = await this.preferencesSrv.getPreferences('login');
-    if (!credentials?.is_coordinator) {
-      this.isCoordinator = false;
+  public async loadData() {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (!id) {
+      this.toastSrv.showErrorToast('ID de estudiante no proporcionado en la ruta.');
       return;
     }
-    const coordData = await this.preferencesSrv.getPreferences('coordData');
-    if (!coordData) return;
-    const id_ie_cicle = coordData.coordData.id_IE_Cicle;
-    this.studentForm.get('id_IE')?.setValue(id_ie_cicle);
-  }
-
-  public async loadStudent(id: string) {
-    try {
-      console.log('[ActualizarEstudiante] loadStudent id =', id);
-
-      // Primero intentamos compatibilidad: si el backend acepta p_id_student
-      let rows: any[] = [];
-      try {
-        rows = await this.querySrv.execute_Function('get_students_by_ie_cicle', { p_id_student: id });
-      } catch (e) {
-        // ignore - probamos otro camino abajo
-        rows = [];
+    await this.loadingSrv.showLoading("Cargando datos...");
+    await this.dataSrv.loadInstitutions({});
+    if(!this.allInstitutions || this.allInstitutions.length === 0){
+      await this.loadingSrv.dismissLoading();
+      this.toastSrv.showErrorToast('No hay instituciones educativas disponibles.');
+      return;
+    }
+    this.institutionsOptions = this.allInstitutions.map((inst: Institution) => ({
+      value: inst.id_ie_cicle,
+      text: inst.name
+    }));
+    await this.autoSetEducationalInstitution();
+    //
+    const coord = await this.preferencesSrv.getPreferences('coordData');
+      if (coord) {
+        const data = coord.coordData || coord;
+        const id_IE: string = data?.id_IE_Cicle;
+        await this.dataSrv.loadStudents({ id_IE: id_IE });
+      } else {
+        await this.dataSrv.loadStudents({});
       }
 
-      console.log('[ActualizarEstudiante] filas devueltas por p_id_student =', rows);
-      let s: any = Array.isArray(rows) && rows.length > 0 ? rows[0] : null;
-
-      if (!s) {
-        this.toastSrv.showWarningToast('Estudiante no encontrado.');
+      if(!this.allStudents || this.allStudents.length === 0){
+        this.toastSrv.showErrorToast('No se encontraron estudiantes para cargar los datos.');
         await this.loadingSrv.dismissLoading();
         return;
       }
 
-      // Mapeamos la fila al formulario
-      console.log('[ActualizarEstudiante] fila a mapear =', s);
-      this.patchStudentRow(s);
-      await this.toastSrv.showSuccessToast('Estudiante cargado.');
 
-    } catch (error) {
-      console.error('Error cargando estudiante', error);
-      this.toastSrv.showErrorToast('Error al cargar el estudiante.');
+      let student = this.allStudents.find(s => s.id_student === id)!;
+      if (!student) {
+        this.toastSrv.showErrorToast('Estudiante no encontrado.');
+        await this.loadingSrv.dismissLoading();
+        return;
+      }
+      this.patchStudentRow(student);
+      console.log('[Pagos] Suscrito a estudiantes, total =', this.allStudents);
+      await this.loadingSrv.dismissLoading();
+  }
+
+    public async autoSetEducationalInstitution() {
+    const coordData = await this.preferencesSrv.getPreferences("coordData");
+    if (!coordData) {
+      this.isCoordinator = false;
+      return;
+    }
+    const id_ie_cicle = coordData.coordData.id_IE_Cicle;
+    this.studentForm.get('id_IE')?.setValue(id_ie_cicle);
+
+  }
+
+  private patchStudentRow(s: Student) {
+    if (!s) return;
+    const tiValue = s.no_document ?? '';
+    this.updatingStudentId = tiValue;
+    this.studentForm.patchValue({
+      DocumentType: s.document_type ?? 'TI',
+      TI: tiValue,
+      Name: s.name ?? '',
+      LastName: s.lastname ?? '',
+      Email: s.email ?? '',
+      Address: s.address ?? '',
+      Phone: s.phone ?? '',
+      Grade: s.grado ?? '',
+      Discount: s.discount ?? '',
+      Installments: s.installments ?? ''
+    });
+
+    try {
+      this.studentForm.get('TI')?.disable();
+    } catch (e) {
+      console.warn('[ActualizarEstudiante] Could not disable TI control', e);
     }
   }
 
-  
+
 
 
   public onSearchInput(ev: any) {
-    
+
     const v = (typeof ev === 'string') ? ev : (ev?.detail?.value ?? ev?.target?.value ?? '');
     this.searchTI = v;
     this.searchQuery = v;
@@ -201,38 +217,12 @@ export class ActualizarEstudiantePage implements OnInit {
       return;
     }
 
-    this.filteredResults = this.allStudents.filter((s: any) =>
-      (s.Name || '').toLowerCase().includes(q) ||
-      (s.LastName || '').toLowerCase().includes(q) ||
-      (s.TI || '').toLowerCase().includes(q)
+    this.filteredResults = this.allStudents.filter((s: Student) =>
+      (s.name || '').toLowerCase().includes(q) ||
+      (s.lastname || '').toLowerCase().includes(q) ||
+      (s.no_document || '').toLowerCase().includes(q)
     );
     console.log('[ActualizarEstudiante] Filtrados', this.filteredResults.length, 'estudiantes para query =', q);
-  }
-
-  public async fetchStudents() {
-    try {
-      const coord = await this.preferencesSrv.getPreferences('coordData');
-      const id_IE = coord?.coordData?.id_IE_Cicle;
-      if (!id_IE) {
-        this.allStudents = [];
-        return;
-      }
-
-      const list: any[] = await this.querySrv.execute_Function('get_students_by_ie_cicle', { p_id_ie_cicle: id_IE });
-      this.allStudents = Array.isArray(list) ? list.map(r => ({
-        TI: (r.id_estudiante_out ?? '').toString(),
-        DocumentType: r.documento_tipo_out ?? 'TI',
-        Name: r.nombre_out ?? '',
-        LastName: r.apellido_out ?? '',
-        Email: r.email_out ?? '',
-        Address: r.direccion_out ?? '',
-        Grade: r.grado_out ?? '',
-        raw: r
-      })) : [];
-    } catch (error) {
-      console.error('[ERROR] Fallo carga de estudiantes (actualizar)', error);
-      this.allStudents = [];
-    }
   }
 
   public selectSearchResult(item: any) {
@@ -240,10 +230,9 @@ export class ActualizarEstudiantePage implements OnInit {
     this.searchQuery = '';
     this.filteredResults = [];
     
-    if (item && item.raw) {
-      this.patchStudentRow(item.raw);
+    if (item) {
+      this.patchStudentRow(item);
       this.toastSrv.showSuccessToast('Estudiante cargado');
     }
   }
-
 }
