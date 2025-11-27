@@ -19,7 +19,7 @@ type SelectOption = {
   styleUrls: ['./form-estudiantes.page.scss'],
   standalone: false,
 })
-export class FormEstudiantesPage implements OnInit, OnDestroy{
+export class FormEstudiantesPage implements OnInit, OnDestroy {
   private institutionSubscription !: Subscription;
   public allInstitutions: Institution[] = [];
   public studentForm !: FormGroup;
@@ -33,13 +33,13 @@ export class FormEstudiantesPage implements OnInit, OnDestroy{
     private readonly querySrv: Query,
     private readonly loadingSrv: Loading,
     private readonly toastSrv: Toast,
-    private readonly dataSrv : Data,
+    private readonly dataSrv: Data,
     private readonly preferencesSrv: Preferences) {
-      this.initForm();
+    this.initForm();
   }
 
   ngOnInit(): void {
-     this.institutionSubscription = this.dataSrv.institutions$.subscribe(institutions => {
+    this.institutionSubscription = this.dataSrv.institutions$.subscribe(institutions => {
       this.allInstitutions = institutions;
     });
   }
@@ -48,14 +48,16 @@ export class FormEstudiantesPage implements OnInit, OnDestroy{
     this.institutionSubscription.unsubscribe();
   }
   private async loadData() {
-        await this.loadingSrv.showLoading("Cargando datos...");
-        await this.dataSrv.loadInstitutions({});
-        this.institutionsOptions = this.allInstitutions.map((inst: Institution): SelectOption => ({
-        value: inst.id_ie_cicle,
-        text: inst.name
-        }));
-        await this.autoSetEducationalInstitution();
-        await this.loadingSrv.dismissLoading();
+    const coord = await this.preferencesSrv.getPreferences('coordData');
+    const existIEs = this.dataSrv.currentInstitutions.length > 0;
+    if (!existIEs) {
+      await this.loadIEs();
+      this.mapInstitutionsOptions();
+      await this.autoSetEducationalInstitution(coord);
+    }else{
+      this.mapInstitutionsOptions();
+      await this.autoSetEducationalInstitution(coord);
+    }
   }
   private initForm() {
     this.studentForm = this.formBuilder.group({
@@ -99,8 +101,9 @@ export class FormEstudiantesPage implements OnInit, OnDestroy{
       console.log("Estudiante a registrar: " + JSON.stringify(Student));
       const response = await this.querySrv.execute_Function('register_student', Student);
       console.log(JSON.stringify(response));
+      const coord = await this.preferencesSrv.getPreferences('coordData');
+      this.autoSetEducationalInstitution(coord);
       this.studentForm.reset();
-      this.autoSetEducationalInstitution();
       await this.loadingSrv.dismissLoading();
       await this.toastSrv.showSuccessToast('Estudiante registrado exitosamente.');
     } catch (error) {
@@ -110,9 +113,16 @@ export class FormEstudiantesPage implements OnInit, OnDestroy{
   }
 
 
+  private async loadIEs() {
+    await this.dataSrv.loadInstitutions({});
+    if (!this.allInstitutions || this.allInstitutions.length === 0) {
+      await this.loadingSrv.dismissLoading();
+      this.toastSrv.showErrorToast('No hay instituciones educativas disponibles.');
+      return;
+    }
+  }
 
-  public async autoSetEducationalInstitution() {
-    const coordData = await this.preferencesSrv.getPreferences("coordData");
+  public async autoSetEducationalInstitution(coordData: any) {
     if (!coordData) {
       this.isCoordinator = false;
       return;
@@ -120,5 +130,13 @@ export class FormEstudiantesPage implements OnInit, OnDestroy{
     const id_ie_cicle = coordData.coordData.id_IE_Cicle;
     this.studentForm.get('id_IE')?.setValue(id_ie_cicle);
 
+  }
+
+  private mapInstitutionsOptions() {
+    this.allInstitutions = this.dataSrv.currentInstitutions;
+    this.institutionsOptions = this.allInstitutions.map((inst: Institution) => ({
+      value: inst.id_ie_cicle,
+      text: inst.name
+    }));
   }
 }

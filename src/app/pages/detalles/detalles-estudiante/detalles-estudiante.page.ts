@@ -55,7 +55,7 @@ export class DetallesEstudiantePage implements OnInit , OnDestroy {
     this.invoicesSubscription?.unsubscribe();
   }
   public async loadData(){
-    await this.loadingSrv.showLoading('');
+    await this.loadingSrv.showLoading();
     const id = this.route.snapshot.paramMap.get('id');
     const coord = await this.preferencesSrv.getPreferences('coordData');
     const existStudents = this.dataSrv.currentStudents.length > 0;
@@ -74,13 +74,10 @@ export class DetallesEstudiantePage implements OnInit , OnDestroy {
         this.findStudent(id);
       }
       
-      const existInvoices = this.dataSrv.currentInvoices.length > 0;
-      if (!existInvoices) {
-        await this.loadInvoices(coord);
-        this.findInvoice(id);
-      }else{
-        this.findInvoice(id);
-      }
+      
+      await this.loadInvoices(coord);
+      this.findInvoice(id);
+      
 
       if(!this.allStudents || this.allStudents.length === 0){
         this.notFound = true;

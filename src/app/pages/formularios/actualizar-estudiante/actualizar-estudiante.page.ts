@@ -112,10 +112,10 @@ export class ActualizarEstudiantePage implements OnInit {
       } catch (rpcErr) {
         console.warn('update_student RPC falló o no existe, intentando fallback con Query.update()', rpcErr);
       }
-      this.studentForm.reset();
       const coord = await this.preferencesSrv.getPreferences('coordData');
       await this.loadStudents(coord);
       await this.autoSetEducationalInstitution(coord);
+      this.studentForm.reset();
       await this.loadingSrv.dismissLoading();
       await this.toastSrv.showSuccessToast('Estudiante actualizado correctamente.');
     } catch (error) {
