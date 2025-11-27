@@ -1,40 +1,50 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { authGuard } from './core/guards/auth/auth-guard';
+import { noAuthGuard } from './core/guards/no-auth/no-auth-guard';
 
 const routes: Routes = [
   
   
   {
     path: 'login',
-    loadChildren: () => import('./pages/login/login.module').then( m => m.LoginPageModule)
+    loadChildren: () => import('./pages/login/login.module').then( m => m.LoginPageModule),
+    canActivate: [noAuthGuard]
   },
   {
     path: 'home',
-    loadChildren: () => import('./pages/home/home.module').then( m => m.HomePageModule)
+    loadChildren: () => import('./pages/home/home.module').then( m => m.HomePageModule),
+    canActivate: [authGuard]
   },
   {
     path: 'form-estudiantes',
-    loadChildren: () => import('./pages/formularios/form-estudiantes/form-estudiantes.module').then( m => m.FormEstudiantesPageModule)
+    loadChildren: () => import('./pages/formularios/form-estudiantes/form-estudiantes.module').then( m => m.FormEstudiantesPageModule),
+    canActivate: [authGuard]
   },
   {
     path: 'form-coordinadores',
-    loadChildren: () => import('./pages/formularios/form-coordinadores/form-coordinadores.module').then( m => m.FormCoordinadoresPageModule)
+    loadChildren: () => import('./pages/formularios/form-coordinadores/form-coordinadores.module').then( m => m.FormCoordinadoresPageModule),
+    canActivate: [authGuard]
   },
   {
     path: 'form-instituciones',
-    loadChildren: () => import('./pages/formularios/form-instituciones/form-instituciones.module').then( m => m.FormInstitucionesPageModule)
+    loadChildren: () => import('./pages/formularios/form-instituciones/form-instituciones.module').then( m => m.FormInstitucionesPageModule),
+    canActivate: [authGuard]
   },
   {
     path: 'form-pagos',
-    loadChildren: () => import('./pages/formularios/form-pagos/form-pagos.module').then(m => m.FormPagosPageModule)
+    loadChildren: () => import('./pages/formularios/form-pagos/form-pagos.module').then(m => m.FormPagosPageModule),
+    canActivate: [authGuard]
   },
   {
     path: 'detalles-estudiante',
-    loadChildren: () => import('./pages/detalles/detalles-estudiante/detalles-estudiante.module').then(m => m.DetallesEstudiantePageModule)
+    loadChildren: () => import('./pages/detalles/detalles-estudiante/detalles-estudiante.module').then(m => m.DetallesEstudiantePageModule),
+    canActivate: [authGuard]
   },
   {
     path: 'actualizar-estudiante',
-    loadChildren: () => import('./pages/formularios/actualizar-estudiante/actualizar-estudiante.module').then( m => m.ActualizarEstudiantePageModule)
+    loadChildren: () => import('./pages/formularios/actualizar-estudiante/actualizar-estudiante.module').then( m => m.ActualizarEstudiantePageModule),
+    canActivate: [authGuard]
   },
   {
     path: '',

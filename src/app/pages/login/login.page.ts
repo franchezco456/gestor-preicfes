@@ -30,8 +30,6 @@ export class LoginPage {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
     });
-
-    this.skiplogin();
   }
 
   public async submitLogin() {
@@ -56,30 +54,8 @@ export class LoginPage {
     }
   }
 
-  public async skiplogin() {
-    const credentials = await this.preferencesSrv.getPreferences("login");
-    if (credentials) {
-      try {
-        await this.loadingSrv.showLoading();
-        const login = await this.authSrv.login(credentials.email, credentials.password);
-        console.log("TAG: LOGIN" + JSON.stringify(login));
-        const last_signIn = login.last_sign_in_at;
-        await this.loadingSrv.dismissLoading();
-        await this.toastSrv.showToast("Ultimo inicio de sesion " + last_signIn);
-        console.log("login skipeado como coordinador " + credentials.is_coordinator);
-        this.router.navigate(["/home"]);
-        this.loginForm.reset();
-      } catch (error) {
-        await this.toastSrv.showErrorToast("Error al iniciar sesion");
-        await this.loadingSrv.dismissLoading();
-        this.loginForm.reset();
-      }
-    }
-  }
-
   public async saveLogin() {
     const is_coordinator = await this.querySrv.execute_Function("is_coordinator", { email_param: this.loginForm.value.email })
-    await this.preferencesSrv.setPreferences("login", { email: this.loginForm.value.email, password: this.loginForm.value.password, is_coordinator: is_coordinator });
     if (is_coordinator) {
       const coordData = await this.querySrv.execute_Function("get_coordinators", { filter_email: this.loginForm.value.email });
       if (coordData || coordData.length > 0) {
