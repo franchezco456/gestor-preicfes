@@ -8,15 +8,14 @@ import { InputComponent } from './components/input/input.component';
 import { ButtonComponent } from './components/button/button.component';
 import { SelectComponent } from './components/select/select.component';
 import { ChartComponent } from './components/chart/chart.component';
-import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { SearchbarComponent } from './components/searchbar/searchbar.component';
 import { FabbutomComponent } from './components/fabbutom/fabbutom.component';
 import { CheckboxComponent } from './components/checkbox/checkbox.component';
 import { ListComponent } from './components/list/list.component';
 
 @NgModule({
-  declarations: [CardComponent, ListComponent,InputComponent, ButtonComponent, SelectComponent, ChartComponent, SidebarComponent, SearchbarComponent, FabbutomComponent, CheckboxComponent],
+  declarations: [CardComponent, ListComponent,InputComponent, ButtonComponent, SelectComponent, ChartComponent,SearchbarComponent, FabbutomComponent, CheckboxComponent],
   imports: [CommonModule, ReactiveFormsModule, IonicModule, NgApexchartsModule],
-  exports: [CardComponent,ListComponent, InputComponent, ButtonComponent, SelectComponent, ChartComponent, SidebarComponent, SearchbarComponent, FabbutomComponent, CheckboxComponent],
+  exports: [CardComponent,ListComponent, InputComponent, ButtonComponent, SelectComponent, ChartComponent,SearchbarComponent, FabbutomComponent, CheckboxComponent],
 })
 export class SharedModule {}

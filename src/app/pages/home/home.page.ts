@@ -1,6 +1,5 @@
 import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
 import { ChartComponent } from 'src/app/shared/components/chart/chart.component';
-import { SidebarComponent } from 'src/app/shared/components/sidebar/sidebar.component';
 import { Router } from '@angular/router';
 import { Auth } from 'src/app/core/services/auth/auth';
 import { Preferences } from 'src/app/core/services/preferences/preferences';
@@ -21,8 +20,8 @@ import { Student, Payment, Invoices } from 'src/domain/models/index';
 export class HomePage implements OnInit, OnDestroy {
   public studentPagos: any;
   @ViewChild(ChartComponent, { static: false }) chartCmp?: ChartComponent;
-  ionViewWillEnter() {
-    this.loadData();
+  async ionViewWillEnter() {
+    await this.loadData();
   }
   private studentsSubscription?: Subscription;
   private invoicesSubscription?: Subscription;
@@ -33,8 +32,6 @@ export class HomePage implements OnInit, OnDestroy {
   public dataList: any[] = [];
   public filteredResults: Student[] = [];
   public searchQuery: string = '';
-
-  @ViewChild('sidebar', { static: false }) sidebar?: SidebarComponent;
 
   constructor(
     private readonly authSrv: Auth,
@@ -106,11 +103,6 @@ export class HomePage implements OnInit, OnDestroy {
     this.router.navigate(['/form-pagos']);
   }
 
-  public async toggleMenu() {
-    if (!this.sidebar) return;
-    await this.sidebar.toggle();
-  }
-
   public selectSearchResult(item: Student) {
     console.log('[Home] Selected search item:', item);
     this.searchQuery = '';
@@ -169,44 +161,75 @@ export class HomePage implements OnInit, OnDestroy {
     try {
       await this.loadingSrv.showLoading();
       const coord = await this.preferencesSrv.getPreferences('coordData');
-      if (coord) {
-        const data = coord.coordData || coord;
-        const name = data.Name || '';
-        const lastName = data.LastName || '';
-        this.coordinatorName = `${name} ${lastName}`.trim();
-        const id_IE: string = data?.id_IE_Cicle;
-        await this.dataSrv.loadStudents({ id_IE: id_IE });
-        await this.dataSrv.loadInvoices({ id_IE: id_IE });
-        await this.dataSrv.loadPayments({ id_IE: id_IE });
+      const existsPayments = this.dataSrv.currentPayments.length > 0;
+      this.setCoordinatorName(coord);
+      if (!existsPayments) {
+        await this.loadPayments(coord);
+        this.mapPaymentsOptions();
       } else {
-        await this.dataSrv.loadStudents({});
-        await this.dataSrv.loadInvoices({});
-        await this.dataSrv.loadPayments({});
+        this.mapPaymentsOptions();
       }
+      await this.loadStudents(coord);
+      await this.loadInvoices(coord);
 
-      this.dataList = this.allPayments.map(pago => {
-      const student = this.allStudents.find(s => s.id_student === pago.invoice_id);
-      const fullName = student ? `${student.name} ${student.lastname}` : 'Estudiante Desconocido';
-
-      return {
-        title: fullName,                                
-        detail: this.formatCurrency(pago.payment_value), 
-        button: pago.payment_id                         
-      };
-    });
 
       await this.updateChartByFilter();
       this.updateKpis();
-
-      console.log('[Pagos] Suscrito a estudiantes, total =', this.allStudents);
-      console.log('[Pagos] Suscrito a facturas, total =', this.allInvoices);
 
       await this.loadingSrv.dismissLoading();
     } catch (error) {
       console.error('[ERROR] Fallo al cargar datos', error);
       await this.loadingSrv.dismissLoading();
     }
-    
+  }
+
+
+  private loadStudents(coord: any) {
+    if (coord) {
+      const data = coord.coordData || coord;
+      const id_IE: string = data?.id_IE_Cicle;
+      return this.dataSrv.loadStudents({ id_IE: id_IE });
+    } else {
+      return this.dataSrv.loadStudents({});
+    }
+  }
+  private loadInvoices(coord: any) {
+    if (coord) {
+      const data = coord.coordData || coord;
+      const id_IE: string = data?.id_IE_Cicle;
+      return this.dataSrv.loadInvoices({ id_IE: id_IE });
+    } else {
+      return this.dataSrv.loadInvoices({});
+    }
+  }
+
+  private loadPayments(coord: any) {
+    if (coord) {
+      const data = coord.coordData || coord;
+      const id_IE: string = data?.id_IE_Cicle;
+      return this.dataSrv.loadPayments({ id_IE: id_IE });
+    } else {
+      return this.dataSrv.loadPayments({});
+    }
+  }
+
+  private setCoordinatorName(coord: any) {
+    const data = coord.coordData || coord;
+    const name = data.Name || '';
+    const lastName = data.LastName || '';
+    this.coordinatorName = `${name} ${lastName}`.trim();
+  }
+  private mapPaymentsOptions() {
+    this.dataList = this.allPayments.map(pago => {
+      const student = this.allStudents.find(s => s.id_student === pago.invoice_id);
+      const fullName = student ? `${student.name} ${student.lastname}` : 'Estudiante Desconocido';
+
+      return {
+        title: fullName,
+        detail: this.formatCurrency(pago.payment_value),
+        button: pago.payment_id
+      };
+    });
   }
 
   //para actualizar los kpis, muestra la suma de los pagos realizados, saldo pendiente, total estudiantes
@@ -233,7 +256,7 @@ export class HomePage implements OnInit, OnDestroy {
       const date = pago.payment_date;
       if (!date) continue;
 
-      const key = this.FILTER_CONFIG[type].format(new Date (date));
+      const key = this.FILTER_CONFIG[type].format(new Date(date));
       const value = pago.payment_value;
       groups[key] = (groups[key] || 0) + value;
     }
@@ -259,9 +282,9 @@ export class HomePage implements OnInit, OnDestroy {
   }
 
   //para ir a detalles estudiante pero desde la lista de pagos (hay que editar)
-  public goToStudentDetail(item: any) {
+  public goToPaymentDetail(item: any) {
     console.log('[Home] Selected search item:', item);
-    console.log('[Home] Navegando a /detalles-estudiante/', item.button);
-    this.router.navigate(['/detalles-estudiante/', item.id]);
+    console.log('[Home] Navegando a /detalles-pago/', item.button);
+    this.router.navigate(['/detalles-pago/', item.button]);
   }
 }
