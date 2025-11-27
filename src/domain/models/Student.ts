@@ -1,10 +1,12 @@
 export interface Student {
-  id: string;
-  document_type: string;
-  Name: string;
-  LastName: string;
-  Email: string;
-  Address: string;
-  id_IE?: string; 
-  Grade?: string; 
+  id_student: string,
+  no_document: string,
+  document_type: string,
+  name: string,
+  lastname: string,
+  email: string, 
+  address: string,
+  phone: string,
+  id_IE: string,
+  grado: string
 }

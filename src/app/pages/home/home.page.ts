@@ -190,7 +190,7 @@ export class HomePage implements OnInit {
   }
 
   private async loadData() {
-    this.loadingSrv.showLoading();
+    await this.loadingSrv.showLoading();
     try {
       const coord = await this.preferencesSrv.getPreferences('coordData');
       // Obtener nombre y apellido del coordinador

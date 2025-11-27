@@ -27,8 +27,8 @@
         <ion-list *ngIf="filteredStudentResults.length" class="search-results">
           <ion-item *ngFor="let r of filteredStudentResults" button (click)="selectStudentSearchResult(r)">
             <ion-label>
-              <h3>{{ r.Name }} {{ r.LastName }}</h3>
-              <p>ID: {{ r.TI }}</p>
+              <h3>{{ r.name }} {{ r.lastname }}</h3>
+              <p>ID: {{ r.no_document }}</p>
             </ion-label>
           </ion-item>
         </ion-list>
