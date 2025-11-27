@@ -20,13 +20,11 @@ type StudentModel = { TI: string; DocumentType: string; Name: string; LastName: 
 export class HomePage implements OnInit {
   public studentPagos: any;
   @ViewChild(ChartComponent, { static: false }) chartCmp?: ChartComponent;
-  ionViewWillEnter() {
-    this.loadingSrv.showLoading();
-    this.fetchPayments();
-    this.fetchStudents();
-    setTimeout(() => {
-      this.loadingSrv.dismissLoading();
-    }, 1000);
+  async ionViewWillEnter() {
+    await this.loadingSrv.showLoading();
+    await this.fetchPayments();
+    await this.fetchStudents();
+    await this.loadingSrv.dismissLoading();
   }
 
   private allStudents: StudentModel[] = [];
