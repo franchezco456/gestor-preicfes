@@ -182,10 +182,10 @@ export class HomePage implements OnInit {
     return `COP ${value.toLocaleString('es-CO')}`;
   }
 
-   public setFilterType(type: 'dia' | 'mes' | 'año') {
+   public async setFilterType(type: 'dia' | 'mes' | 'año') {
     if (this.filterType !== type) {
       this.filterType = type;
-      this.updateChartByFilter();
+      await this.updateChartByFilter();
     }
   }
 
@@ -211,7 +211,7 @@ export class HomePage implements OnInit {
       this.invoices = Array.isArray(invoicesList) ? invoicesList : [];
 
       //actualizar graficas y KPI
-      this.updateChartByFilter();
+      await this.updateChartByFilter();
       this.updateKpis();
     } catch (error) {
       console.error('[ERROR] Fallo al cargar datos', error);
@@ -252,11 +252,11 @@ export class HomePage implements OnInit {
     return Object.entries(groups).map(([label, count]) => ({ label, count }));
   }
 //para actualizar las graficas 
-  public updateChartByFilter() {
+  public async updateChartByFilter() {
     const data = this.groupPaymentsBy(this.filterType);
     const config = this.FILTER_CONFIG[this.filterType];
 
-    this.studentPagos = this.chartSrv.createBarChart(
+    this.studentPagos = await  this.chartSrv.createBarChart(
       data.map(d => ({ x: d.label, y: d.count })),
       {
         title: `Pagos agrupados por ${config.label.toLowerCase()}`,

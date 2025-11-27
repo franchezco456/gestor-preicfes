@@ -22,8 +22,8 @@ export class FormPagosPage implements OnInit {
   private allStudents: any[] = [];
   public filteredStudentResults: any[] = [];
   public studentSearchQuery: string = '';
-  public student :  any;
-  public paymentSummary : any;
+  public student: any;
+  public paymentSummary: any;
 
   async ionViewWillEnter() {
     await this.loadingSrv.showLoading('Cargando estudiante...');
@@ -31,7 +31,7 @@ export class FormPagosPage implements OnInit {
     await this.loadingSrv.dismissLoading();
   }
 
- 
+
   @Input() public value: number | string | undefined;
 
   public paymentForm!: FormGroup;
@@ -77,7 +77,7 @@ export class FormPagosPage implements OnInit {
         id_student: formValues.id_Student,
         value: formValues.amount
       };
-      if(Payment.value > this.paymentSummary.pending){
+      if (Payment.value > this.paymentSummary.pending) {
         this.toastSrv.showWarningToast('El valor del pago no puede ser mayor al saldo pendiente.');
         await this.loadingSrv.dismissLoading();
         return;
@@ -96,7 +96,7 @@ export class FormPagosPage implements OnInit {
     }
   }
 
-   public async onStudentSearchInput(value: string) {
+  public async onStudentSearchInput(value: string) {
     this.studentSearchQuery = value ?? '';
     const q = (this.studentSearchQuery || '').trim().toLowerCase();
     console.log('[Pagos] onStudentSearchInput query =', q);
@@ -113,21 +113,23 @@ export class FormPagosPage implements OnInit {
     console.log('[Pagos] Filtrados', this.filteredStudentResults.length, 'estudiantes para query =', q);
   }
 
-  public selectStudentSearchResult(item: any) {
+  public async selectStudentSearchResult(item: any) {
 
     this.paymentForm.get('payerName')?.setValue(`${item.Name} ${item.LastName}`);
     this.paymentForm.get('id_Student')?.setValue(item.Id_Student_Cicle);
+    await this.loadPayments(item.Id_Student_Cicle);
     this.studentSearchQuery = `${item.Name} ${item.LastName}`;
     this.filteredStudentResults = [];
     console.log('[Pagos] Selected student:', item);
   }
 
-  private async loadStudent(){
-      const id = this.route.snapshot.paramMap.get('id');
+  private async loadStudent() {
+    const id = this.route.snapshot.paramMap.get('id');
     console.log('[DetallesEstudiante] Param id =', id);
-    if (!id) {  
+    if (!id) {
       this.fetchStudents();
-      return; }
+      return;
+    }
     try {
       const rows: any[] = await this.querySrv.execute_Function('get_students_by_ie_cicle', { p_id_student: id });
       const s = Array.isArray(rows) ? rows[0] : null;
@@ -152,15 +154,15 @@ export class FormPagosPage implements OnInit {
       await this.loadingSrv.dismissLoading();
     }
   }
-    private async fetchStudents(){
+  private async fetchStudents() {
     try {
       const coord = await this.preferencesSrv.getPreferences('coordData');
-        console.log(coord);
-        const id_IE = coord.coordData.id_IE_Cicle;
-        
-        console.log('[Home] id_IE_Cicle =', id_IE);
-        const list: any[] = await this.querySrv.execute_Function('get_students_by_ie_cicle', {p_id_ie_cicle: id_IE})
-        this.allStudents = Array.isArray(list) ? list.map(r => ({
+      console.log(coord);
+      const id_IE = coord.coordData.id_IE_Cicle;
+
+      console.log('[Home] id_IE_Cicle =', id_IE);
+      const list: any[] = await this.querySrv.execute_Function('get_students_by_ie_cicle', { p_id_ie_cicle: id_IE })
+      this.allStudents = Array.isArray(list) ? list.map(r => ({
 
           TI: r.id_estudiante_out ?? '',
           DocumentType: r.documento_tipo_out ?? 'TI',
@@ -171,14 +173,14 @@ export class FormPagosPage implements OnInit {
           Grade: r.grado_out ??'',
           Id_Student_Cicle: r.invoice_id_out ?? '',
 
-        })) : [];
+      })) : [];
     } catch (error) {
       console.error('[ERROR] Fallo carga de estudiantes', error);
       this.allStudents = [];
     }
   }
 
-   private async loadPayments(studentId: string) {
+  private async loadPayments(studentId: string) {
     try {
 
       const invoiceData = await this.querySrv.execute_Function('get_invoices', { id_student: studentId });
@@ -186,18 +188,13 @@ export class FormPagosPage implements OnInit {
         return;
       }
       const invoice = invoiceData[0];
-      if (!invoice.status) {
-        this.student.estado = 'Pendiente'
-      } else {
-        this.student.estado = 'Pagado';
-      }
-      this.student.institucion = invoice.ie_name;
       this.paymentSummary = {
         courseValue: invoice.total_value,
         totalPaid: invoice.paid_amount,
         pending: invoice.remaining_debt,
         discount: invoice.discount
       };
+      console.log('[DetallesEstudiante] Payment summary:', this.paymentSummary);
     } catch (e) {
       console.warn('[DetallesEstudiante] No se pudo cargar pago', e);
     }
