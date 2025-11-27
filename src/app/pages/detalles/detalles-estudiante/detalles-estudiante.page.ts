@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Query } from 'src/app/core/services/query/query';
 import { Loading } from 'src/app/core/services/loading/loading';
+import { Toast } from 'src/app/core/services/toast/toast';
+import { AlertController } from '@ionic/angular';
+import { AlertCtrl } from 'src/app/core/services/alertControl/alert-ctrl';
 
 @Component({
   selector: 'app-detalles-estudiante',
@@ -20,12 +23,12 @@ export class DetallesEstudiantePage implements OnInit {
     estado: 'Activo',
     grado: '11'
   };
-  
+
   public paymentSummary = {
-    courseValue: 200000,
-    totalPaid: 80000,
+    courseValue: 0,
+    totalPaid: 0,
     discount: 0,
-    pending: 120000
+    pending: 0
   };
 
   public loading = false;
@@ -41,7 +44,9 @@ export class DetallesEstudiantePage implements OnInit {
     private readonly router: Router,
     private readonly querySrv: Query,
     private readonly loadingSrv: Loading,
-  ) {}
+    private readonly toastSrv: Toast,
+    private readonly alertSrv: AlertCtrl,
+  ) { }
 
   async ngOnInit() {
   }
@@ -52,7 +57,7 @@ export class DetallesEstudiantePage implements OnInit {
     if (!id) { this.notFound = true; return; }
     this.loading = true;
     try {
-      const rows: any[] = await this.querySrv.execute_Function('get_students_by_ie_cicle', {p_id_student : id});
+      const rows: any[] = await this.querySrv.execute_Function('get_students_by_ie_cicle', { p_id_student: id });
       const s = Array.isArray(rows) ? rows[0] : null;
       if (!s) { this.notFound = true; return; }
       this.student = {
@@ -66,7 +71,7 @@ export class DetallesEstudiantePage implements OnInit {
         grado: s.grado_out ?? ''
       };
       console.log('[DetallesEstudiante] Estudiante cargado:', this.student);
-      await this.loadEnrollment(this.student.identificacion);
+      await this.loadPayments(this.student.identificacion);
     } catch (e) {
       console.error('[DetallesEstudiante] Error cargando estudiante', e);
       this.notFound = true;
@@ -76,45 +81,42 @@ export class DetallesEstudiantePage implements OnInit {
     }
   }
 
-  private async loadEnrollment(studentId: string) {
+  private async loadPayments(studentId: string) {
     try {
 
       const invoiceData = await this.querySrv.execute_Function('get_invoices', { id_student: studentId });
-      if(!invoiceData || invoiceData.length === 0) {
-        return ;
+      if (!invoiceData || invoiceData.length === 0) {
+        return;
       }
       const invoice = invoiceData[0];
-      if(!invoice.status) {
+      if (!invoice.status) {
         this.student.estado = 'Pendiente'
-      }else{
+      } else {
         this.student.estado = 'Pagado';
       }
       this.student.institucion = invoice.ie_name;
-      this.paymentSummary.courseValue = invoice.total_value ;
+      this.paymentSummary.courseValue = invoice.total_value;
       this.paymentSummary.totalPaid = invoice.paid_amount;
       this.paymentSummary.pending = invoice.remaining_debt;
       this.paymentSummary.discount = invoice.discount;
     } catch (e) {
-      console.warn('[DetallesEstudiante] No se pudo cargar inscripcion', e);
+      console.warn('[DetallesEstudiante] No se pudo cargar pago', e);
     }
   }
 
 
   // Maneja las acciones del fab flotante
-  public onFabAction(action: any) {
+  public async onFabAction(action: any) {
     const id = typeof action === 'string' ? action : (action?.id ?? '');
     switch (id) {
       case 'editar':
-        this.router.navigate(['/actualizar-estudiante', this.student.identificacion]);
+        this.goToEdit();
         break;
       case 'eliminar':
-        this.router.navigate(['/eliminar-estudiante', this.student.identificacion]);
+        await this.deletedStudent();
         break;
       case 'pago':
-        this.router.navigate(['/form-pagos', this.student.identificacion]);
-        break;
-      case 'volver':
-        this.router.navigate(['/home']);
+        this.goToPay();
         break;
       default:
         break;
@@ -124,4 +126,46 @@ export class DetallesEstudiantePage implements OnInit {
   public goToEdit() {
     this.router.navigate(['/actualizar-estudiante', this.student.identificacion]);
   }
+
+  public goToPay(){
+    this.router.navigate(['/form-pagos', this.student.identificacion]);
+  }
+  //eliminar estudiante
+  public async deletedStudent() {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (this.paymentSummary.pending > 0) {
+      await this.toastSrv.showErrorToast('No se puede eliminar el estudiante porque tiene saldo pendiente.');
+      return;
+  }
+
+
+
+    const confirmed = await this.alertSrv.confirm(
+      `¿Está seguro que desea eliminar al estudiante?\n\nNombre: ${this.student.nombre} ${this.student.apellido}\nIdentificación: ${this.student.identificacion}`,
+      'Confirmar eliminación',
+      'Eliminar',
+      'Cancelar',
+      'danger-alert'
+    );
+    
+    if (!confirmed) return;
+    this.loading = true;
+    await this.loadingSrv.showLoading('Eliminando estudiante...');
+    try {
+      const result = await this.querySrv.delete('Student_Cicle', { id });
+      console.log('[DetallesEstudiante] Resultado de eliminación:', result);
+      await this.toastSrv.showSuccessToast('Estudiante eliminado correctamente.');
+      this.loading = false;
+      await this.loadingSrv.dismissLoading();
+      this.router.navigate(['/home']);
+    } catch (e) {
+      await this.toastSrv.showErrorToast('Error al eliminar el estudiante.');
+      console.error('[DetallesEstudiante] Error eliminando estudiante', e);
+      this.loading = false;
+      await this.loadingSrv.dismissLoading();
+    }
+  }
+
+
+
 }

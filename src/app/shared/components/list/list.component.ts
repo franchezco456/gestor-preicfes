@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 
 type data = {
   title: string;
@@ -13,15 +13,16 @@ type data = {
 })
 export class ListComponent implements OnInit {
   @Input() items: data[] = [];
-  constructor() {
-  }
+
+  @Output() itemClick = new EventEmitter<data>();
+  constructor() {}
 
   ngOnInit() {
 
   }
 
-  onButtonClick(i : data){
-    console.log('Button clicked for item:', i);
+  onButtonClick(i: data) {
+    this.itemClick.emit(i);
   }
 
 }

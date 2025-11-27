@@ -21,12 +21,6 @@
         <h2>DATOS DEL ESTUDIANTE</h2>
       </ion-card-header>
       <ion-card-content>
-        <div style="display:flex;justify-content:flex-end;margin-bottom:12px;">
-          <ion-button color="primary" fill="solid" size="small" (click)="goToEdit()">
-            <ion-icon slot="start" name="create"></ion-icon>
-            Editar
-          </ion-button>
-        </div>
         <div class="student-grid">
           <div class="p-label">Nombre : </div>
           <div class="p-value">{{ student.nombre }}</div>
@@ -101,8 +95,7 @@
   <app-fabbutom color="primary" position="bottom-right" [actions]="[
       { id: 'editar', icon: 'create', label: 'Editar', color: 'primary' },
       { id: 'eliminar', icon: 'trash', label: 'Eliminar', color: 'danger' },
-      { id: 'pago', icon: 'card', label: 'Registrar pago', color: 'success' },
-      { id: 'volver', icon: 'arrow-back', label: 'Volver', color: 'secondary' }
+      { id: 'pago', icon: 'card', label: 'Registrar pago', color: 'success' }
     ]" (actionClick)="onFabAction($event)"></app-fabbutom>
 
 

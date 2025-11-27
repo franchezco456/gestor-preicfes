@@ -4,8 +4,12 @@ import { Routes, RouterModule } from '@angular/router';
 import { FormPagosPage } from './form-pagos.page';
 
 const routes: Routes = [
-  {
+   {
     path: '',
+    component: FormPagosPage
+  },
+  {
+    path: ':id',
     component: FormPagosPage
   }
 ];
