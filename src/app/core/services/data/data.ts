@@ -53,6 +53,8 @@ export class Data {
         address: s.direccion_out ?? '',
         phone: s.telefono_out ?? '',
         id_IE: s.id_ie_cicle_out ?? '',
+        discount :  s.descuento_out ?? '',
+        installments : s.cuotas_out ?? '',
         grado: s.grado_out ?? ''
       }));
 

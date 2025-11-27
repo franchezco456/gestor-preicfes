@@ -179,6 +179,8 @@ export class FormPagosPage implements OnInit {
         address: s.address ?? '',
         phone: s.phone ?? '',
         id_IE: s.id_IE ?? '',
+        discount : s.discount ?? 0,
+        installments : s.installments ?? 0,
         grado: s.grado ?? ''
       };
       await this.findInvoices(this.student.id_student);

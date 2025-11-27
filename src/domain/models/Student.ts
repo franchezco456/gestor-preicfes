@@ -8,5 +8,7 @@ export interface Student {
   address: string,
   phone: string,
   id_IE: string,
+  discount : number,
+  installments : number,
   grado: string
 }
