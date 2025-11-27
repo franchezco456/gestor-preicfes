@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Query } from 'src/app/core/services/query/query';
 import { Loading } from 'src/app/core/services/loading/loading';
 import { Toast } from 'src/app/core/services/toast/toast';
@@ -7,7 +7,7 @@ import { Preferences } from 'src/app/core/services/preferences/preferences';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Data } from 'src/app/core/services/data/data';
-import type { Student, Invoices } from '../../../../domain/models/index';
+import type { Student, Invoices, Payment } from '../../../../domain/models/index';
 
 interface SearchOptions {
   Name: string;
@@ -21,15 +21,16 @@ interface SearchOptions {
   styleUrls: ['./form-pagos.page.scss'],
   standalone: false,
 })
-export class FormPagosPage implements OnInit {
+export class FormPagosPage implements OnInit, OnDestroy {
   private allStudents: Student[] = [];
   private allInvoices: Invoices[] = [];
+  private allPayments: Payment[] = [];
   private studentsSubscription?: Subscription;
   private invoicesSubscription?: Subscription;
+  private paymentsSubscriptions?: Subscription;                                 
   public filteredStudentResults: any[] = [];
   public studentSearchQuery: string = '';
   public student !: Student;
-
   public invoiceSummary !: Invoices;
 
 
@@ -38,7 +39,9 @@ export class FormPagosPage implements OnInit {
   public paymentForm!: FormGroup;
   public filteredResults: SearchOptions[] = [];
   public searchQuery: string = '';
-
+  async ionViewWillEnter() {
+    await this.loadData();
+  }
   constructor(
     private readonly formBuilder: FormBuilder,
     private readonly querySrv: Query,
@@ -59,21 +62,22 @@ export class FormPagosPage implements OnInit {
     this.invoicesSubscription = this.dataSrv.invoices$.subscribe(invoices => {
       this.allInvoices = invoices;
     });
+
+    this.paymentsSubscriptions =  this.dataSrv.payments$.subscribe(payments =>{
+      this.allPayments = payments;
+    })
     await this.loadData();
 
-      if (this.value !== undefined && this.paymentForm) {
-        this.paymentForm.get('amount')?.setValue(this.value);
-      }
-
-
-    
-    await this.findStudent();
+    if (this.value !== undefined && this.paymentForm) {
+      this.paymentForm.get('amount')?.setValue(this.value);
+    }
 
   }
 
   ngOnDestroy() {
     this.studentsSubscription?.unsubscribe();
     this.invoicesSubscription?.unsubscribe();
+    this.paymentsSubscriptions?.unsubscribe();
   }
 
   private initForm() {
@@ -85,21 +89,49 @@ export class FormPagosPage implements OnInit {
   }
 
   private async loadData() {
-     const coord = await this.preferencesSrv.getPreferences('coordData');
+    const id = this.route.snapshot.paramMap.get('id');
+    console.log('[DetallesEstudiante] Param id =', id);
+    const coord = await this.preferencesSrv.getPreferences('coordData');
+    const existStudents = this.dataSrv.currentStudents.length > 0;
 
-      if (coord) {
-        const data = coord.coordData || coord;
-        const id_IE : string  = data?.id_IE_Cicle;
-        await this.dataSrv.loadStudents({ id_IE : id_IE });
-        await this.dataSrv.loadInvoices({ id_IE : id_IE });
-      }else{
-        await this.dataSrv.loadStudents({});
-        await this.dataSrv.loadInvoices({});
-      }
-
+    if (!existStudents) {
+      await this.loadStudents(coord);
+      this.findStudent(id || '');
+    } else {
+      this.findStudent(id || '');
+    }
+    const existInvoices = this.dataSrv.currentInvoices.length > 0;
+    if (!existInvoices) {
+      await this.loadInvoices(coord);
+      this.findInvoices(id || '');
+    } else {
+      this.findInvoices(id || '');
+    }
     console.log('[Pagos] Suscrito a estudiantes, total =', this.allStudents);
     console.log('[Pagos] Suscrito a facturas, total =', this.allInvoices);
   }
+
+  private async loadStudents(coord: any) {
+    if (coord) {
+      const data = coord.coordData || coord;
+      const id_IE: string = data?.id_IE_Cicle;
+      await this.dataSrv.loadStudents({ id_IE: id_IE });
+    } else {
+      await this.dataSrv.loadStudents({});
+    }
+
+  }
+
+  private async loadInvoices(coord: any) {
+    if (coord) {
+      const data = coord.coordData || coord;
+      const id_IE: string = data?.id_IE_Cicle;
+      await this.dataSrv.loadInvoices({ id_IE: id_IE });
+    } else {
+      await this.dataSrv.loadInvoices({});
+    }
+  }
+
   public async submitPaymentForm() {
     if (!this.paymentForm.valid) {
       Object.values(this.paymentForm.controls).forEach((c) => c.markAsTouched());
@@ -120,6 +152,8 @@ export class FormPagosPage implements OnInit {
       }
       console.log('Pago enviado:', JSON.stringify(Payment));
       const response = await this.querySrv.execute_Function('register_payment', Payment);
+      console.log('Pago registrado:', JSON.stringify(this.student));
+      this.dataSrv.loadPayments({id_IE: this.student.id_IE});
       console.log('Respuesta registro pago:', JSON.stringify(response));
       this.studentSearchQuery = '';
       this.paymentForm.reset();
@@ -149,24 +183,19 @@ export class FormPagosPage implements OnInit {
     console.log('[Pagos] Filtrados', this.filteredStudentResults.length, 'estudiantes para query =', q);
   }
 
-  public async selectStudentSearchResult(item: any) {
+  public async selectStudentSearchResult(item: Student) {
 
     this.paymentForm.get('payerName')?.setValue(`${item.name} ${item.lastname}`);
     this.paymentForm.get('id_Student')?.setValue(item.id_student);
-    await this.findInvoices(item.id_student);
+    this.findStudent(item.id_student);
+    this.findInvoices(item.id_student);
     this.studentSearchQuery = `${item.name} ${item.lastname}`;
     this.filteredStudentResults = [];
     console.log('[Pagos] Selected student:', item);
   }
 
-  private async findStudent() {
-    const id = this.route.snapshot.paramMap.get('id');
-    console.log('[DetallesEstudiante] Param id =', id);
-    if (!id) {
-      return;
-    }
+  private findStudent(id : string ) {
     try {
-      await this.loadingSrv.showLoading('Cargando estudiante...');
       const s = this.allStudents.find(st => st.id_student === id);
       if (!s) { return; }
       this.student = {
@@ -179,21 +208,18 @@ export class FormPagosPage implements OnInit {
         address: s.address ?? '',
         phone: s.phone ?? '',
         id_IE: s.id_IE ?? '',
-        discount : s.discount ?? 0,
-        installments : s.installments ?? 0,
+        discount: s.discount ?? 0,
+        installments: s.installments ?? 0,
         grado: s.grado ?? ''
       };
-      await this.findInvoices(this.student.id_student);
       this.paymentForm.get('payerName')?.setValue(`${this.student.name} ${this.student.lastname}`);
       this.paymentForm.get('id_Student')?.setValue(this.student.id_student);
     } catch (e) {
       console.error('[DetallesEstudiante] Error cargando estudiante', e);
-    } finally {
-      await this.loadingSrv.dismissLoading();
     }
   }
 
-  private async findInvoices(studentId: string) {
+  private findInvoices(studentId: string) {
     try {
 
       const invoiceData = this.allInvoices.find((inv: any) => inv.invoice_id === studentId);
