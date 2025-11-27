@@ -12,13 +12,11 @@ export class Data {
   private _payments = new BehaviorSubject<any[]>([]);
   private _institutions = new BehaviorSubject<any[]>([]);
   private _invoices = new BehaviorSubject<Invoices[]>([]);
-  private _coordinator = new BehaviorSubject<any>(null);
 
   public students$ = this._students.asObservable();
   public payments$ = this._payments.asObservable();
   public institutions$ = this._institutions.asObservable();
   public invoices$ = this._invoices.asObservable();
-  public coordinator$ = this._coordinator.asObservable();
   constructor(
     private readonly querySrv: Query
   ) { }
@@ -39,16 +37,10 @@ export class Data {
     return this._invoices.value;
   }
 
-  public get currentCoordinator(): any {
-    return this._coordinator.value;
-  }
-
-  public setCoordinator(data: any) {
-    this._coordinator.next(data);
-  }
-
-  public async loadStudents(id_IE?: string | null) {
+  public async loadStudents(filters :{id_IE?: string | null}) {
     try {
+      const {id_IE} = filters;
+      console.log('[Data] Loading students for IE:', id_IE);
       const rows: any[] = await this.querySrv.execute_Function('get_students_by_ie_cicle', { p_id_ie_cicle: id_IE });
 
       const mappedStudents = (rows || []).map(s => ({
@@ -72,8 +64,9 @@ export class Data {
     }
   }
 
-  public async loadPayments(id_IE?: string | null, id_Student?: string | null, id_payment?: string | null) {
+  public async loadPayments(filters : {id_IE?: string | null, id_Student?: string | null, id_payment?: string | null}) {
     try {
+      const {id_IE, id_Student, id_payment} = filters;
       const rows: any[] = await this.querySrv.execute_Function('get_payments', { id_ie: id_IE, id_student: id_Student, id_payment: id_payment });
 
       const mappedPayments = (rows || []).map(r => ({
@@ -94,8 +87,9 @@ export class Data {
     }
   }
 
-  public async loadInstitutions(id_IE_Cicle?: string | null) {
+  public async loadInstitutions(filters : {id_IE_Cicle?: string | null}) {
     try {
+      const {id_IE_Cicle} = filters;
       const rows: any[] = await this.querySrv.execute_Function('get_ie', { filter_id: id_IE_Cicle });
 
       const mappedInstitutions = (rows || []).map(i => ({
@@ -117,10 +111,10 @@ export class Data {
     }
   }
 
-  public async loadInvoices(id_IE?: string | null, id_Student?: string | null) {
+  public async loadInvoices(filters : {id_IE?: string | null, id_Student?: string | null}) {
     try {
+      const {id_IE, id_Student} = filters;
       const rows: any[] = await this.querySrv.execute_Function('get_invoices', { id_ie: id_IE, id_student: id_Student });
-
       const mappedInvoices = (rows || []).map(i => ({
         invoice_id: i.invoice_id,
         creation_date: i.creation_date,

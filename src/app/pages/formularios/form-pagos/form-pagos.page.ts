@@ -67,7 +67,7 @@ export class FormPagosPage implements OnInit {
 
 
     
-    await this.loadStudent();
+    await this.findStudent();
 
   }
 
@@ -85,12 +85,17 @@ export class FormPagosPage implements OnInit {
   }
 
   private async loadData() {
-    const coord = this.dataSrv.currentCoordinator;
-    if (coord) {
-      const IE = coord.id_IE_Cicle;
-      await this.dataSrv.loadInvoices(IE);
-    }
-    await this.dataSrv.loadInvoices();
+     const coord = await this.preferencesSrv.getPreferences('coordData');
+
+      if (coord) {
+        const data = coord.coordData || coord;
+        const id_IE : string  = data?.id_IE_Cicle;
+        await this.dataSrv.loadStudents({ id_IE : id_IE });
+        await this.dataSrv.loadInvoices({ id_IE : id_IE });
+      }else{
+        await this.dataSrv.loadStudents({});
+        await this.dataSrv.loadInvoices({});
+      }
 
     console.log('[Pagos] Suscrito a estudiantes, total =', this.allStudents);
     console.log('[Pagos] Suscrito a facturas, total =', this.allInvoices);
@@ -148,13 +153,13 @@ export class FormPagosPage implements OnInit {
 
     this.paymentForm.get('payerName')?.setValue(`${item.name} ${item.lastname}`);
     this.paymentForm.get('id_Student')?.setValue(item.id_student);
-    await this.loadInvoices(item.id_student);
+    await this.findInvoices(item.id_student);
     this.studentSearchQuery = `${item.name} ${item.lastname}`;
     this.filteredStudentResults = [];
     console.log('[Pagos] Selected student:', item);
   }
 
-  private async loadStudent() {
+  private async findStudent() {
     const id = this.route.snapshot.paramMap.get('id');
     console.log('[DetallesEstudiante] Param id =', id);
     if (!id) {
@@ -176,7 +181,7 @@ export class FormPagosPage implements OnInit {
         id_IE: s.id_IE ?? '',
         grado: s.grado ?? ''
       };
-      await this.loadInvoices(this.student.id_student);
+      await this.findInvoices(this.student.id_student);
       this.paymentForm.get('payerName')?.setValue(`${this.student.name} ${this.student.lastname}`);
       this.paymentForm.get('id_Student')?.setValue(this.student.id_student);
     } catch (e) {
@@ -186,7 +191,7 @@ export class FormPagosPage implements OnInit {
     }
   }
 
-  private async loadInvoices(studentId: string) {
+  private async findInvoices(studentId: string) {
     try {
 
       const invoiceData = this.allInvoices.find((inv: any) => inv.invoice_id === studentId);

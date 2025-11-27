@@ -4,3 +4,4 @@ export * from './Coordinator';
 export * from './Institution';
 export * from './Student';
 export * from './Invoices';
+export * from './Payment';
