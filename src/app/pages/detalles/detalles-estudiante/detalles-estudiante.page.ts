@@ -1,10 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Query } from 'src/app/core/services/query/query';
 import { Loading } from 'src/app/core/services/loading/loading';
 import { Toast } from 'src/app/core/services/toast/toast';
 import { AlertController } from '@ionic/angular';
 import { AlertCtrl } from 'src/app/core/services/alertControl/alert-ctrl';
+import { Subscription } from 'rxjs';
+import { Invoices, Student } from 'src/domain/models/index';
+import { Data } from 'src/app/core/services/data/data';
+import { Preferences } from 'src/app/core/services/preferences/preferences';
 
 @Component({
   selector: 'app-detalles-estudiante',
@@ -12,32 +16,18 @@ import { AlertCtrl } from 'src/app/core/services/alertControl/alert-ctrl';
   styleUrls: ['./detalles-estudiante.page.scss'],
   standalone: false,
 })
-export class DetallesEstudiantePage implements OnInit {
-  public student = {
-    nombre: 'Jesus',
-    apellido: 'Ramos',
-    correo: 'jesus.ramos@unicolombo.com',
-    identificacion: '1142912485',
-    direccion: 'Calle 123',
-    institucion: 'IE San Nicolas',
-    estado: 'Activo',
-    grado: '11'
-  };
-
-  public paymentSummary = {
-    courseValue: 0,
-    totalPaid: 0,
-    discount: 0,
-    pending: 0
-  };
-
-  public loading = false;
+export class DetallesEstudiantePage implements OnInit , OnDestroy {
+  private studentsSubscription ?: Subscription;
+  private invoicesSubscription ?: Subscription;
+  public allStudents !: Student [];
+  public allInvoices !: Invoices [];
+  public student !: Student ;
+  public invoiceSummary !: Invoices ;
+  public loading = true;
   public notFound = false;
 
   async ionViewWillEnter() {
-    await this.loadingSrv.showLoading('Cargando estudiante...');
-    await this.loadStudent();
-    await this.loadingSrv.dismissLoading();
+    await this.loadData();
   }
   constructor(
     private readonly route: ActivatedRoute,
@@ -46,63 +36,121 @@ export class DetallesEstudiantePage implements OnInit {
     private readonly loadingSrv: Loading,
     private readonly toastSrv: Toast,
     private readonly alertSrv: AlertCtrl,
+    private readonly dataSrv: Data,
+    private readonly preferencesSrv : Preferences
   ) { }
 
-  async ngOnInit() {
+  ngOnInit() {
+    this.studentsSubscription = this.dataSrv.students$.subscribe(students => {
+      this.allStudents = students;
+    });
+
+    this.invoicesSubscription = this.dataSrv.invoices$.subscribe(invoices => {
+      this.allInvoices = invoices;
+    })
   }
 
-  private async loadStudent(){
-      const id = this.route.snapshot.paramMap.get('id');
-    console.log('[DetallesEstudiante] Param id =', id);
-    if (!id) { this.notFound = true; return; }
-    this.loading = true;
-    try {
-      const rows: any[] = await this.querySrv.execute_Function('get_students_by_ie_cicle', { p_id_student: id });
-      const s = Array.isArray(rows) ? rows[0] : null;
-      if (!s) { this.notFound = true; return; }
-      this.student = {
-        nombre: s.nombre_out ?? '',
-        apellido: s.apellido_out ?? '',
-        correo: s.email_out ?? '',
-        identificacion: s.invoice_id_out ?? id,
-        direccion: s.direccion_out ?? '',
-        institucion: '',
-        estado: '',
-        grado: s.grado_out ?? ''
-      };
-      console.log('[DetallesEstudiante] Estudiante cargado:', this.student);
-      await this.loadPayments(this.student.identificacion);
-    } catch (e) {
-      console.error('[DetallesEstudiante] Error cargando estudiante', e);
+  ngOnDestroy() {
+    this.studentsSubscription?.unsubscribe();
+    this.invoicesSubscription?.unsubscribe();
+  }
+  public async loadData(){
+    const id = this.route.snapshot.paramMap.get('id');
+    if(!id){
       this.notFound = true;
-    } finally {
+      this.loading = false;
+      return;
+    }
+      try {
+        this.loading = true;
+      await this.loadingSrv.showLoading();
+      const coord = await this.preferencesSrv.getPreferences('coordData');
+      if (coord) {
+        const data = coord.coordData || coord;
+        const id_IE: string = data?.id_IE_Cicle;
+        await this.dataSrv.loadStudents({ id_IE: id_IE });
+        await this.dataSrv.loadInvoices({ id_IE: id_IE });
+      } else {
+        await this.dataSrv.loadStudents({});
+        await this.dataSrv.loadInvoices({});
+      }
+
+      if(!this.allStudents || this.allStudents.length === 0){
+        this.notFound = true;
+        return;
+      }
+
+      if(!this.allInvoices || this.allInvoices.length === 0){
+        this.notFound = true;
+        return;
+      }
+
+      this.student = this.allStudents.find(s => s.id_student === id)!;
+      this.invoiceSummary = this.allInvoices.find(i => i.invoice_id === id)!;
+      console.log('[Pagos] Suscrito a estudiantes, total =', this.allStudents);
+      console.log('[Pagos] Suscrito a facturas, total =', this.allInvoices);
+      this.notFound = false;
+      await this.loadingSrv.dismissLoading();
+    } catch (error) {
+      this.notFound = true;
+      console.error('[ERROR] Fallo al cargar datos', error);
+    }finally{
       this.loading = false;
       await this.loadingSrv.dismissLoading();
     }
   }
+  // private async loadStudent(){
+  //   const id = this.route.snapshot.paramMap.get('id');
+  //   console.log('[DetallesEstudiante] Param id =', id);
+  //   if (!id) { this.notFound = true; return; }
+  //   this.loading = true;
+  //   try {
+  //     const rows: any[] = await this.querySrv.execute_Function('get_students_by_ie_cicle', { p_id_student: id });
+  //     const s = Array.isArray(rows) ? rows[0] : null;
+  //     if (!s) { this.notFound = true; return; }
+  //     this.student = {
+  //       nombre: s.nombre_out ?? '',
+  //       apellido: s.apellido_out ?? '',
+  //       correo: s.email_out ?? '',
+  //       identificacion: s.invoice_id_out ?? id,
+  //       direccion: s.direccion_out ?? '',
+  //       institucion: '',
+  //       estado: '',
+  //       grado: s.grado_out ?? ''
+  //     };
+  //     console.log('[DetallesEstudiante] Estudiante cargado:', this.student);
+  //     await this.loadPayments(this.student.identificacion);
+  //   } catch (e) {
+  //     console.error('[DetallesEstudiante] Error cargando estudiante', e);
+  //     this.notFound = true;
+  //   } finally {
+  //     this.loading = false;
+  //     await this.loadingSrv.dismissLoading();
+  //   }
+  // }
 
-  private async loadPayments(studentId: string) {
-    try {
+  // private async loadPayments(studentId: string) {
+  //   try {
 
-      const invoiceData = await this.querySrv.execute_Function('get_invoices', { id_student: studentId });
-      if (!invoiceData || invoiceData.length === 0) {
-        return;
-      }
-      const invoice = invoiceData[0];
-      if (!invoice.status) {
-        this.student.estado = 'Pendiente'
-      } else {
-        this.student.estado = 'Pagado';
-      }
-      this.student.institucion = invoice.ie_name;
-      this.paymentSummary.courseValue = invoice.total_value;
-      this.paymentSummary.totalPaid = invoice.paid_amount;
-      this.paymentSummary.pending = invoice.remaining_debt;
-      this.paymentSummary.discount = invoice.discount;
-    } catch (e) {
-      console.warn('[DetallesEstudiante] No se pudo cargar pago', e);
-    }
-  }
+  //     const invoiceData = await this.querySrv.execute_Function('get_invoices', { id_student: studentId });
+  //     if (!invoiceData || invoiceData.length === 0) {
+  //       return;
+  //     }
+  //     const invoice = invoiceData[0];
+  //     if (!invoice.status) {
+  //       this.student.estado = 'Pendiente'
+  //     } else {
+  //       this.student.estado = 'Pagado';
+  //     }
+  //     this.student.institucion = invoice.ie_name;
+  //     this.invoiceSummary.courseValue = invoice.total_value;
+  //     this.invoiceSummary.totalPaid = invoice.paid_amount;
+  //     this.invoiceSummary.pending = invoice.remaining_debt;
+  //     this.invoiceSummary.discount = invoice.discount;
+  //   } catch (e) {
+  //     console.warn('[DetallesEstudiante] No se pudo cargar pago', e);
+  //   }
+  // }
 
 
   // Maneja las acciones del fab flotante
@@ -124,24 +172,24 @@ export class DetallesEstudiantePage implements OnInit {
   }
 
   public goToEdit() {
-    this.router.navigate(['/actualizar-estudiante', this.student.identificacion]);
+    this.router.navigate(['/actualizar-estudiante', this.student.id_student]);
   }
 
   public goToPay(){
-    this.router.navigate(['/form-pagos', this.student.identificacion]);
+    this.router.navigate(['/form-pagos', this.student.id_student]);
   }
   //eliminar estudiante
   public async deletedStudent() {
     const id = this.route.snapshot.paramMap.get('id');
-    if (this.paymentSummary.pending > 0) {
-      await this.toastSrv.showErrorToast('No se puede eliminar el estudiante porque tiene saldo pendiente.');
+    if (this.invoiceSummary.remaining_debt > 0) {
+      await this.toastSrv.showErrorToast('No se pueden eliminar estudiantes con saldo pendiente.');
       return;
   }
 
 
 
     const confirmed = await this.alertSrv.confirm(
-      `¿Está seguro que desea eliminar al estudiante?\n\nNombre: ${this.student.nombre} ${this.student.apellido}\nIdentificación: ${this.student.identificacion}`,
+      `¿Está seguro que desea eliminar al estudiante?\n\nNombre: ${this.student.name} ${this.student.lastname}\nIdentificación: ${this.student.id_student}`,
       'Confirmar eliminación',
       'Eliminar',
       'Cancelar',
@@ -152,7 +200,7 @@ export class DetallesEstudiantePage implements OnInit {
     this.loading = true;
     await this.loadingSrv.showLoading('Eliminando estudiante...');
     try {
-      const result = await this.querySrv.delete('Student_Cicle', { id });
+      const result = await this.querySrv.delete('Student_Cicle', { id: this.student.id_student });
       console.log('[DetallesEstudiante] Resultado de eliminación:', result);
       await this.toastSrv.showSuccessToast('Estudiante eliminado correctamente.');
       this.loading = false;

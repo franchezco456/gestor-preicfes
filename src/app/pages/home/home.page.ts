@@ -261,7 +261,7 @@ export class HomePage implements OnInit {
   //para ir a detalles estudiante pero desde la lista de pagos (hay que editar)
   public goToStudentDetail(item: any) {
     console.log('[Home] Selected search item:', item);
-    console.log('[Home] Navegando a /detalles-estudiante/', item.id);
-    this.router.navigate(['/detalles-estudiante', item.id]);
+    console.log('[Home] Navegando a /detalles-estudiante/', item.button);
+    this.router.navigate(['/detalles-estudiante/', item.id]);
   }
 }
