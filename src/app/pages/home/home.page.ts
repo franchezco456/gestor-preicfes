@@ -160,7 +160,7 @@ export class HomePage implements OnInit, OnDestroy {
   private async loadData() {
     try {
       await this.loadingSrv.showLoading();
-      const coord = await this.preferencesSrv.getPreferences('coordData');
+      const coord = await this.preferencesSrv.getPreferences('coordData') ?? null;
       const existsPayments = this.dataSrv.currentPayments.length > 0;
       this.setCoordinatorName(coord);
       if (!existsPayments) {
@@ -214,6 +214,10 @@ export class HomePage implements OnInit, OnDestroy {
   }
 
   private setCoordinatorName(coord: any) {
+    if (!coord) {
+      this.coordinatorName = '';
+      return;
+    }
     const data = coord.coordData || coord;
     const name = data.Name || '';
     const lastName = data.LastName || '';
