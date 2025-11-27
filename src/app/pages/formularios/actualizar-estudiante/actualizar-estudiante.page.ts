@@ -7,7 +7,7 @@ import { Toast } from 'src/app/core/services/toast/toast';
 import { Query } from 'src/app/core/services/query/query';
 import { Subscription } from 'rxjs';
 import { Data } from 'src/app/core/services/data/data';
-import { Student , Institution } from 'src/domain/models/index';
+import { Student, Institution } from 'src/domain/models/index';
 @Component({
   selector: 'app-actualizar-estudiante',
   templateUrl: './actualizar-estudiante.page.html',
@@ -22,7 +22,6 @@ export class ActualizarEstudiantePage implements OnInit {
   private institutionSubscription !: Subscription;
   private studentsSubscription?: Subscription;
   public allInstitutions: Institution[] = [];
-  // Client-side search like Home: cache students and filtered results
   private allStudents: any[] = [];
   public filteredResults: any[] = [];
   public searchQuery: string = '';
@@ -55,7 +54,12 @@ export class ActualizarEstudiantePage implements OnInit {
     this.studentsSubscription = this.dataSrv.students$.subscribe(students => {
       this.allStudents = students;
     });
-    
+
+  }
+
+  ngOnDestroy() {
+      this.institutionSubscription.unsubscribe();
+      this.studentsSubscription?.unsubscribe();
   }
 
   private initForm() {
@@ -104,13 +108,15 @@ export class ActualizarEstudiantePage implements OnInit {
 
       try {
         const response = await this.querySrv.execute_Function('register_student', Student);
+        const coord = await this.preferencesSrv.getPreferences('coordData');
+        await this.loadStudents(coord);
         console.log('Respuesta update_student:', response);
       } catch (rpcErr) {
 
         console.warn('update_student RPC falló o no existe, intentando fallback con Query.update()', rpcErr);
       }
       this.studentForm.reset();
-      this.autoSetEducationalInstitution();
+      await this.ionViewWillEnter();
       await this.loadingSrv.dismissLoading();
       await this.toastSrv.showSuccessToast('Estudiante actualizado correctamente.');
     } catch (error) {
@@ -122,52 +128,63 @@ export class ActualizarEstudiantePage implements OnInit {
 
   public async loadData() {
     const id = this.route.snapshot.paramMap.get('id');
-    if (!id) {
-      this.toastSrv.showErrorToast('ID de estudiante no proporcionado en la ruta.');
-      return;
+    const coord = await this.preferencesSrv.getPreferences('coordData');
+    const existIEs = this.dataSrv.currentInstitutions.length > 0;
+    if (!existIEs) {
+      await this.loadIEs();
+      this.mapInstitutionsOptions();
+      await this.autoSetEducationalInstitution(coord);
+    }else{
+      this.mapInstitutionsOptions();
+      await this.autoSetEducationalInstitution(coord);
     }
-    await this.loadingSrv.showLoading("Cargando datos...");
+
+    const existStudents = this.dataSrv.currentStudents.length > 0;
+    if (!existStudents) {
+      await this.loadStudents(id!);
+      await this.setCurStudent(id!);
+    }else{
+      await this.setCurStudent(id!);
+    }
+  }
+
+  private async loadIEs() {
     await this.dataSrv.loadInstitutions({});
-    if(!this.allInstitutions || this.allInstitutions.length === 0){
+    if (!this.allInstitutions || this.allInstitutions.length === 0) {
       await this.loadingSrv.dismissLoading();
       this.toastSrv.showErrorToast('No hay instituciones educativas disponibles.');
       return;
     }
-    this.institutionsOptions = this.allInstitutions.map((inst: Institution) => ({
-      value: inst.id_ie_cicle,
-      text: inst.name
-    }));
-    await this.autoSetEducationalInstitution();
-    //
-    const coord = await this.preferencesSrv.getPreferences('coordData');
-      if (coord) {
-        const data = coord.coordData || coord;
-        const id_IE: string = data?.id_IE_Cicle;
-        await this.dataSrv.loadStudents({ id_IE: id_IE });
-      } else {
-        await this.dataSrv.loadStudents({});
-      }
-
-      if(!this.allStudents || this.allStudents.length === 0){
-        this.toastSrv.showErrorToast('No se encontraron estudiantes para cargar los datos.');
-        await this.loadingSrv.dismissLoading();
-        return;
-      }
-
-
-      let student = this.allStudents.find(s => s.id_student === id)!;
-      if (!student) {
-        this.toastSrv.showErrorToast('Estudiante no encontrado.');
-        await this.loadingSrv.dismissLoading();
-        return;
-      }
-      this.patchStudentRow(student);
-      console.log('[Pagos] Suscrito a estudiantes, total =', this.allStudents);
-      await this.loadingSrv.dismissLoading();
   }
 
-    public async autoSetEducationalInstitution() {
-    const coordData = await this.preferencesSrv.getPreferences("coordData");
+  private async loadStudents(coord : any) {
+    if (coord) {
+      const data = coord.coordData || coord;
+      const id_IE: string = data?.id_IE_Cicle;
+      await this.dataSrv.loadStudents({ id_IE: id_IE });
+    } else {
+      await this.dataSrv.loadStudents({});
+    }
+  }
+
+  private async setCurStudent(id : string){
+       if (!this.allStudents || this.allStudents.length === 0) {
+      this.toastSrv.showErrorToast('No se encontraron estudiantes para cargar los datos.');
+      await this.loadingSrv.dismissLoading();
+      return;
+    }
+    let student = this.allStudents.find(s => s.id_student === id)!;
+    if (!student) {
+      this.toastSrv.showErrorToast('Estudiante no encontrado.');
+      await this.loadingSrv.dismissLoading();
+      return;
+    }
+    this.patchStudentRow(student);
+    console.log('[Pagos] Suscrito a estudiantes, total =', this.allStudents);
+    await this.loadingSrv.dismissLoading();
+  }
+
+  public async autoSetEducationalInstitution(coordData : any) {
     if (!coordData) {
       this.isCoordinator = false;
       return;
@@ -176,6 +193,14 @@ export class ActualizarEstudiantePage implements OnInit {
     this.studentForm.get('id_IE')?.setValue(id_ie_cicle);
 
   }
+
+  private mapInstitutionsOptions() {
+    this.allInstitutions = this.dataSrv.currentInstitutions;
+    this.institutionsOptions = this.allInstitutions.map((inst: Institution) => ({
+      value: inst.id_ie_cicle,
+      text: inst.name
+    }));
+}
 
   private patchStudentRow(s: Student) {
     if (!s) return;
@@ -229,7 +254,7 @@ export class ActualizarEstudiantePage implements OnInit {
     console.log('[ActualizarEstudiante] Selected search item:', item);
     this.searchQuery = '';
     this.filteredResults = [];
-    
+
     if (item) {
       this.patchStudentRow(item);
       this.toastSrv.showSuccessToast('Estudiante cargado');
