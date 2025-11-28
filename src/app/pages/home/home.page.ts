@@ -137,7 +137,7 @@ export class HomePage implements OnInit, OnDestroy {
   public filterControl = new FormControl<'dia' | 'mes' | 'año'>(this.filterType);
 
   private readonly FILTER_CONFIG = {
-   dia: {
+    dia: {
       label: 'Diario',
       formatLabel: (date: string) => date ? new Date(date).toLocaleDateString('es-CO') : 'Sin fecha'
     },
@@ -177,7 +177,7 @@ export class HomePage implements OnInit, OnDestroy {
     try {
       await this.loadingSrv.showLoading();
       const coord = await this.preferencesSrv.getPreferences('coordData') ?? null;
-      
+
       this.setCoordinatorName(coord);
       const existsStudents = this.dataSrv.currentStudents.length > 0;
       if (!existsStudents) {
@@ -191,7 +191,7 @@ export class HomePage implements OnInit, OnDestroy {
       } else {
         await this.mapPaymentsOptions();
       }
-     
+
 
 
       await this.updateChartByFilter();
@@ -315,5 +315,32 @@ export class HomePage implements OnInit, OnDestroy {
 
   public gotoSearchPayments() {
     this.router.navigate(['/consultar-payments']);
+  }
+
+  public async handleRefresh(event: any) {
+    const coord = await this.preferencesSrv.getPreferences('coordData') ?? null;
+    if (coord) {
+      const params = { id_IE_Cicle: coord?.coordData?.id_IE_Cicle };
+      await Promise.all([
+        this.dataSrv.loadInstitutions(params),
+        this.dataSrv.loadInvoices({ id_IE: params.id_IE_Cicle }),
+        this.dataSrv.loadPayments({ id_IE: params.id_IE_Cicle }),
+        this.dataSrv.loadStudents({ id_IE: params.id_IE_Cicle })
+      ]);
+    } else {
+      await Promise.all([
+        this.dataSrv.loadInstitutions({}),
+        this.dataSrv.loadInvoices({}),
+        this.dataSrv.loadPayments({}),
+        this.dataSrv.loadStudents({})
+      ]);
+    }
+
+    await this.mapPaymentsOptions(); 
+    this.updateKpis();              
+    await this.updateChartByFilter();
+
+    event.target.complete();
+
   }
 }

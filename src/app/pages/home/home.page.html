@@ -1,4 +1,8 @@
 <ion-content id="home-content" [fullscreen]="true" class="form-page home-with-search">
+
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
   <div class="home-topbar">
     <div class="home-search-wrapper">
       <app-searchbar cssClass="form-field" placeholder="Buscar un estudiante" [value]="searchQuery"
