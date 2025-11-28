@@ -10,13 +10,10 @@
 <ion-content class="form-page">
 
   <section class="form-wrapper" *ngIf="!loading && !notFound; else loadingOrEmpty">
-    <!-- Page header (matches form-coordinadores visual language) -->
-    <div class="form-header">
-      <h1>Detalles del estudiante</h1>
-      <p *ngIf="student">Información y resumen de pagos para <strong>{{ student.name }} {{ student.lastname }}</strong></p>
-    </div>
+    
+    <!-- Encabezado eliminado a petición del usuario -->
 
-    <!-- Student info card (rounded) -->
+    
     <ng-container *ngIf="student">
     <ion-card class="form-card student-card">
       <ion-card-header>
@@ -51,7 +48,7 @@
       </ion-card-content>
     </ion-card>
 
-    <!-- Payment summary card -->
+    
     <ion-card class="form-card payment-card">
       <ion-card-header>
         <h3>DATOS DEL PAGO DEL ESTUDIANTE</h3>
@@ -74,7 +71,7 @@
     </ion-card>
     </ng-container>
 
-    <!-- spacer so bottom controls (FAB / native bars) don't cover content -->
+    
     <div class="bottom-spacer" aria-hidden="true"></div>
   </section>
 

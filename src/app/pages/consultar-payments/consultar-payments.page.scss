@@ -1,23 +1,36 @@
-/* Full coordinadores-style theme adapted for Consultar Payments
-   - Background: blend of coordinadores purple with white
-   - Subtle animated glows (::before / ::after)
-   - Header & meta styles, glass cards and result-field styles
-   - Searchbar remains light/white for readability */
+/* Page-specific styles for consultar-payments
+   Adapted to match detalles-pagos / detalles-estudiante visual language
+   (dark glass cards, accent glow, soft animations). */
 
 :host {
 	--page-accent: var(--ion-color-tertiary);
 	--page-accent-rgb: var(--ion-color-tertiary-rgb);
 	--page-accent-shade: var(--ion-color-tertiary-shade);
-	display: block;
+}
+
+/* Make the top header match the page background tone (purple gradient) */
+:host ::ng-deep ion-header,
+:host ::ng-deep ion-toolbar {
+	background: rgba(var(--page-accent-rgb), 1);
+	--background: transparent;
+	color: var(--ion-color-light);
+}
+
+:host ::ng-deep ion-header ion-toolbar .toolbar-title,
+:host ::ng-deep ion-header ion-buttons,
+:host ::ng-deep ion-back-button,
+:host ::ng-deep ion-back-button .button-native,
+:host ::ng-deep ion-icon {
+	color: var(--ion-color-light) !important;
 }
 
 .form-page {
 	position: relative;
-	background: linear-gradient(135deg,
-		rgba(var(--page-accent-rgb), 0.22) 0%, /* soft purple tint */
-		rgba(255,255,255,0.92) 46%,
-		rgba(255,255,255,0.98) 100%);
+	/* Use the purple gradient from detalles pages (form-coordinadores look) */
+	--background: linear-gradient(135deg, rgba(var(--page-accent-rgb), 0.92) 0%, var(--page-accent-shade) 44%, #0c1223 100%);
+	background: var(--background);
 	overflow: hidden;
+	padding: 28px 18px calc(var(--ion-safe-area-bottom, 0px) + 120px);
 }
 
 .form-page::before,
@@ -33,7 +46,7 @@
 	height: 520px;
 	top: -150px;
 	right: -200px;
-	background: radial-gradient(circle at center, rgba(var(--page-accent-rgb), 0.22) 0%, transparent 66%);
+	background: radial-gradient(circle at center, rgba(var(--page-accent-rgb), 0.28) 0%, transparent 68%);
 	animation: pulseGlow 16s ease-in-out infinite;
 }
 
@@ -42,112 +55,265 @@
 	height: 680px;
 	bottom: -360px;
 	left: -240px;
-	background: radial-gradient(circle at center, rgba(var(--page-accent-rgb), 0.10) 0%, transparent 72%);
+	background: radial-gradient(circle at center, rgba(58, 28, 93, 0.3) 0%, transparent 70%);
 	animation: drift 24s linear infinite;
 }
 
-/* Header (same visual language as form-coordinadores) */
-.form-header h1 {
-	margin: 0 0 8px;
-	font-size: clamp(1.4rem, 3.4vw, 1.9rem);
-	font-weight: 600;
-	letter-spacing: 0.02em;
-	color: rgba(16,18,28,0.98);
-}
-
-.form-header p {
-	margin: 0;
-	font-size: 0.95rem;
-	max-width: 780px;
-	opacity: 0.9;
-	color: rgba(16,18,28,0.78);
-}
-
-.header-meta {
+.form-wrapper {
+	/* Increased max-width so cards are less narrow on large screens */
+	max-width: 1200px;
+	margin: 0 auto;
 	display: flex;
-	flex-wrap: wrap;
-	gap: 10px;
-	margin-top: 12px;
+	flex-direction: column;
+	gap: 24px;
 }
 
-.meta-chip {
-	--background: transparent;
-	--color: var(--ion-color-dark);
-}
 
-.meta-chip::part(container) {
-	background: rgba(255,255,255,0.92);
-	border: 1px solid rgba(16,18,28,0.06);
-	border-radius: 18px;
-	padding: 0 12px;
-	gap: 6px;
-	transition: transform 180ms ease, box-shadow 220ms ease;
-}
+.form-card {
+	position: relative;
 
-.meta-chip ion-icon { font-size: 1rem; }
-.meta-chip ion-label { font-weight: 500; letter-spacing: 0.02em; }
-
-/* Main light glass searchbar (preserve white) */
-:host ::ng-deep app-searchbar,
-:host ::ng-deep app-searchbar.form-field {
-	display: block;
-	margin: 12px 18px 6px;
-	width: calc(100% - 36px);
-	max-width: 1100px;
-	box-sizing: border-box;
+	width: min(1000px, 86%);
+	max-width: 1000px;
+	margin: 0 auto;
+	background: rgba(10, 15, 30, 0.78);
+	border: 1px solid rgba(255, 255, 255, 0.04);
+    
 	border-radius: 12px;
-	padding: 8px 12px;
-	background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(250,250,250,0.95));
-	border: 1px solid rgba(16,18,28,0.06);
-	box-shadow: 0 18px 42px rgba(9,12,20,0.06), inset 0 1px 0 rgba(255,255,255,0.6);
-	backdrop-filter: blur(8px) saturate(1.04);
-	-webkit-backdrop-filter: blur(8px) saturate(1.04);
-	transition: box-shadow 220ms ease, transform 180ms ease, border-color 160ms ease;
+    
+	box-shadow: 0 12px 30px rgba(2, 4, 20, 0.45);
+	backdrop-filter: blur(10px);
+	overflow: hidden;
+	animation: cardFloat 0.85s cubic-bezier(0.21, 0.8, 0.32, 1) both;
 }
 
-:host ::ng-deep app-searchbar:focus-within,
-:host ::ng-deep app-searchbar.form-field:focus-within {
-	transform: translateY(-2px);
-	box-shadow: 0 28px 68px rgba(6,8,12,0.08), 0 0 0 8px rgba(var(--page-accent-rgb),0.06);
-	border-color: rgba(var(--page-accent-rgb),0.22);
+.form-card ion-card-header {
+	padding-inline: clamp(18px, 3vw, 28px);
+	padding-block: clamp(14px, 2.5vw, 20px);
+	color: var(--ion-color-light);
 }
 
-:host ::ng-deep app-searchbar ion-searchbar { --background: transparent; --border-radius: 12px; width:100%; }
-:host ::ng-deep app-searchbar ion-searchbar::part(search-icon) { color: rgba(var(--page-accent-rgb),0.95); }
-:host ::ng-deep app-searchbar ion-searchbar::part(input) { color: rgba(11,17,20,0.92); font-weight:600; }
 
-/* Small cards/list results adopt glass card look to match theme */
-.result-card,
+h1, p {
+	color: whitesmoke;
+}
+
+.form-card ion-card-title,
+.form-card h2, .form-card h3 {
+	margin: 0;
+	font-size: 1.05rem;
+	font-weight: 600;
+	color: whitesmoke;
+}
+
+.form-card ion-card-content {
+	padding-inline: clamp(18px, 3vw, 28px);
+	padding-block: clamp(14px, 2.5vw, 22px);
+}
+
+.student-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	/* larger horizontal gap so content breathes */
+	gap: 16px 28px;
+	align-items: center;
+}
+
+.payment-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 16px 24px;
+	align-items: center;
+}
+
+/* Improved list presentation for payments */
 .list-card {
 	margin: 8px 18px;
-	background: rgba(255,255,255,0.96);
+	/* light glass card so purple background shows around it */
+	background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(250,250,250,0.95));
 	border: 1px solid rgba(16,18,28,0.06);
 	border-radius: 14px;
-	box-shadow: 0 18px 48px rgba(6,8,12,0.06);
-	padding: 10px 12px;
+	box-shadow: 0 18px 36px rgba(6,8,12,0.12);
+	padding: 8px;
+	overflow: hidden;
+	position: relative;
 }
 
-.result-field {
-	display:flex;
-	justify-content: space-between;
-	align-items: center;
+/* subtle frosted sweep inside list card to mimic form-coordinadores sheen */
+.list-card::before {
+	content: '';
+	position: absolute;
+	left: -6%;
+	top: -12%;
+	width: 120%;
+	height: 180px;
+	background: radial-gradient(600px 120px at 20% 16%, rgba(var(--page-accent-rgb),0.08) 0%, rgba(255,255,255,0.24) 30%, transparent 55%);
+	transform: rotate(-6deg);
+	filter: blur(18px);
+	pointer-events: none;
+	opacity: 0.9;
+	mix-blend-mode: screen;
+}
+
+.list-card .list-item {
+	display: flex;
 	gap: 12px;
+	align-items: center;
+	padding: 12px 14px;
+	transition: transform 160ms ease, box-shadow 180ms ease, background-color 140ms ease;
+	cursor: pointer;
 }
 
-.result-field .result-label { color: rgba(16,18,28,0.8); font-weight:700; }
-.result-field .result-sub { color: rgba(16,18,28,0.6); font-weight:500; }
+.list-card .list-item + .list-item {
+	border-top: 1px solid rgba(255,255,255,0.02);
+}
+
+.list-item .avatar {
+	width: 44px;
+	height: 44px;
+	border-radius: 50%;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	background: linear-gradient(135deg, rgba(var(--page-accent-rgb),0.95), rgba(var(--page-accent-rgb),0.6));
+	color: white;
+	font-weight: 700;
+	box-shadow: 0 8px 20px rgba(9,12,20,0.45);
+	border: 2px solid rgba(255,255,255,0.04);
+}
+
+.list-item .meta {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+.list-item .meta .title {
+	color: rgba(16,18,28,0.96);
+	font-weight: 700;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	font-size: 1.02rem;
+}
+
+.list-item .meta .subtitle {
+	color: rgba(16,18,28,0.64);
+	font-size: 0.92rem; /* small readable size */
+	margin-top: 2px;
+}
+
+.list-item .aside {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	gap: 6px;
+}
+
+.amount-badge {
+	background: rgba(16,18,28,0.06);
+	color: rgba(16,18,28,0.92);
+	padding: 6px 12px;
+	border-radius: 12px;
+	font-weight: 700;
+	min-width: 88px;
+	text-align: right;
+}
+
+.status-pill {
+	padding: 4px 8px;
+	border-radius: 999px;
+	font-size: 0.78rem;
+	font-weight: 700;
+	color: #0b1020;
+}
+.status-paid { background: #b6f7c6; }
+.status-pending { background: #ffe69a; }
+.status-failed { background: #ffb3b3; }
+
+.list-card .list-item:hover {
+	transform: translateY(-4px);
+	box-shadow: 0 22px 48px rgba(2,4,20,0.48);
+	background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.03));
+}
 
 @media (max-width: 767px) {
-	.form-header h1 { font-size: 1.4rem; }
-	.result-card, .list-card { margin-left: 12px; margin-right: 12px; }
+	.list-card { margin-left: 12px; margin-right: 12px; }
+	.list-item { padding: 10px; }
+	.list-item .avatar { width: 40px; height: 40px; }
+	.amount-badge { padding: 4px 8px; }
+}
+
+.p-label {
+	color: rgba(255,255,255,0.65);
+	font-weight: 600;
+	font-size: 0.92rem;
+	letter-spacing: 0.02em;
+}
+
+.p-value {
+	color: var(--ion-color-light);
+	font-weight: 700;
+	font-size: 1rem;
+}
+
+.loading-state {
+	display:flex;
+	align-items:center;
+	justify-content:center;
+	height:50vh;
+}
+
+ion-card.not-found {
+	text-align: center;
+	color: rgba(255,255,255,0.8);
+}
+
+/* FAB polish */
+app-fabbutom { --fab-size: 56px; }
+
+ion-fab-button {
+	width: var(--fab-size);
+	height: var(--fab-size);
+	border-radius: 12px;
+	box-shadow: 0 20px 40px rgba(2,4,20,0.45);
+}
+
+ion-fab-button[color="primary"] {
+	--background: linear-gradient(135deg, rgba(var(--page-accent-rgb), 1) 0%, rgba(var(--page-accent-rgb), 0.6) 100%);
+	--box-shadow: 0 20px 48px rgba(var(--page-accent-rgb), 0.28);
+}
+
+@media (max-width: 767px) {
+	.student-grid, .payment-grid { grid-template-columns: 1fr; }
 	.form-page::before { width: 360px; height: 360px; right: -140px; }
+	/* on small screens keep card almost full width */
+	.form-card { width: calc(100% - 32px); border-radius: 12px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.form-wrapper, .form-card, .result-card { animation: none !important; }
+	.form-wrapper, .form-card { animation: none !important; }
 }
 
-@keyframes pulseGlow { 0%,100%{ transform:scale(1); opacity:0.7 } 50%{ transform:scale(1.06); opacity:1 } }
-@keyframes drift { 0%{ transform:translate3d(0,0,0) rotate(0deg) } 50%{ transform:translate3d(10px,-8px,0) rotate(1deg) } 100%{ transform:translate3d(0,0,0) rotate(0deg) } }
+@keyframes cardFloat {
+	from { opacity: 0; transform: translate3d(0, 24px, 0); }
+	to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+@keyframes pulseGlow {
+	0%,100% { transform: scale(1); opacity: 0.72; }
+	50% { transform: scale(1.06); opacity: 1; }
+}
+
+@keyframes drift {
+	0% { transform: translate3d(0, 0, 0) rotate(0deg); }
+	50% { transform: translate3d(10px, -8px, 0) rotate(1deg); }
+	100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+}
+
+/* spacer to ensure last card is fully scrollable above FAB / bottom bars */
+.bottom-spacer {
+	height: calc(var(--ion-safe-area-bottom, 0px) + 180px);
+	width: 100%;
+	pointer-events: none;
+}
 
 

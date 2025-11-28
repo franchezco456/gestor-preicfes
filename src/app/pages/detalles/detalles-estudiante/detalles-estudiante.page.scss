@@ -9,6 +9,22 @@
 	--page-accent-shade: var(--ion-color-tertiary-shade);
 }
 
+/* Make the top header match the page background tone (purple gradient) */
+:host ::ng-deep ion-header,
+:host ::ng-deep ion-toolbar {
+	background: rgba(var(--page-accent-rgb), 1);
+	--background: transparent;
+	color: var(--ion-color-light);
+}
+
+:host ::ng-deep ion-header ion-toolbar .toolbar-title,
+:host ::ng-deep ion-header ion-buttons,
+:host ::ng-deep ion-back-button,
+:host ::ng-deep ion-back-button .button-native,
+:host ::ng-deep ion-icon {
+	color: var(--ion-color-light) !important;
+}
+
 .form-page {
 	position: relative;
 	--background: linear-gradient(135deg, rgba(var(--page-accent-rgb), 0.92) 0%, var(--page-accent-shade) 44%, #0c1223 100%);
@@ -44,20 +60,28 @@
 }
 
 .form-wrapper {
-	max-width: 980px;
+	/* Increased max-width so cards are less narrow on large screens */
+	max-width: 1200px;
 	margin: 0 auto;
 	display: flex;
 	flex-direction: column;
-	gap: 20px;
+	gap: 24px;
 }
+
 
 .form-card {
 	position: relative;
+	/* Wider responsive card: fills side gutters but remains constrained on very large screens */
+	width: min(1000px, 86%);
+	max-width: 1000px;
+	margin: 0 auto;
 	background: rgba(10, 15, 30, 0.78);
-	border: 1px solid rgba(255, 255, 255, 0.08);
-	border-radius: 20px;
-	box-shadow: 0 28px 65px rgba(2, 4, 20, 0.6);
-	backdrop-filter: blur(14px);
+	border: 1px solid rgba(255, 255, 255, 0.04);
+	/* reduced radius so cards appear more compact */
+	border-radius: 12px;
+	/* softer, smaller shadow to avoid heavy boxed feeling */
+	box-shadow: 0 12px 30px rgba(2, 4, 20, 0.45);
+	backdrop-filter: blur(10px);
 	overflow: hidden;
 	animation: cardFloat 0.85s cubic-bezier(0.21, 0.8, 0.32, 1) both;
 }
@@ -90,14 +114,15 @@ color:whitesmoke
 .student-grid {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
-	gap: 12px 20px;
+	/* larger horizontal gap so content breathes */
+	gap: 16px 28px;
 	align-items: center;
 }
 
 .payment-grid {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
-	gap: 12px 18px;
+	gap: 16px 24px;
 	align-items: center;
 }
 
@@ -144,7 +169,8 @@ ion-fab-button[color="primary"] {
 @media (max-width: 767px) {
 	.student-grid, .payment-grid { grid-template-columns: 1fr; }
 	.form-page::before { width: 360px; height: 360px; right: -140px; }
-	.form-card { border-radius: 18px; }
+	/* on small screens keep card almost full width */
+	.form-card { width: calc(100% - 32px); border-radius: 12px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

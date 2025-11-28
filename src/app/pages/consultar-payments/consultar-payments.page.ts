@@ -101,11 +101,26 @@ export class ConsultarPaymentsPage implements OnInit, OnDestroy {
   private mapPaymentsOptions() {
     this.dataList = this.allPayments.map(pago => {
       const student = this.allStudents.find(s => s.id_student === pago.invoice_id);
+      const first = student ? (student.name || '').split(' ')[0] : '';
+      const last = student ? (student.lastname || '').split(' ')[0] : '';
+      const initials = `${(first || '').charAt(0)}${(last || '').charAt(0)}`.toUpperCase();
       const fullName = student ? `${student.name} ${student.lastname}` : 'Estudiante Desconocido';
+      // Determine status from remaining_debt if available
+      const status = (pago as any).remaining_debt !== undefined
+        ? ((pago as any).remaining_debt === 0 ? 'paid' : 'pending')
+        : 'pending';
+      const statusClass = status === 'paid' ? 'status-paid' : (status === 'pending' ? 'status-pending' : 'status-failed');
+      const statusLabel = status === 'paid' ? 'Pagado' : (status === 'pending' ? 'Pendiente' : 'Fallido');
       return {
+        id: pago.payment_id,
         title: fullName,
+        subtitle: pago.payment_date || '',
         detail: this.formatCurrency(pago.payment_value),
-        button: pago.payment_id
+        amount: pago.payment_value,
+        avatar: initials,
+        status,
+        statusClass,
+        statusLabel
       };
     });
   }
@@ -122,14 +137,15 @@ export class ConsultarPaymentsPage implements OnInit, OnDestroy {
     this.dataList = this.dataList.filter((item) =>
         (item.title || '').toLowerCase().includes(q) ||
         (item.detail || '').toLowerCase().includes(q) ||
-        (item.button || '').toLowerCase().includes(q)
+        (item.subtitle || '').toLowerCase().includes(q) ||
+        (item.id || '').toLowerCase().includes(q)
       );
     console.log('[Pagos] Filtrados', this.dataList.length, 'pagos para query =', q);
   }
 
   public goToPaymentDetail(item: any) {
     console.log('[Home] Selected search item:', item);
-    console.log('[Home] Navegando a /detalles-pagos/', item.button);
-    this.router.navigate(['/detalles-pagos', item.button]);
+    console.log('[Home] Navegando a /detalles-pagos/', item.id);
+    this.router.navigate(['/detalles-pagos', item.id]);
   }
 }
