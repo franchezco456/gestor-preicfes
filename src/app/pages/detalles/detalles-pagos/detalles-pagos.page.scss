@@ -1,0 +1,59 @@
+
+/* Page-specific styles for detalles-estudiante */
+
+.form-page {
+  /* Override global centering so content stays scrollable within ion-content */
+  display: block;
+  min-height: auto;
+  /* leave extra space at the bottom so the FAB doesn't cover the last card */
+  padding-bottom: 96px;
+}
+
+.data-student {
+	align-content: space-around;
+}
+
+.student-card {
+	border-radius: var(--card-radius);
+	padding: 8px 12px;
+}
+
+.student-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 8px 18px;
+	align-items: start;
+}
+
+.student-grid .label {
+	font-weight: 700;
+	color: rgba(11,17,20,0.76);
+}
+.student-grid .value {
+	color: #0B1114;
+}
+
+.payment-card {
+	border-radius: 12px;
+}
+
+.payment-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 8px 12px;
+	align-items: center;
+}
+
+.p-label { color: rgba(11,17,20,0.7); font-weight:600; }
+.p-value { color: #0B1114; font-weight:700; }
+
+/* FAB polish: slightly larger and using accent token */
+ion-fab-button[color="primary"] {
+	--background: linear-gradient(135deg, rgba(var(--form-accent-rgb),1) 0%, rgba(var(--form-accent-rgb),0.9) 100%);
+	--box-shadow: 0 20px 40px rgba(var(--form-accent-dark-rgb),0.18);
+}
+
+@media (max-width: 600px) {
+	.student-grid, .payment-grid { grid-template-columns: 1fr; }
+}
+

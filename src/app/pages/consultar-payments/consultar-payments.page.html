@@ -1,0 +1,30 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Consultar Pagos</ion-title>
+  </ion-toolbar>
+  <div>
+    <app-searchbar cssClass="form-field" placeholder="Buscar un estudiante" [value]="searchQuery"
+      (valueChange)="onSearchInput($event)">
+    </app-searchbar>
+  </div>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+
+  <section>
+
+    <ion-list *ngIf="filteredResults.length > 0; else noPagos">
+      <ion-item *ngFor="let item of filteredResults" style="min-height: 72px;">
+        <ion-label style="font-size: 1.15rem;">
+          <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 4px;">{{ item.title }}</h3>
+          <p class="muted" style="font-size: 1.1rem;">{{ item.detail }}</p>
+        </ion-label>
+        <ion-button fill="clear" slot="end" style="font-size: 1.1rem; min-width: 48px;" (click)="goToPaymentDetail(item)">Ver</ion-button>
+      </ion-item>
+    </ion-list>
+  </section>
+
+  <ng-template #noPagos>
+    <p class="muted" style="text-align:center;">No hay pagos registrados</p>
+  </ng-template>
+</ion-content>

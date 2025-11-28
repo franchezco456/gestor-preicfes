@@ -1,0 +1,31 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Detalle del Pago</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content *ngIf="!loading && !notFound">
+  <ion-card class="form-card payment-card">
+      <ion-card-header>
+        <h3>DETALLES DE PAGO</h3>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="payment-grid">
+          <div class="p-label">Estudiante</div>
+          <div class="p-value">{{ student.name }} {{ student.lastname }}</div>
+
+          <div class="p-label">Fecha de Pago</div>
+          <div class="p-value">{{ payment.payment_date | date:'mediumDate' }}</div>
+
+          <div class="p-label">Cantidad Pagada:</div>
+          <div class="p-value">{{ payment.payment_value | currency:'COP' }}</div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+</ion-content>
+<ion-content *ngIf="loading">
+  <ion-spinner></ion-spinner>
+</ion-content>
+<ion-content *ngIf="notFound">
+  <p class="muted" style="text-align:center;">No se encontró el pago o estudiante.</p>
+</ion-content>

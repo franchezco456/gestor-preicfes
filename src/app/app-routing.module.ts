@@ -2,27 +2,27 @@ import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
-  
-  
+
+
   {
     path: 'login',
-    loadChildren: () => import('./pages/login/login.module').then( m => m.LoginPageModule)
+    loadChildren: () => import('./pages/login/login.module').then(m => m.LoginPageModule)
   },
   {
     path: 'home',
-    loadChildren: () => import('./pages/home/home.module').then( m => m.HomePageModule)
+    loadChildren: () => import('./pages/home/home.module').then(m => m.HomePageModule)
   },
   {
     path: 'form-estudiantes',
-    loadChildren: () => import('./pages/formularios/form-estudiantes/form-estudiantes.module').then( m => m.FormEstudiantesPageModule)
+    loadChildren: () => import('./pages/formularios/form-estudiantes/form-estudiantes.module').then(m => m.FormEstudiantesPageModule)
   },
   {
     path: 'form-coordinadores',
-    loadChildren: () => import('./pages/formularios/form-coordinadores/form-coordinadores.module').then( m => m.FormCoordinadoresPageModule)
+    loadChildren: () => import('./pages/formularios/form-coordinadores/form-coordinadores.module').then(m => m.FormCoordinadoresPageModule)
   },
   {
     path: 'form-instituciones',
-    loadChildren: () => import('./pages/formularios/form-instituciones/form-instituciones.module').then( m => m.FormInstitucionesPageModule)
+    loadChildren: () => import('./pages/formularios/form-instituciones/form-instituciones.module').then(m => m.FormInstitucionesPageModule)
   },
   {
     path: 'form-pagos',
@@ -34,8 +34,17 @@ const routes: Routes = [
   },
   {
     path: 'actualizar-estudiante',
-    loadChildren: () => import('./pages/formularios/actualizar-estudiante/actualizar-estudiante.module').then( m => m.ActualizarEstudiantePageModule)
+    loadChildren: () => import('./pages/formularios/actualizar-estudiante/actualizar-estudiante.module').then(m => m.ActualizarEstudiantePageModule)
   },
+  {
+    path: 'consultar-payments',
+    loadChildren: () => import('./pages/consultar-payments/consultar-payments.module').then(m => m.ConsultarPaymentsPageModule)
+  },
+  {
+    path: 'detalles-pagos',
+    loadChildren: () => import('./pages/detalles/detalles-pagos/detalles-pagos.module').then(m => m.DetallesPagosPageModule)
+  },
+
   {
     path: '',
     redirectTo: 'login',
