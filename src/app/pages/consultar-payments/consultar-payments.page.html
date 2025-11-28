@@ -5,15 +5,13 @@
     </ion-buttons>
     <ion-title>Consultar Pagos</ion-title>
   </ion-toolbar>
-  <div>
-    <app-searchbar cssClass="form-field" placeholder="Buscar un estudiante" [value]="searchQuery"
-      (valueChange)="onSearchInput($event)">
-    </app-searchbar>
-  </div>
+
 </ion-header>
 
 <ion-content [fullscreen]="true">
-
+    <app-searchbar cssClass="form-field" placeholder="Buscar un estudiante" [value]="searchQuery"
+      (valueChange)="onSearchInput($event)">
+    </app-searchbar>
   <section>
     <ion-list *ngIf="dataList.length > 0; else noPagos">
       <ion-item *ngFor="let item of dataList" style="min-height: 72px;">

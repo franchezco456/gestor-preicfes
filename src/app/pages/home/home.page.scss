@@ -36,6 +36,55 @@
   
 }
 
+
+.dashboard-hero .hero-left { width: 100%; }
+
+.dashboard-hero .user-badge {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* keep text on the left */
+  gap: 12px;
+  padding: 12px 18px;
+  border-radius: 12px;
+  max-width: 1024px; /* constrain width so light borders remain */
+  width: 100%;
+  margin: 0 auto; /* center within the hero area */
+  box-sizing: border-box;
+  background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow: 0 12px 30px rgba(2,4,12,0.12);
+  backdrop-filter: blur(6px) saturate(1.04);
+  animation: fadeInUp 320ms cubic-bezier(.2,.9,.28,1) both;
+}
+
+.dashboard-hero .user-badge::before {
+  content: '';
+  display: block;
+  width: 4px;
+  height: 48px;
+  border-radius: 4px;
+  background: linear-gradient(180deg, rgba(var(--form-accent-rgb),1), rgba(var(--form-accent-dark-rgb),0.8));
+  margin-right: 6px;
+}
+
+.dashboard-hero .user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-hero .user-name {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: rgba(11,17,20,0.95);
+  line-height: 1.1;
+}
+
+.dashboard-hero .user-sub {
+  font-size: 0.85rem;
+  color: rgba(11,17,20,0.58);
+  margin-top: 4px;
+}
+
 .menu-btn {
   display: inline-flex;
   align-items: center;
@@ -373,7 +422,68 @@ ion-card.home-chart, ion-card {
 .stats-card { width: 100%; }
 .stats-card .stats-grid { width: 100%; }
 
-/* Make the menu button more visible on the light background */
+/* Further polish: alternating rows, right meta column, avatar and amount emphasis */
+:host ::ng-deep .dashboard-grid app-list ion-item,
+:host ::ng-deep .home-with-search app-list ion-item {
+  align-items: center;
+}
+
+:host ::ng-deep .dashboard-grid app-list ion-item ion-label,
+:host ::ng-deep .home-with-search app-list ion-item ion-label {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* right column for actions/amounts */
+:host ::ng-deep .dashboard-grid app-list ion-item .item-meta,
+:host ::ng-deep .home-with-search app-list ion-item .item-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  margin-left: 12px;
+  flex: 0 0 auto;
+}
+
+:host ::ng-deep .dashboard-grid app-list ion-item .meta-amount,
+:host ::ng-deep .home-with-search app-list ion-item .meta-amount {
+  font-size: 0.98rem;
+  font-weight: 800;
+  color: rgba(var(--form-accent-rgb, 0,143,251), 0.95);
+}
+
+/* subtle zebra striping for readability */
+:host ::ng-deep .dashboard-grid app-list ion-item:nth-child(even),
+:host ::ng-deep .home-with-search app-list ion-item:nth-child(even) {
+  background: linear-gradient(180deg, rgba(11,17,20,0.01), rgba(11,17,20,0.00));
+}
+
+/* small avatar/icon if provided by the list item */
+:host ::ng-deep .dashboard-grid app-list ion-item ion-avatar,
+:host ::ng-deep .home-with-search app-list ion-item ion-avatar,
+:host ::ng-deep .dashboard-grid app-list ion-item .avatar,
+:host ::ng-deep .home-with-search app-list ion-item .avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, rgba(var(--form-accent-rgb,127,175,224),0.14), rgba(0,0,0,0.02));
+}
+
+
+@media (max-width: 420px) {
+  :host ::ng-deep .dashboard-grid app-list ion-item {
+    --padding-start: 10px;
+    --padding-end: 10px;
+  }
+  :host ::ng-deep .dashboard-grid app-list ion-item .item-meta {
+    margin-left: 8px;
+  }
+}
+
+
 .menu-btn {
   background: rgba(var(--form-accent-rgb), 0.06);
   color: rgba(11,17,20,0.9);
