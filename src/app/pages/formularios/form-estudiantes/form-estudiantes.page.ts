@@ -7,6 +7,7 @@ import { Query } from 'src/app/core/services/query/query';
 import { Data } from 'src/app/core/services/data/data';
 import { Subscription } from 'rxjs';
 import { Institution } from 'src/domain/models/index';
+import { StudentsByInstitutionData } from '../../../../domain/models/ChartData';
 
 type SelectOption = {
   value: string;
@@ -21,6 +22,7 @@ type SelectOption = {
 })
 export class FormEstudiantesPage implements OnInit, OnDestroy {
   private institutionSubscription !: Subscription;
+  private StudentsSubscription !: Subscription;
   public allInstitutions: Institution[] = [];
   public studentForm !: FormGroup;
   public institutionsOptions: SelectOption[] = [];
@@ -103,6 +105,7 @@ export class FormEstudiantesPage implements OnInit, OnDestroy {
       console.log(JSON.stringify(response));
       const coord = await this.preferencesSrv.getPreferences('coordData');
       this.autoSetEducationalInstitution(coord);
+      await this.loadStudents(coord);
       this.studentForm.reset();
       await this.loadingSrv.dismissLoading();
       await this.toastSrv.showSuccessToast('Estudiante registrado exitosamente.');
@@ -119,6 +122,16 @@ export class FormEstudiantesPage implements OnInit, OnDestroy {
       await this.loadingSrv.dismissLoading();
       this.toastSrv.showErrorToast('No hay instituciones educativas disponibles.');
       return;
+    }
+  }
+
+  private async loadStudents(coord: any) {
+    if (coord) {
+      const data = coord.coordData || coord;
+      const id_IE: string = data?.id_IE_Cicle;
+      await this.dataSrv.loadStudents({ id_IE: id_IE });
+    }else{
+      await this.dataSrv.loadStudents({});
     }
   }
 
