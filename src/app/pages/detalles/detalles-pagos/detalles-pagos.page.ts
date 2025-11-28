@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Data } from 'src/app/core/services/data/data';
 import { Loading } from 'src/app/core/services/loading/loading';
 import { Preferences } from 'src/app/core/services/preferences/preferences';
+import { Invoices } from 'src/domain/models';
 import { Payment } from 'src/domain/models/Payment';
 import { Student } from 'src/domain/models/Student';
 
@@ -13,18 +14,20 @@ import { Student } from 'src/domain/models/Student';
   styleUrls: ['./detalles-pagos.page.scss'],
   standalone: false,
 })
-export class DetallesPagosPage implements OnInit {
+export class DetallesPagosPage implements OnInit, OnDestroy {
   private allStudents: Student[] = [];
   private allPayments: Payment[] = [];
+  private allInvoices: any[] = [];
   private studentsSubscription?: Subscription;
   private paymentsSubscriptions?: Subscription;
+  private invoicesSubscription?: Subscription;
   public student !: Student;
   public loading = true;
   public notFound = false;
   public payment !: Payment;
+  public invoice !: Invoices;
 
   async ionViewWillEnter() {
-
     await this.loadData();
   }
   constructor(
@@ -39,14 +42,19 @@ export class DetallesPagosPage implements OnInit {
       this.allStudents = students;
     });
 
+    this.invoicesSubscription = this.dataSrv.invoices$.subscribe(invoices => {
+      this.allInvoices = invoices;
+    });
+
     this.paymentsSubscriptions = this.dataSrv.payments$.subscribe(payments => {
       this.allPayments = payments;
-    })
+    });
   }
 
   ngOnDestroy() {
     this.studentsSubscription?.unsubscribe();
     this.paymentsSubscriptions?.unsubscribe();
+    this.invoicesSubscription?.unsubscribe();
   }
 
   public async loadData() {
@@ -67,7 +75,7 @@ export class DetallesPagosPage implements OnInit {
         await this.loadPayments(coord);
       }
 
-        this.findPaymentByPaymentId(id);
+      this.findPaymentByPaymentId(id);
       console.log('[DetallesPago] Pago encontrado:', this.payment);
 
       if (!existStudents) {
@@ -80,6 +88,10 @@ export class DetallesPagosPage implements OnInit {
         this.notFound = true;
         return;
       }
+
+      await this.loadInvoices(coord);
+      this.invoice = this.findInvoices(this.student.id_student);
+      console.log('[DetallesPago] Factura encontrada:', this.invoice);
 
       if (!this.allStudents || this.allStudents.length === 0) {
         this.notFound = true;
@@ -123,10 +135,25 @@ export class DetallesPagosPage implements OnInit {
     }
   }
 
+  private async loadInvoices(coord: any) {
+    if (coord) {
+      const data = coord.coordData || coord;
+      const id_IE: string = data?.id_IE_Cicle;
+      await this.dataSrv.loadInvoices({ id_IE: id_IE });
+    }
+    else {
+      await this.dataSrv.loadInvoices({});
+    }
+  }
+
   private findPaymentByPaymentId(id: string) {
     this.payment = this.allPayments.find(p => p.payment_id === id)!;
   }
+
+  private findInvoices(id: string) {
+    return this.allInvoices.find(inv => inv.invoice_id === id);
   }
+}
   
 
 

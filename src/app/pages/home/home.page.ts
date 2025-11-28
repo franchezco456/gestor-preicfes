@@ -22,6 +22,7 @@ export class HomePage implements OnInit, OnDestroy {
   @ViewChild(ChartComponent, { static: false }) chartCmp?: ChartComponent;
   async ionViewWillEnter() {
     await this.loadData();
+    this.loading = false;
   }
   private studentsSubscription?: Subscription;
   private invoicesSubscription?: Subscription;
@@ -32,6 +33,7 @@ export class HomePage implements OnInit, OnDestroy {
   public dataList: any[] = [];
   public filteredResults: Student[] = [];
   public searchQuery: string = '';
+  public loading = true;
 
   constructor(
     private readonly authSrv: Auth,
@@ -128,22 +130,36 @@ export class HomePage implements OnInit, OnDestroy {
     console.log('[Home] Filtrados', this.filteredResults.length, 'estudiantes para query =', q);
   }
 
-  //Jesus Work
 
   public kpis: Array<{ value: string | number; label: string }> = [];
   public coordinatorName: string = '';
   public filterType: 'dia' | 'mes' | 'año' = 'mes';
   public filterControl = new FormControl<'dia' | 'mes' | 'año'>(this.filterType);
-  public tabButtons = [
-    { icon: 'home-outline', route: '/home', aria: 'Inicio' },
-    { icon: 'people-outline', route: '/form-estudiantes', aria: 'Estudiantes' },
-    { icon: 'card-outline', route: '/form-pagos', aria: 'Pagos' },
-  ];
 
   private readonly FILTER_CONFIG = {
-    dia: { label: 'Día', format: (d: Date) => d.toISOString().slice(0, 10) },
-    mes: { label: 'Mes', format: (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}` },
-    año: { label: 'Año', format: (d: Date) => String(d.getFullYear()) }
+   dia: {
+      label: 'Diario',
+      formatLabel: (date: string) => date ? new Date(date).toLocaleDateString('es-CO') : 'Sin fecha'
+    },
+    mes: {
+      label: 'Mensual',
+      formatLabel: (date: string) => {
+        if (!date) return 'Sin fecha';
+        try {
+          const d = new Date(date);
+          if (isNaN(d.getTime())) return 'Fecha Inválida';
+
+          const monthName = d.toLocaleString('es-CO', { month: 'short' }).replace('.', '');
+          return (monthName.charAt(0).toUpperCase() + monthName.slice(1)).substring(0, 3);
+        } catch (e) {
+          return 'Error';
+        }
+      }
+    },
+    año: {
+      label: 'Anual',
+      formatLabel: (date: string) => date ? new Date(date).getFullYear().toString() : 'Sin fecha'
+    }
   } as const;
 
   private formatCurrency(value: number): string {
@@ -161,16 +177,21 @@ export class HomePage implements OnInit, OnDestroy {
     try {
       await this.loadingSrv.showLoading();
       const coord = await this.preferencesSrv.getPreferences('coordData') ?? null;
-      const existsPayments = this.dataSrv.currentPayments.length > 0;
+      
       this.setCoordinatorName(coord);
+      const existsStudents = this.dataSrv.currentStudents.length > 0;
+      if (!existsStudents) {
+        await this.loadStudents(coord);
+      }
+      await this.loadInvoices(coord);
+      const existsPayments = this.dataSrv.currentPayments.length > 0;
       if (!existsPayments) {
         await this.loadPayments(coord);
-        this.mapPaymentsOptions();
+        await this.mapPaymentsOptions();
       } else {
-        this.mapPaymentsOptions();
+        await this.mapPaymentsOptions();
       }
-      await this.loadStudents(coord);
-      await this.loadInvoices(coord);
+     
 
 
       await this.updateChartByFilter();
@@ -223,7 +244,7 @@ export class HomePage implements OnInit, OnDestroy {
     const lastName = data.LastName || '';
     this.coordinatorName = `${name} ${lastName}`.trim();
   }
-  private mapPaymentsOptions() {
+  private async mapPaymentsOptions() {
     this.dataList = this.allPayments.map(pago => {
       const student = this.allStudents.find(s => s.id_student === pago.invoice_id);
       const fullName = student ? `${student.name} ${student.lastname}` : 'Estudiante Desconocido';
@@ -260,7 +281,7 @@ export class HomePage implements OnInit, OnDestroy {
       const date = pago.payment_date;
       if (!date) continue;
 
-      const key = this.FILTER_CONFIG[type].format(new Date(date));
+      const key = this.FILTER_CONFIG[type].formatLabel(date);
       const value = pago.payment_value;
       groups[key] = (groups[key] || 0) + value;
     }
@@ -287,8 +308,12 @@ export class HomePage implements OnInit, OnDestroy {
 
   //para ir a detalles estudiante pero desde la lista de pagos (hay que editar)
   public goToPaymentDetail(item: any) {
-    console.log('[Home] Selected search item:', item);
-    console.log('[Home] Navegando a /detalles-pago/', item.button);
-    this.router.navigate(['/detalles-pago/', item.button]);
+    console.log('[Home] Navegando a /detalles-pagos/', item.button);
+    this.loading = true;
+    this.router.navigate(['/detalles-pagos', item.button]);
+  }
+
+  public gotoSearchPayments() {
+    this.router.navigate(['/consultar-payments']);
   }
 }

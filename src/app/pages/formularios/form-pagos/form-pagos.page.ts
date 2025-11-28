@@ -4,7 +4,7 @@ import { Loading } from 'src/app/core/services/loading/loading';
 import { Toast } from 'src/app/core/services/toast/toast';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Preferences } from 'src/app/core/services/preferences/preferences';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Data } from 'src/app/core/services/data/data';
 import type { Student, Invoices, Payment } from '../../../../domain/models/index';
@@ -49,7 +49,8 @@ export class FormPagosPage implements OnInit, OnDestroy {
     private readonly toastSrv: Toast,
     private readonly preferencesSrv: Preferences,
     private readonly route: ActivatedRoute,
-    private readonly dataSrv: Data
+    private readonly dataSrv: Data,
+    private readonly router: Router
   ) {
     this.initForm();
   }
@@ -159,6 +160,7 @@ export class FormPagosPage implements OnInit, OnDestroy {
       this.paymentForm.reset();
       await this.loadingSrv.dismissLoading();
       await this.toastSrv.showSuccessToast('Pago registrado exitosamente.');
+      this.router.navigate(['/detalles-pagos', response]);
     } catch (error) {
       this.toastSrv.showErrorToast("Error al registrar el pago.");
       console.error('Error registrando pago:', error);

@@ -26,7 +26,7 @@
     </div>
   </section>
   
-  <section class="dashboard-grid">
+  <section class="dashboard-grid" *ngIf="!loading">
     <ion-card class="stats-card">
       <ion-card-content>
         <div class="stats-grid">
@@ -43,7 +43,7 @@
             </div>
             <div class="stat-label">{{ kpis[1]?.label }}</div>
           </div>
-          <div class="stat-cell">
+          <div class="stat-cell" (click)="gotoSearchPayments()" style="border: #008FFB solid 2px !important;">
             <div class="stat-value">{{ kpis[2]?.value }}</div>
             <div class="stat-label">{{ kpis[2]?.label }}</div>
           </div>
@@ -69,11 +69,11 @@
   </section>
 
 
-  <app-list [items]="dataList" (itemClick)="goToPaymentDetail($event)"></app-list>
+  <app-list [items]="dataList" (itemClick)="goToPaymentDetail($event)" *ngIf="!loading"></app-list>
 
   <app-fabbutom icon="menu" label="Acciones" color="primary" position="bottom-right" [actions]="[
       { id: 'estudiante', icon: 'person-add', label: 'Estudiante', color: 'secondary' },
       { id: 'pago', icon: 'card', label: 'Pago', color: 'secondary' },
       { id: 'logout', icon: 'log-out', label: 'Salir', color: 'secondary' }
-    ]" (actionClick)="onFabAction($event)"></app-fabbutom>
+    ]" (actionClick)="onFabAction($event)" *ngIf="!loading"></app-fabbutom>
 </ion-content>

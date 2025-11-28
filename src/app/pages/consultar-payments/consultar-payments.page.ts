@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Data } from 'src/app/core/services/data/data';
@@ -12,10 +12,11 @@ import { Payment, Student } from 'src/domain/models/index';
   styleUrls: ['./consultar-payments.page.scss'],
   standalone: false,
 })
-export class ConsultarPaymentsPage implements OnInit {
+export class ConsultarPaymentsPage implements OnInit, OnDestroy {
   private allStudents: Student[] = [];
   private allPayments: Payment[] = [];
   public filteredResults: any[] = [];
+  public dataList: any[] = [];
   private studentsSubscription?: Subscription;
   private paymentsSubscriptions?: Subscription;
   public searchQuery: string = '';
@@ -98,7 +99,7 @@ export class ConsultarPaymentsPage implements OnInit {
   }
 
   private mapPaymentsOptions() {
-    this.filteredResults = this.allPayments.map(pago => {
+    this.dataList = this.allPayments.map(pago => {
       const student = this.allStudents.find(s => s.id_student === pago.invoice_id);
       const fullName = student ? `${student.name} ${student.lastname}` : 'Estudiante Desconocido';
       return {
@@ -118,27 +119,17 @@ export class ConsultarPaymentsPage implements OnInit {
       return;
     }
 
-    this.filteredResults = this.allPayments
-      .map(pago => {
-        const student = this.allStudents.find(s => s.id_student === pago.invoice_id);
-        const fullName = student ? `${student.name} ${student.lastname}` : 'Estudiante Desconocido';
-        return {
-          title: fullName,
-          detail: this.formatCurrency(pago.payment_value),
-          button: pago.payment_id
-        };
-      })
-      .filter((item) =>
+    this.dataList = this.dataList.filter((item) =>
         (item.title || '').toLowerCase().includes(q) ||
         (item.detail || '').toLowerCase().includes(q) ||
         (item.button || '').toLowerCase().includes(q)
       );
-    console.log('[Pagos] Filtrados', this.filteredResults.length, 'pagos para query =', q);
+    console.log('[Pagos] Filtrados', this.dataList.length, 'pagos para query =', q);
   }
 
   public goToPaymentDetail(item: any) {
     console.log('[Home] Selected search item:', item);
     console.log('[Home] Navegando a /detalles-pagos/', item.button);
-    this.router.navigate(['/detalles-pagos/', item.button]);
+    this.router.navigate(['/detalles-pagos', item.button]);
   }
 }

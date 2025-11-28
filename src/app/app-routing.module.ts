@@ -48,11 +48,13 @@ const routes: Routes = [
   },
   {
     path: 'consultar-payments',
-    loadChildren: () => import('./pages/consultar-payments/consultar-payments.module').then(m => m.ConsultarPaymentsPageModule)
+    loadChildren: () => import('./pages/consultar-payments/consultar-payments.module').then(m => m.ConsultarPaymentsPageModule),
+    canActivate: [authGuard]
   },
   {
     path: 'detalles-pagos',
-    loadChildren: () => import('./pages/detalles/detalles-pagos/detalles-pagos.module').then(m => m.DetallesPagosPageModule)
+    loadChildren: () => import('./pages/detalles/detalles-pagos/detalles-pagos.module').then(m => m.DetallesPagosPageModule),
+    canActivate: [authGuard]
   },
 
   {
