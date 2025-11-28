@@ -17,7 +17,12 @@ import { Data } from './services/data/data';
   providers: [{
     provide: SupabaseClient,
     useFactory: () => {
-      return createClient(env.SUPABASE_APP.URL, env.SUPABASE_APP.API_KEY);
+      return createClient(env.SUPABASE_APP.URL, env.SUPABASE_APP.API_KEY, {
+        auth : {
+          persistSession: true,
+          autoRefreshToken: true
+        }
+      });
     }
   }, Auth, Query, Cleaner, Loading, Preferences, Toast, Data],
   imports: [

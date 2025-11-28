@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Loading } from 'src/app/core/services/loading/loading';
@@ -14,7 +14,7 @@ import { Student, Institution } from 'src/domain/models/index';
   styleUrls: ['./actualizar-estudiante.page.scss'],
   standalone: false
 })
-export class ActualizarEstudiantePage implements OnInit {
+export class ActualizarEstudiantePage implements OnInit, OnDestroy {
   public studentForm !: FormGroup;
   public institutionsOptions: { value: string; text: string }[] = [];
   public isCoordinator: boolean = true;
