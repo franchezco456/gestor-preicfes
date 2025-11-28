@@ -7,8 +7,9 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="form-page" *ngIf="!loading && !notFound">
-  <ion-card class="form-card payment-card">
+<ion-content>
+  <section class="form-page" *ngIf="!loading && !notFound">
+    <ion-card class="form-card payment-card">
       <ion-card-header>
         <h3>DETALLES DE PAGO</h3>
       </ion-card-header>
@@ -41,6 +42,7 @@
         </div>
       </ion-card-content>
     </ion-card>
+  </section>
 </ion-content>
 <ion-content *ngIf="notFound">
   <p class="muted" style="text-align:center;">No se encontró el pago o estudiante.</p>

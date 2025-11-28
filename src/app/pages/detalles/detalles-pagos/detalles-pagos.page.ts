@@ -63,6 +63,7 @@ export class DetallesPagosPage implements OnInit, OnDestroy {
     const coord = await this.preferencesSrv.getPreferences('coordData');
     const existStudents = this.dataSrv.currentStudents.length > 0;
     const existPayments = this.dataSrv.currentPayments.length > 0;
+    const existInvoices = this.dataSrv.currentInvoices.length > 0;
     if (!id) {
       this.notFound = true;
       this.loading = false;
